@@ -55,6 +55,16 @@
   gap: .45rem;
 }
 
+/* .flow-split 안에 중첩된 .flow는 IF 노드 자신의 두 갈래를 하나의 상자로
+   묶어 보여준다. .flow는 원래 페이지 전체를 담는 최상위 컨테이너로 설계되어
+   여백이 크므로, 중첩 상황에 맞게 안쪽 상자의 여백만 줄인다. */
+.flow-split > .flow {
+  margin: 0;
+  padding: .5rem .6rem;
+  gap: .45rem 0;
+  overflow-x: visible;
+}
+
 .flow-legend { font-size: .85rem; color: var(--muted); margin-top: -.4rem; }
 .flow-legend .sw {
   display: inline-block;
