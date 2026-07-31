@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공무원을 위한 n8n 업무 자동화 — 2일 과정</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main class="wrap">
+
+  <header class="page-head">
+    <h1>공무원을 위한 n8n 업무 자동화</h1>
+    <p class="sub">코딩 없이 반복 업무를 자동으로 — 2일 과정</p>
+  </header>
+
+  <div class="note tip">
+    <b>이 과정을 마치면</b>
+    민원이 접수되면 시트에 기록되고, 담당자에게 메일이 가고, 처리 마감이 캘린더에 잡히고,
+    AI가 안내문 초안까지 써주는 시스템을 직접 만들 수 있습니다.
+  </div>
+
+  <h2>시작하기 전에</h2>
+  <ul class="toc">
+    <li><a href="prep/day1.html"><span class="n">준비 ①</span><span>1일차 준비물 — 구글 계정, Gemini API 키</span><span class="d">30분</span></a></li>
+    <li><a href="prep/day2.html"><span class="n">준비 ②</span><span>2일차 준비물 — 텔레그램 봇 만들기</span><span class="d">20분</span></a></li>
+  </ul>
+
+  <h2>1일차 — 민원 접수 자동화 시스템 만들기</h2>
+  <p>워크플로우 하나를 8단계에 걸쳐 조금씩 키웁니다. 매 시간 노드를 하나씩 얹습니다.</p>
+  <ul class="toc">
+    <li><a href="day1/01.html"><span class="n">01</span><span>첫 워크플로우</span><span class="d">노드와 실행</span></a></li>
+    <li><a href="day1/02.html"><span class="n">02</span><span>데이터 흐름과 표현식</span><span class="d">{{ }} 문법</span></a></li>
+    <li><a href="day1/03.html"><span class="n">03</span><span>구글 시트에 자동 기록</span><span class="d">계정 연결</span></a></li>
+    <li><a href="day1/04.html"><span class="n">04</span><span>이메일 자동 발송</span><span class="d">Gmail</span></a></li>
+    <li><a href="day1/05.html"><span class="n">05</span><span>캘린더 일정 자동 생성</span><span class="d">날짜 계산</span></a></li>
+    <li><a href="day1/06.html"><span class="n">06</span><span>AI 안내문 자동 생성</span><span class="d">Gemini</span></a></li>
+    <li><a href="day1/07.html"><span class="n">07</span><span>조건에 따라 나누기</span><span class="d">IF 분기</span></a></li>
+    <li><a href="day1/08.html"><span class="n">08</span><span>입력 폼으로 실제 접수받기</span><span class="d">완성</span></a></li>
+  </ul>
+
+  <h2>2일차 — 업무별 자동화 프로젝트</h2>
+  <p>1일차에서 배운 것을 조합해 실제 업무에 쓸 수 있는 자동화를 네 가지 만듭니다.</p>
+  <ul class="toc">
+    <li><a href="day2/p1.html"><span class="n">P1</span><span>공문서 요약 서비스</span><span class="d">PDF 요약</span></a></li>
+    <li><a href="day2/p2.html"><span class="n">P2</span><span>매일 아침 민원 브리핑 봇</span><span class="d">정시 자동실행</span></a></li>
+    <li><a href="day2/p3.html"><span class="n">P3</span><span>AI 민원 자동 분류·답변 초안</span><span class="d">AI 분류</span></a></li>
+    <li><a href="day2/p4.html"><span class="n">P4</span><span>날씨 알리미</span><span class="d">공공데이터 API</span></a></li>
+  </ul>
+
+  <div class="note warn">
+    <b>준비물을 먼저 확인하세요</b>
+    구글 계정과 Gemini API 키가 없으면 1일차 3강부터 진행할 수 없습니다.
+    기상청 API는 신청 후 승인까지 시간이 걸리니 <a href="prep/day1.html">준비 ①</a> 맨 아래를 미리 봐두세요.
+  </div>
+
+</main>
+</body>
+</html>
