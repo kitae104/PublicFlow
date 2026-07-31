@@ -46,6 +46,7 @@
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.5,
       "position": [0, 0],
+      "webhookId": "3dd98627-feac-46dd-93aa-6cb5795cd96a",
       "id": "d1-form",
       "name": "민원 입력 폼"
     },
