@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P3 AI 민원 자동 분류·답변 초안 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/flow.css">
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 2일차 › P3</nav>
+
+  <header class="page-head">
+    <h1>P3 AI 민원 자동 분류·답변 초안</h1>
+    <p class="sub">AI가 분류하고 초안을 씁니다</p>
+  </header>
+
+  <section class="sec" id="goal">
+    <h2 class="sec-title">이번 시간에 만들 것</h2>
+    <p>폼으로 접수된 민원을 AI가 종류별로 분류하고 답변 초안까지 작성해
+       시트에 기록하는 워크플로우를 만듭니다.</p>
+    <figure class="capture">
+      <div class="capture-cap">[그림 P3-1] 완성된 모습</div>
+      <div class="capture-guide">캡처 위치: 시트에 기록된 분류 결과와 답변 초안</div>
+    </figure>
+  </section>
+
+  <section class="sec" id="flow">
+    <h2 class="sec-title">지금까지의 흐름</h2>
+    <div class="flow">
+      <div class="flow-node is-new"><span class="t">폼</span><span class="k">Form 트리거</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-new"><span class="t">AI 분류·답변</span><span class="k">Gemini</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-new"><span class="t">시트 기록</span><span class="k">Sheets</span></div>
+    </div>
+    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
+  </section>
+
+  <section class="sec" id="why">
+    <h2 class="sec-title">왜 이게 필요한가</h2>
+    <p>민원을 접수받을 때마다 종류를 나누고 답변을 처음부터 쓰는 일은 반복적이고
+       시간이 오래 걸립니다. AI가 분류와 초안 작성을 먼저 해두면 담당자는
+       검토와 수정만 하면 됩니다.</p>
+  </section>
+
+  <section class="sec" id="steps">
+    <h2 class="sec-title">따라하기</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="verify">
+    <h2 class="sec-title">실행하고 확인하기</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="trouble">
+    <h2 class="sec-title">안 될 때</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="download">
+    <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
+    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <a class="dl" href="../downloads/day2-p3.json" download>
+      워크플로우 내려받기 <span class="dl-name">day2-p3.json</span>
+    </a>
+  </section>
+
+  <nav class="pager">
+    <a href="p2.html">← P2 매일 아침 민원 브리핑 봇</a>
+    <a href="p4.html">P4 날씨 알리미 →</a>
+  </nav>
+
+</main>
+</body>
+</html>

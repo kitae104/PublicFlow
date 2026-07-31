@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 구글 시트에 자동 기록 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/flow.css">
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 1일차 › 03</nav>
+
+  <header class="page-head">
+    <h1>03 구글 시트에 자동 기록</h1>
+    <p class="sub">만든 데이터를 시트에 쌓습니다</p>
+  </header>
+
+  <section class="sec" id="goal">
+    <h2 class="sec-title">이번 시간에 만들 것</h2>
+    <p>샘플 민원 데이터를 만들어 구글 시트에 한 줄씩 자동으로 쌓는 워크플로우를 만듭니다.</p>
+    <figure class="capture">
+      <div class="capture-cap">[그림 3-1] 완성된 모습</div>
+      <div class="capture-guide">캡처 위치: 새 행이 추가된 구글 시트 화면 전체</div>
+    </figure>
+  </section>
+
+  <section class="sec" id="flow">
+    <h2 class="sec-title">지금까지의 흐름</h2>
+    <div class="flow">
+      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">트리거</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-dim"><span class="t">샘플 민원</span><span class="k">Set</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-new"><span class="t">시트에 기록</span><span class="k">Sheets</span></div>
+    </div>
+    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
+  </section>
+
+  <section class="sec" id="why">
+    <h2 class="sec-title">왜 이게 필요한가</h2>
+    <p>민원 접수 대장이나 처리 현황표를 손으로 옮겨 적는 대신, n8n이 구글 시트에
+       자동으로 기록하게 하면 입력 실수도 줄고 담당자가 실시간으로 현황을 볼 수 있습니다.</p>
+  </section>
+
+  <section class="sec" id="steps">
+    <h2 class="sec-title">따라하기</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="verify">
+    <h2 class="sec-title">실행하고 확인하기</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="trouble">
+    <h2 class="sec-title">안 될 때</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="download">
+    <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
+    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <a class="dl" href="../downloads/day1-03.json" download>
+      워크플로우 내려받기 <span class="dl-name">day1-03.json</span>
+    </a>
+  </section>
+
+  <nav class="pager">
+    <a href="02.html">← 02 데이터 흐름과 표현식</a>
+    <a href="04.html">04 이메일 자동 발송 →</a>
+  </nav>
+
+</main>
+</body>
+</html>

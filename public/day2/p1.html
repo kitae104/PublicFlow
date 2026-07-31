@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P1 공문서 요약 서비스 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/flow.css">
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 2일차 › P1</nav>
+
+  <header class="page-head">
+    <h1>P1 공문서 요약 서비스</h1>
+    <p class="sub">PDF를 올리면 요약을 보내줍니다</p>
+  </header>
+
+  <section class="sec" id="goal">
+    <h2 class="sec-title">이번 시간에 만들 것</h2>
+    <p>폼에 PDF 공문서를 올리면 텍스트를 추출해 AI가 요약한 뒤 텔레그램으로
+       보내주는 독립 프로젝트를 만듭니다.</p>
+    <figure class="capture">
+      <div class="capture-cap">[그림 P1-1] 완성된 모습</div>
+      <div class="capture-guide">캡처 위치: 텔레그램으로 도착한 공문서 요약 메시지</div>
+    </figure>
+  </section>
+
+  <section class="sec" id="flow">
+    <h2 class="sec-title">지금까지의 흐름</h2>
+    <div class="flow">
+      <div class="flow-node is-new"><span class="t">폼(PDF)</span><span class="k">Form 트리거</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-new"><span class="t">텍스트 추출</span><span class="k">Extract</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-new"><span class="t">AI 요약</span><span class="k">Gemini</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-new"><span class="t">텔레그램</span><span class="k">Telegram</span></div>
+    </div>
+    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
+  </section>
+
+  <section class="sec" id="why">
+    <h2 class="sec-title">왜 이게 필요한가</h2>
+    <p>긴 공문서를 처음부터 끝까지 읽을 시간이 부족할 때, 핵심만 먼저 요약으로
+       받아보면 업무 처리 속도가 빨라집니다.</p>
+  </section>
+
+  <section class="sec" id="steps">
+    <h2 class="sec-title">따라하기</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="verify">
+    <h2 class="sec-title">실행하고 확인하기</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="trouble">
+    <h2 class="sec-title">안 될 때</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="download">
+    <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
+    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <a class="dl" href="../downloads/day2-p1.json" download>
+      워크플로우 내려받기 <span class="dl-name">day2-p1.json</span>
+    </a>
+  </section>
+
+  <nav class="pager">
+    <a href="../day1/08.html">← 1일차 08 입력 폼으로 실제 접수받기</a>
+    <a href="p2.html">P2 매일 아침 민원 브리핑 봇 →</a>
+  </nav>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 데이터 흐름과 표현식 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/flow.css">
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 1일차 › 02</nav>
+
+  <header class="page-head">
+    <h1>02 데이터 흐름과 표현식</h1>
+    <p class="sub">앞 노드의 값을 가져다 씁니다</p>
+  </header>
+
+  <section class="sec" id="goal">
+    <h2 class="sec-title">이번 시간에 만들 것</h2>
+    <p>이전 노드에서 만든 값을 다음 노드가 표현식으로 그대로 이어받아 쓰는 워크플로우를 만듭니다.
+       값을 두 번 입력하지 않고도 앞 단계의 결과를 재사용하는 법을 익힙니다.</p>
+    <figure class="capture">
+      <div class="capture-cap">[그림 2-1] 완성된 모습</div>
+      <div class="capture-guide">캡처 위치: 값 가져오기 노드의 표현식 입력창과 오른쪽 결과 미리보기</div>
+    </figure>
+  </section>
+
+  <section class="sec" id="flow">
+    <h2 class="sec-title">지금까지의 흐름</h2>
+    <div class="flow">
+      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">트리거</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-dim"><span class="t">값 만들기</span><span class="k">Set</span></div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-node is-new"><span class="t">값 가져오기</span><span class="k">Set</span></div>
+    </div>
+    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
+  </section>
+
+  <section class="sec" id="why">
+    <h2 class="sec-title">왜 이게 필요한가</h2>
+    <p>문서를 옮겨 적거나 같은 값을 여러 번 붙여넣다 보면 오타와 누락이 생기기 쉽습니다.
+       n8n에서는 앞 노드가 만든 값을 표현식(<code class="val">{{ }}</code>)으로 참조하면,
+       값이 바뀌어도 뒤 단계가 자동으로 최신 값을 따라갑니다. 민원 처리나 보고서 작성처럼
+       같은 정보를 여러 단계에서 반복해 쓰는 업무에 특히 유용합니다.</p>
+  </section>
+
+  <section class="sec" id="steps">
+    <h2 class="sec-title">따라하기</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="verify">
+    <h2 class="sec-title">실행하고 확인하기</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="trouble">
+    <h2 class="sec-title">안 될 때</h2>
+    <p class="hint">작성 예정입니다.</p>
+  </section>
+
+  <section class="sec" id="download">
+    <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
+    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <a class="dl" href="../downloads/day1-02.json" download>
+      워크플로우 내려받기 <span class="dl-name">day1-02.json</span>
+    </a>
+  </section>
+
+  <nav class="pager">
+    <a href="01.html">← 01 첫 워크플로우</a>
+    <a href="03.html">03 구글 시트에 자동 기록 →</a>
+  </nav>
+
+</main>
+</body>
+</html>
