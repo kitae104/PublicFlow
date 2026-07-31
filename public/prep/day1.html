@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>준비물 ① 1일차 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 준비물 ①</nav>
+
+  <header class="page-head">
+    <h1>1일차 준비물</h1>
+    <p class="sub">구글 계정과 Gemini API 키를 미리 준비합니다 — 약 30분</p>
+  </header>
+
+  <section class="sec" id="summary">
+    <h2 class="sec-title">무엇을, 왜 준비하나요</h2>
+    <p>1일차 수업은 구글 계정으로 로그인해 여러 구글 서비스(시트, 지메일, 캘린더)와
+       구글의 AI 모델(Gemini)을 연결하는 방식으로 진행됩니다. 아래 세 가지만
+       미리 준비해두면 수업 시간에 헤매지 않습니다.</p>
+    <ol class="steps">
+      <li><span class="step-title">구글 계정</span>
+        개인 Gmail 권장. <span class="hint">1일차·2일차 공통으로 씁니다.</span></li>
+      <li><span class="step-title">Gemini API 키</span>
+        <span class="hint">1일차 6강부터 사용합니다.</span></li>
+      <li><span class="step-title">기상청 단기예보 API 키</span>
+        <span class="hint">2일차용입니다 — 지금은 신청만 해둡니다.</span></li>
+    </ol>
+  </section>
+
+  <section class="sec" id="google-account">
+    <h2 class="sec-title">① 구글 계정 준비</h2>
+    <p>이미 쓰고 있는 개인 Gmail 계정이 있다면 그대로 쓰면 됩니다. 없다면
+       <code class="val">accounts.google.com</code>에서 새로 만드세요.</p>
+    <div class="note warn">
+      <b>기관 계정(예: @korea.kr) 대신 개인 Gmail을 쓰세요</b>
+      기관에서 발급한 구글 계정은 관리자가 외부 앱 연결을 막아둔 경우가 많습니다.
+      이 경우 수업 중 3강(구글 시트 연결)에서 권한 오류가 나는데, 학생 스스로는
+      풀 수 없는 문제입니다. 처음부터 개인 Gmail 계정으로 진행하세요.
+    </div>
+    <figure class="capture">
+      <div class="capture-cap">[그림 준1-1] 개인 Gmail 계정으로 로그인한 상태</div>
+      <div class="capture-guide">캡처 위치: 구글 계정 로그인 후 우측 상단 프로필 아이콘과 이메일 주소가 보이는 화면</div>
+    </figure>
+  </section>
+
+  <section class="sec" id="gemini-key">
+    <h2 class="sec-title">② Gemini API 키 발급</h2>
+    <p>Gemini는 구글이 만든 AI 모델입니다. n8n에서 이 모델을 쓰려면 "API 키"라는
+       비밀번호 같은 문자열이 필요합니다. 아래 순서대로 발급받습니다.</p>
+    <ol class="steps">
+      <li><span class="step-title">AI Studio 접속</span>
+        방금 준비한 구글 계정으로 로그인한 브라우저에서
+        <code class="val">https://aistudio.google.com/apikey</code> 주소로 들어갑니다.
+        <figure class="capture">
+          <div class="capture-cap">[그림 준1-2] AI Studio 로그인 후 첫 화면</div>
+          <div class="capture-guide">캡처 위치: aistudio.google.com/apikey 접속 직후 화면 전체, 좌측 메뉴 포함</div>
+        </figure>
+      </li>
+      <li><span class="step-title">키 만들기</span>
+        화면에 보이는 <code class="val">API 키 만들기</code> 버튼을 누릅니다.
+        <span class="hint">이미 만든 키가 있다는 안내가 나오면, 그 키를 그대로 써도 됩니다.</span>
+        <figure class="capture">
+          <div class="capture-cap">[그림 준1-3] API 키 만들기 버튼</div>
+          <div class="capture-guide">캡처 위치: API 키 만들기 버튼과 그 주변, 클릭 전 상태</div>
+        </figure>
+      </li>
+      <li><span class="step-title">키 복사해서 보관</span>
+        키가 만들어지면 긴 문자열이 화면에 나타납니다. <code class="val">복사</code> 버튼을 눌러
+        메모장 등 나만 볼 수 있는 곳에 잠시 붙여둡니다. 수업 시간에 n8n에 붙여넣을 것입니다.
+        <figure class="capture">
+          <div class="capture-cap">[그림 준1-4] 발급된 API 키와 복사 버튼</div>
+          <div class="capture-guide">캡처 위치: 발급 직후 키 문자열 전체와 복사 버튼(키 값은 실제로는 가려서 촬영)</div>
+        </figure>
+      </li>
+    </ol>
+  </section>
+
+  <div class="note warn">
+    <b>API 키는 비밀번호와 같습니다</b>
+    이 키를 아는 사람은 내 계정의 한도로 AI를 마음대로 쓸 수 있습니다.
+    화면 공유 중에 키가 보이는 화면을 띄우지 마세요. 카카오톡·문자 등 메신저로
+    남에게 전송하지도 마세요. 수업 중에는 n8n 화면에만 붙여넣습니다.
+  </div>
+
+  <div class="note">
+    <b>무료로 쓸 수 있나요</b>
+    네, Gemini는 무료로 쓸 수 있는 한도가 있습니다. 다만 구글이 이 한도(하루에 몇 번까지
+    등)를 고정된 표로 공개하지 않고, 계정마다 AI Studio의 사용량 화면에서 확인하도록
+    바뀌었습니다. 정확한 한도가 궁금하면 AI Studio에 로그인한 뒤 사용량(Usage) 메뉴를
+    확인하세요. 이 문서에는 숫자를 적지 않습니다 — 계정마다 다르고 수시로 바뀌기 때문입니다.
+  </div>
+
+  <div class="note warn">
+    <b>모델은 반드시 직접 골라서 지정하세요</b>
+    n8n에서 Gemini 모델 노드를 추가하면 화면에 모델 이름이 미리 채워져 있습니다.
+    이걸 그대로 두지 말고, 반드시 모델 선택 목록(드롭다운)을 열어 아래 값을
+    직접 골라서 바꾸세요.
+    <p>이 수업에서 쓰는 모델: <code class="val">models/gemini-2.5-flash</code></p>
+    <p>n8n 버전에 따라 처음부터 <code class="val">models/gemini-3-flash-preview</code>처럼
+       이름에 <code class="val">preview</code>가 들어간 모델이 기본값으로 채워질 수 있습니다.
+       preview(미리보기) 모델은 구글이 예고 없이 이름을 바꾸거나 없애버릴 수 있어서,
+       수업 도중 갑자기 작동하지 않을 위험이 있습니다. 그래서 반드시 위 값으로
+       직접 바꿔야 합니다.</p>
+    <p>수업 중 한도 초과(사용량 화면에 오류가 뜸) 안내를 받으면
+       <code class="val">models/gemini-2.5-flash-lite</code>로 바꿔서 계속 진행하세요.</p>
+  </div>
+
+  <section class="sec" id="weather-api">
+    <h2 class="sec-title">2일차에 쓸 것 — 지금 미리 신청해두세요</h2>
+    <p><b>1일차 실습에는 이 항목이 전혀 필요 없습니다.</b> 아래 절차만 지금 시작해두면
+       2일차 시작 전까지 승인이 끝나 있을 가능성이 높다는 뜻으로 여기에 적어둡니다.
+       1일차를 진행하는 데는 아무 지장이 없으니 걱정하지 마세요.</p>
+    <ol class="steps">
+      <li><span class="step-title">공공데이터포털 가입</span>
+        <code class="val">https://www.data.go.kr</code>에 접속해 회원가입합니다.
+        이미 계정이 있다면 로그인만 하면 됩니다.
+      </li>
+      <li><span class="step-title">기상청 단기예보 API 검색</span>
+        검색창에 <code class="val">기상청_단기예보</code> 또는
+        <code class="val">단기예보 조회서비스</code>를 검색합니다.
+      </li>
+      <li><span class="step-title">활용신청</span>
+        검색 결과에서 해당 API를 찾아 <code class="val">활용신청</code> 버튼을 누르고
+        사용 목적을 간단히 적어 제출합니다.
+        <span class="hint">승인까지 보통 몇 시간에서 하루 정도 걸릴 수 있습니다. 그래서 미리 신청해두는 것입니다.</span>
+      </li>
+      <li><span class="step-title">승인 후 인증키 확인</span>
+        승인되면 마이페이지의 <code class="val">개발계정</code> 또는 <code class="val">활용현황</code>
+        메뉴에서 인증키(서비스키)를 확인할 수 있습니다. 2일차에 이 키를 사용합니다.
+      </li>
+    </ol>
+    <div class="note tip">
+      <b>지금 당장 승인이 안 나도 괜찮습니다</b>
+      1일차에는 전혀 쓰지 않으니, 신청만 해두고 승인 메일이 올 때까지 기다리면 됩니다.
+    </div>
+  </section>
+
+  <nav class="pager">
+    <a href="../index.html">← 목차</a>
+    <a href="../day1/01.html">1일차 01 첫 워크플로우 →</a>
+  </nav>
+
+</main>
+</body>
+</html>
