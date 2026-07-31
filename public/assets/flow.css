@@ -2,7 +2,7 @@
 .flow {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   gap: .8rem 0;
   overflow-x: auto;
   padding: 1rem .2rem;
@@ -42,7 +42,6 @@
 
 .flow-arrow {
   flex: none;
-  align-self: center;
   padding: 0 .45rem;
   color: var(--muted);
   font-size: 1.1rem;
