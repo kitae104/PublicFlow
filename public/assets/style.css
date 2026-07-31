@@ -13,7 +13,6 @@
   --warn: #b45309;
   --warn-soft: #fef3c7;
   --radius: 10px;
-  --gap: 1.25rem;
   --maxw: 46rem;
 }
 
@@ -220,5 +219,5 @@ figure.capture img { max-width: 100%; border-radius: var(--radius); border: 1px 
   body { font-size: 11pt; padding: 0; }
   .pager, .crumb { display: none; }
   .sec { break-inside: avoid; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .85em; color: #555; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .85em; color: var(--muted); }
 }
