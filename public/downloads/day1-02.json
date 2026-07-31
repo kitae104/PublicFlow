@@ -1,1 +1,62 @@
-{"name":"[공무원] 1일차 02 데이터 흐름과 표현식","nodes":[],"connections":{}}
+{
+  "name": "[공무원] 1일차 02 데이터 흐름과 표현식",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "d1-trigger",
+      "name": "수동 실행"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "인사말",
+              "value": "안녕하세요, 홍길동님",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0],
+      "id": "d1-set-greeting",
+      "name": "값 만들기"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a2",
+              "name": "최종문구",
+              "value": "={{ $json.인사말 }} 반갑습니다.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [440, 0],
+      "id": "d1-set-final",
+      "name": "값 가져오기"
+    }
+  ],
+  "connections": {
+    "수동 실행": {
+      "main": [[{ "node": "값 만들기", "type": "main", "index": 0 }]]
+    },
+    "값 만들기": {
+      "main": [[{ "node": "값 가져오기", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" }
+}
