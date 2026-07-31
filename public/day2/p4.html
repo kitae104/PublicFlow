@@ -21,6 +21,11 @@
     <h2 class="sec-title">이번 시간에 만들 것</h2>
     <p>매일 아침 7시에 기상청 공공데이터 API에서 날씨 정보를 받아와 메시지로
        가공한 뒤 텔레그램으로 보내는 워크플로우를 만듭니다.</p>
+    <div class="note warn">
+      <b>기상청 API 키가 필요합니다</b>
+      이 프로젝트는 기상청 공공데이터 API를 호출합니다. 아직 발급받지 못했다면
+      <a href="../prep/day1.html#weather-api">준비물 ① 기상청 단기예보 API 키 신청</a>을 먼저 보고 오세요.
+    </div>
     <figure class="capture" id="fig-d2-p4-1">
       <div class="capture-cap">[그림 P4-1] 완성된 모습</div>
       <div class="capture-guide">캡처 위치: 텔레그램으로 도착한 아침 날씨 알림</div>
@@ -28,13 +33,13 @@
   </section>
 
   <section class="sec" id="flow">
-    <h2 class="sec-title">지금까지의 흐름</h2>
+    <h2 class="sec-title">이번 프로젝트의 흐름</h2>
     <div class="flow">
-      <div class="flow-node is-new"><span class="t">매일 7시</span><span class="k">Schedule</span></div>
+      <div class="flow-node is-new"><span class="t">매일 7시</span><span class="k">Schedule 트리거</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">기상청 API</span><span class="k">HTTP</span></div>
+      <div class="flow-node is-new"><span class="t">기상청 API</span><span class="k">HTTP Request</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">메시지 가공</span><span class="k">Set</span></div>
+      <div class="flow-node is-new"><span class="t">메시지 가공</span><span class="k">Edit Fields</span></div>
       <div class="flow-arrow">▶</div>
       <div class="flow-node is-new"><span class="t">텔레그램</span><span class="k">Telegram</span></div>
     </div>

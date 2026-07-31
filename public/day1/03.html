@@ -20,6 +20,11 @@
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
     <p>샘플 민원 데이터를 만들어 구글 시트에 한 줄씩 자동으로 쌓는 워크플로우를 만듭니다.</p>
+    <div class="note warn">
+      <b>구글 계정이 필요합니다</b>
+      이번 시간부터 구글 시트에 연결합니다. 아직 준비하지 못했다면
+      <a href="../prep/day1.html#google-account">준비물 ① 구글 계정 준비</a>를 먼저 보고 오세요.
+    </div>
     <figure class="capture" id="fig-d1-03-1">
       <div class="capture-cap">[그림 3-1] 완성된 모습</div>
       <div class="capture-guide">캡처 위치: 새 행이 추가된 구글 시트 화면 전체</div>
@@ -29,13 +34,14 @@
   <section class="sec" id="flow">
     <h2 class="sec-title">지금까지의 흐름</h2>
     <div class="flow">
-      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">트리거</span></div>
+      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">수동 트리거</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">샘플 민원</span><span class="k">Set</span></div>
+      <div class="flow-node is-dim"><span class="t">샘플 민원</span><span class="k">Edit Fields</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">시트에 기록</span><span class="k">Sheets</span></div>
+      <div class="flow-node is-new"><span class="t">시트에 기록</span><span class="k">Google Sheets</span></div>
     </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드 — 1·2강의 예시 값은 이번 시간부터 실제와 비슷한 샘플 민원 하나로 바뀌고, 앞으로 몇 강 동안 그대로 재사용됩니다.</p>
+    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
+    <p class="flow-legend">01·02강에서 만든 <b>값 만들기</b>와 <b>값 가져오기</b> 두 노드는 이번 시간부터 <b>샘플 민원</b> 노드 하나로 합쳐집니다. 이 노드는 앞으로 몇 강 동안 그대로 재사용됩니다.</p>
   </section>
 
   <section class="sec" id="why">

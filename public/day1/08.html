@@ -32,21 +32,24 @@
     <div class="flow">
       <div class="flow-node is-new"><span class="t">민원 입력 폼</span><span class="k">Form 트리거</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">샘플 민원</span><span class="k">Set</span></div>
+      <div class="flow-node is-dim"><span class="t">민원 데이터 정리</span><span class="k">Edit Fields</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">시트에 기록</span><span class="k">Sheets</span></div>
+      <div class="flow-node is-dim"><span class="t">시트에 기록</span><span class="k">Google Sheets</span></div>
       <div class="flow-arrow">▶</div>
       <div class="flow-node is-dim"><span class="t">접수 메일 보내기</span><span class="k">Gmail</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">처리 마감 일정</span><span class="k">Calendar</span></div>
+      <div class="flow-node is-dim"><span class="t">처리 마감 일정</span><span class="k">Google Calendar</span></div>
       <div class="flow-arrow">▶</div>
       <div class="flow-node is-dim"><span class="t">AI 안내문 작성</span><span class="k">Gemini</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">생활인가?</span><span class="k">IF</span></div>
+      <div class="flow-node is-dim"><span class="t">민원 종류 확인</span><span class="k">IF</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">담당자 분기</span><span class="k">분기</span></div>
+      <div class="flow-split">
+        <div class="flow-node is-dim"><span class="t">생활민원 담당자</span><span class="k">참</span></div>
+        <div class="flow-node is-dim"><span class="t">그 외 담당자</span><span class="k">거짓</span></div>
+      </div>
     </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드 — 수동 실행 트리거는 폼 트리거로 교체됩니다</p>
+    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드 — 수동 실행 트리거는 폼 트리거로 교체됩니다. 이제 폼이 민원 값을 직접 넘겨주므로, <b>민원 데이터 정리</b> 노드는 더 이상 샘플 값을 만들어내지 않고 제출된 값을 정리하는 역할만 합니다.</p>
   </section>
 
   <section class="sec" id="why">

@@ -47,6 +47,14 @@
   font-size: 1.1rem;
 }
 
+/* IF 분기 — 참/거짓 두 갈래를 세로로 쌓는다 */
+.flow-split {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+
 .flow-legend { font-size: .85rem; color: var(--muted); margin-top: -.4rem; }
 .flow-legend .sw {
   display: inline-block;

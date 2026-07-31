@@ -21,6 +21,11 @@
     <h2 class="sec-title">이번 시간에 만들 것</h2>
     <p>폼에 PDF 공문서를 올리면 텍스트를 추출해 AI가 요약한 뒤 텔레그램으로
        보내주는 독립 프로젝트를 만듭니다.</p>
+    <div class="note warn">
+      <b>텔레그램 봇이 필요합니다</b>
+      이 프로젝트는 마지막에 텔레그램으로 메시지를 보냅니다. 아직 만들지 못했다면
+      <a href="../prep/day2.html">준비물 ② 텔레그램 봇 만들기</a>를 먼저 보고 오세요.
+    </div>
     <figure class="capture" id="fig-d2-p1-1">
       <div class="capture-cap">[그림 P1-1] 완성된 모습</div>
       <div class="capture-guide">캡처 위치: 텔레그램으로 도착한 공문서 요약 메시지</div>
@@ -28,11 +33,11 @@
   </section>
 
   <section class="sec" id="flow">
-    <h2 class="sec-title">지금까지의 흐름</h2>
+    <h2 class="sec-title">이번 프로젝트의 흐름</h2>
     <div class="flow">
       <div class="flow-node is-new"><span class="t">폼(PDF)</span><span class="k">Form 트리거</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">텍스트 추출</span><span class="k">Extract</span></div>
+      <div class="flow-node is-new"><span class="t">텍스트 추출</span><span class="k">Extract from File</span></div>
       <div class="flow-arrow">▶</div>
       <div class="flow-node is-new"><span class="t">AI 요약</span><span class="k">Gemini</span></div>
       <div class="flow-arrow">▶</div>
