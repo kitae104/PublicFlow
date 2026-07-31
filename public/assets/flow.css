@@ -1,8 +1,9 @@
-/* 워크플로우 흐름도 — 가로 스크롤 허용, 새 노드만 강조 */
+/* 워크플로우 흐름도 — 화면 안에서 줄바꿈, 아주 좁은 화면만 가로 스크롤 */
 .flow {
   display: flex;
-  align-items: stretch;
-  gap: 0;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: .8rem 0;
   overflow-x: auto;
   padding: 1rem .2rem;
   margin: 1rem 0;
