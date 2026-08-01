@@ -59,6 +59,14 @@
         <code class="val">값 만들기</code> 노드 오른쪽의 <code class="val">+</code>를 눌러
         <code class="val">Edit Fields (Set)</code>를 고릅니다.
       </li>
+      <li><span class="step-title">필드 추가하기</span>
+        노드를 열었을 때 이름과 값을 입력할 빈 줄이 보이지 않는다면, 필드 추가 버튼을 눌러 줄을 하나 만듭니다.
+        이미 빈 줄이 하나 보인다면 그 줄을 그대로 씁니다.
+        <figure class="capture" id="fig-d1-02-2">
+          <div class="capture-cap">[그림 2-2] 필드를 입력할 빈 줄이 준비된 상태</div>
+          <div class="capture-guide">캡처 위치: Set 노드 패널에서 이름/값을 입력할 빈 줄이 하나 보이는 화면, 아직 아무것도 입력하지 않은 상태(필드 추가 버튼이 함께 보이면 더 좋음)</div>
+        </figure>
+      </li>
       <li><span class="step-title">필드 이름 정하기</span>
         새로 붙은 노드의 이름 칸에 <code class="val">최종문구</code>를 입력합니다.
       </li>
@@ -70,15 +78,15 @@
         <span class="hint">이 스위치를 누르지 않고 다음 단계 내용을 그대로 입력해도 n8n은 오류를 내지 않습니다.
         그냥 화면에 글자가 그대로 나올 뿐입니다. 이 강의에서 가장 놓치기 쉬운 지점이니 값 칸 오른쪽을 잘 살펴보고
         누르세요.</span>
-        <figure class="capture" id="fig-d1-02-2">
-          <div class="capture-cap">[그림 2-2] 표현식 전환 스위치 위치</div>
+        <figure class="capture" id="fig-d1-02-3">
+          <div class="capture-cap">[그림 2-3] 표현식 전환 스위치 위치</div>
           <div class="capture-guide">캡처 위치: 최종문구 값 입력칸과 그 오른쪽의 Fixed/Expression 전환 스위치(또는 fx 아이콘)가 함께 보이는 화면, 전환 전 상태</div>
         </figure>
       </li>
       <li><span class="step-title">표현식 입력하기</span>
         표현식 모드로 바뀐 값 칸에 <code class="val">{{ $json.인사말 }} 반갑습니다.</code>를 입력합니다.
-        <figure class="capture" id="fig-d1-02-3">
-          <div class="capture-cap">[그림 2-3] 표현식 입력 후 미리보기</div>
+        <figure class="capture" id="fig-d1-02-4">
+          <div class="capture-cap">[그림 2-4] 표현식 입력 후 미리보기</div>
           <div class="capture-guide">캡처 위치: 표현식을 입력한 값 칸과, 그 옆이나 아래에 나타나는 실제 값 미리보기(안녕하세요, 홍길동님 반갑습니다.)가 함께 보이는 화면</div>
         </figure>
       </li>
@@ -87,7 +95,7 @@
       </li>
     </ol>
     <div class="note">
-      <b>{{ $json.인사말 }}은 무슨 뜻인가요</b>
+      <b><code class="val">{{ $json.인사말 }}</code>은 무슨 뜻인가요</b>
       <code class="val">$json</code>은 바로 앞 노드가 넘겨준 데이터 전체를 가리킵니다. 값 가져오기 앞에는
       값 만들기 노드가 있고, 그 노드는 <code class="val">인사말</code>이라는 이름의 값을 만들었습니다.
       그래서 <code class="val">$json.인사말</code>은 값 만들기가 만든 인사말 값,
@@ -108,6 +116,7 @@
     <p><b>값 칸에 <code class="val">{{ $json.인사말 }} 반갑습니다.</code>가 글자 그대로 보입니다</b> —
        표현식 전환 스위치를 누르지 않았을 때 나타나는 증상입니다. 값 칸이
        <code class="val">Expression</code> 모드로 바뀌어 있는지 다시 확인하세요.</p>
+    <p><b>필드 이름을 입력할 칸이 없습니다</b> — 아직 필드 줄이 만들어지지 않았습니다. 필드 추가 버튼을 눌러 빈 줄을 먼저 만드세요.</p>
     <p><b>undefined 반갑습니다.가 나옵니다</b> — 앞 노드가 만든 필드 이름과 철자가 다릅니다.
        값 만들기 노드의 필드 이름이 정확히 <code class="val">인사말</code>인지 확인하세요.</p>
     <p><b>값 만들기 노드와 연결되어 있지 않습니다</b> — 두 노드 사이에 선이 이어져 있는지 확인하세요.
