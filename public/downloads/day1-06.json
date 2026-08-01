@@ -150,7 +150,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [460, 280],
+      "position": [400, 300],
       "id": "d1-gemini-model",
       "name": "Google Gemini Chat Model"
     }

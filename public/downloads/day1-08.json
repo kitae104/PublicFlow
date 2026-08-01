@@ -147,7 +147,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [460, 280],
+      "position": [400, 300],
       "id": "d1-gemini-model",
       "name": "Google Gemini Chat Model"
     },
@@ -178,7 +178,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [460, 300],
+      "position": [460, 450],
       "id": "d1-if",
       "name": "생활인가?"
     },
@@ -191,7 +191,7 @@
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
-      "position": [680, 250],
+      "position": [700, 380],
       "id": "d1-gmail-lifestyle",
       "name": "생활 담당자"
     },
@@ -204,7 +204,7 @@
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
-      "position": [680, 380],
+      "position": [700, 520],
       "id": "d1-gmail-general",
       "name": "일반 담당자"
     }
