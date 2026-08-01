@@ -140,11 +140,11 @@
         누른 것이 나머지 칸까지 적용되지는 않습니다. 안 누른 칸은 입력한 글자가 그대로
         시트에 들어갑니다.</span>
         <p>
-          <code class="val">이름</code> = <code class="val">{{ $json['이름'] }}</code><br>
-          <code class="val">연락처</code> = <code class="val">{{ $json['연락처'] }}</code><br>
-          <code class="val">이메일</code> = <code class="val">{{ $json['이메일'] }}</code><br>
-          <code class="val">종류</code> = <code class="val">{{ $json['종류'] }}</code><br>
-          <code class="val">상세설명</code> = <code class="val">{{ $json['상세설명'] }}</code><br>
+          <code class="val">이름</code> = <code class="val">{{ $json.이름 }}</code><br>
+          <code class="val">연락처</code> = <code class="val">{{ $json.연락처 }}</code><br>
+          <code class="val">이메일</code> = <code class="val">{{ $json.이메일 }}</code><br>
+          <code class="val">종류</code> = <code class="val">{{ $json.종류 }}</code><br>
+          <code class="val">상세설명</code> = <code class="val">{{ $json.상세설명 }}</code><br>
           <code class="val">등록일</code> = <code class="val">{{ $now.toFormat('yyyy-MM-dd') }}</code>
         </p>
         <span class="hint"><code class="val">$now</code>는 지금 이 순간의 날짜와 시간입니다.
@@ -170,7 +170,7 @@
        자격증명 연결 단계를 다시 확인하세요.</p>
     <p><b>값이 엉뚱한 칸에 들어갑니다</b> — 구글 시트의 머리글 철자가 정본(이름·연락처·이메일·종류·상세설명·등록일)과
        다릅니다. 시트 1행을 다시 확인하세요.</p>
-    <p><b>일부 칸에만 <code class="val">{{ $json['이름'] }}</code> 같은 글자가 그대로 들어갑니다</b> —
+    <p><b>일부 칸에만 <code class="val">{{ $json.이름 }}</code> 같은 글자가 그대로 들어갑니다</b> —
        그 칸의 표현식 전환 스위치를 안 눌렀습니다. 스위치는 여섯 칸을 각각 따로 눌러야 합니다.
        값이 제대로 들어간 칸과 비교해 보면 안 눌린 칸을 찾을 수 있습니다.</p>
     <p><b>권한 오류가 납니다</b> — 기관 계정을 쓰고 있을 가능성이 큽니다. 개인 구글

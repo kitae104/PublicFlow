@@ -80,7 +80,7 @@
       <li><span class="step-title">받는 사람 입력하기</span>
         <code class="val">To</code> 칸 오른쪽의 표현식 전환 스위치를 눌러
         <code class="val">Expression</code> 모드로 바꾼 뒤
-        <code class="val">{{ $json["이메일"] }}</code>을 입력합니다.
+        <code class="val">{{ $json.이메일 }}</code>을 입력합니다.
         <span class="hint"><code class="val">Resource</code>와 <code class="val">Operation</code>은
         기본값인 <code class="val">Message</code>·<code class="val">Send</code> 그대로 두면 됩니다.
         따로 바꿀 필요가 없습니다.</span>
@@ -133,7 +133,7 @@
     <p><b>메일이 안 옵니다</b> — 먼저 스팸함을 확인하세요. 그다음
        <code class="val">To</code> 칸이 <code class="val">Expression</code> 모드로
        바뀌어 있는지 확인하세요. 모드를 바꾸지 않으면 n8n이 이메일 주소가 아니라
-       글자 <code class="val">{{ $json["이메일"] }}</code> 그대로를 받는 사람으로
+       글자 <code class="val">{{ $json.이메일 }}</code> 그대로를 받는 사람으로
        해석해 발송에 실패합니다.</p>
     <p><b>본문에 <code class="val">{{ $json.이름 }}</code>이 글자 그대로 나옵니다</b> —
        <code class="val">Message</code> 칸이 <code class="val">Expression</code> 모드가
