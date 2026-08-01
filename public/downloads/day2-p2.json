@@ -1,1 +1,191 @@
-{"name":"[공무원] 2일차 P2 매일 아침 민원 브리핑 봇","nodes":[],"connections":{}}
+{
+  "name": "[공무원] 2일차 P2 매일 아침 민원 브리핑 봇",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d2p2-schedule",
+      "name": "매일 아침 9시"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "여기에_본인_시트_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "시트1"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d2p2-sheets",
+      "name": "민원 현황 읽기"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "id": "d2p2-aggregate",
+      "name": "한 건으로 합치기"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=당신은 시청의 업무 비서입니다.\n아래는 오늘까지 접수된 민원 목록입니다.\n담당 공무원이 아침에 한눈에 볼 수 있도록 간단한 '일일 민원 브리핑'을 작성해 주세요.\n\n[규칙]\n- 전체 건수를 먼저 알려줍니다.\n- 종류별 건수를 정리합니다.\n- 특히 시급해 보이는 민원 1~2건을 짚어줍니다.\n- 5~8줄로 간결하게 작성합니다.\n\n[민원 목록]\n{{ JSON.stringify($json.data) }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        660,
+        0
+      ],
+      "id": "d2p2-ai",
+      "name": "AI 브리핑 작성"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        600,
+        180
+      ],
+      "id": "d2p2-gemini",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "sendTo": "본인이메일@example.com",
+        "subject": "=[일일 민원 브리핑] {{ $now.toFormat('yyyy-MM-dd') }}",
+        "emailType": "text",
+        "message": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -100
+      ],
+      "id": "d2p2-gmail",
+      "name": "브리핑 메일"
+    },
+    {
+      "parameters": {
+        "chatId": "여기에_본인_chat_id",
+        "text": "=📋 일일 민원 브리핑\n\n{{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        120
+      ],
+      "webhookId": "e31f6b28-90a7-4c5d-8b41-2d6ea70f9c53",
+      "id": "d2p2-telegram",
+      "name": "텔레그램 알림"
+    }
+  ],
+  "connections": {
+    "매일 아침 9시": {
+      "main": [
+        [
+          {
+            "node": "민원 현황 읽기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "민원 현황 읽기": {
+      "main": [
+        [
+          {
+            "node": "한 건으로 합치기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "한 건으로 합치기": {
+      "main": [
+        [
+          {
+            "node": "AI 브리핑 작성",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI 브리핑 작성": {
+      "main": [
+        [
+          {
+            "node": "브리핑 메일",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "텔레그램 알림",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI 브리핑 작성",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

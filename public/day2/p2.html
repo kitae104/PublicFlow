@@ -17,56 +17,286 @@
     <p class="sub">정해진 시각에 스스로 실행됩니다</p>
   </header>
 
+  <section class="sec" id="why">
+    <h2 class="sec-title">왜 이게 필요한가</h2>
+    <p>1일차에 만든 자동화 덕분에 민원은 시트에 차곡차곡 쌓입니다. 그런데
+       <b>쌓이기만 합니다.</b> 아침마다 시트를 열어 스크롤을 내리며 어제 몇 건이
+       들어왔는지 세고, 종류별로 눈대중하고, 급해 보이는 건이 있는지 훑어봅니다.
+       팀장님이 "어제 민원 어땠어요?" 하고 물으면 그때 또 한 번 봅니다.</p>
+    <p>이건 <b>사람이 아니라 컴퓨터가 해야 하는 일</b>입니다. 세는 것도, 분류하는
+       것도, 요약하는 것도 전부 기계가 훨씬 잘합니다. 사람이 할 일은 요약을 읽고
+       <b>오늘 무엇을 먼저 할지 정하는 것</b>뿐입니다.</p>
+    <p>이번에 만드는 봇은 매일 아침 9시에 <b>아무도 시키지 않아도 혼자</b> 시트를
+       열어보고, 전체 건수와 종류별 건수를 세고, 시급해 보이는 건을 짚어 메일과
+       텔레그램으로 보내줍니다. 출근해서 자리에 앉으면 이미 도착해 있습니다.</p>
+    <div class="note tip">
+      <b>이번에 새로 배우는 것 두 가지</b>
+      <p>① <b>정해진 시각에 혼자 실행되기</b> — 지금까지는 버튼을 누르거나 폼을
+         제출해야 워크플로우가 돌았습니다. 이번에는 아무도 건드리지 않아도 시각이
+         되면 스스로 돕니다.</p>
+      <p>② <b>여러 건을 한 번에 다루기</b> — 지금까지는 민원 한 건을 처리했습니다.
+         이번에는 시트에 쌓인 <b>수십 건 전부</b>를 한꺼번에 넘겨 요약시킵니다.
+         여기에 함정이 하나 있어서, 아래 따라하기에서 자세히 다룹니다.</p>
+    </div>
+  </section>
+
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
-    <p>매일 아침 9시가 되면 스스로 실행되어 시트의 민원 현황을 읽고 AI가
-       브리핑을 작성해 메일과 텔레그램으로 보내는 워크플로우를 만듭니다.</p>
+    <p>매일 아침 9시가 되면 스스로 실행되어 1일차에 만든 구글 시트의 민원 기록을
+       전부 읽고, AI가 일일 브리핑을 작성해 <b>메일과 텔레그램 두 곳에 동시에</b>
+       보내는 워크플로우를 만듭니다.</p>
+    <div class="note warn">
+      <b>1일차 시트에 민원이 몇 건 쌓여 있어야 합니다</b>
+      브리핑할 내용이 있어야 결과를 확인할 수 있습니다. 1일차 08강까지 마쳤다면 이미
+      몇 줄 들어 있을 것입니다. 비어 있다면 1일차 워크플로우를 두세 번 실행하거나,
+      시트에 직접 몇 줄 적어 넣고 시작하세요.
+    </div>
     <figure class="capture" id="fig-d2-p2-1">
       <div class="capture-cap">[그림 P2-1] 완성된 모습</div>
-      <div class="capture-guide">캡처 위치: 아침에 도착한 민원 브리핑 메일 화면</div>
+      <div class="capture-guide">캡처 위치: 아침에 도착한 민원 브리핑 메일 화면, 제목의 날짜와 본문의 건수 정리가 함께 보이도록</div>
     </figure>
   </section>
 
   <section class="sec" id="flow">
     <h2 class="sec-title">이번 프로젝트의 흐름</h2>
     <div class="flow">
-      <div class="flow-node is-new"><span class="t">매일 9시</span><span class="k">Schedule 트리거</span></div>
+      <div class="flow-node is-new"><span class="t">매일 아침 9시</span><span class="k">Schedule 트리거</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">시트 읽기</span><span class="k">Google Sheets</span></div>
+      <div class="flow-node is-new"><span class="t">민원 현황 읽기</span><span class="k">Google Sheets</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">AI 브리핑</span><span class="k">Gemini</span></div>
+      <div class="flow-node is-new"><span class="t">한 건으로 합치기</span><span class="k">Aggregate</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">메일</span><span class="k">Gmail</span></div>
+      <div class="flow-node is-new"><span class="t">AI 브리핑 작성</span><span class="k">Basic LLM Chain</span></div>
       <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">텔레그램</span><span class="k">Telegram</span></div>
+      <div class="flow-split">
+        <div class="flow-node is-new"><span class="t">브리핑 메일</span><span class="k">Gmail</span></div>
+        <div class="flow-node is-new"><span class="t">텔레그램 알림</span><span class="k">Telegram</span></div>
+      </div>
     </div>
     <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
-  </section>
-
-  <section class="sec" id="why">
-    <h2 class="sec-title">왜 이게 필요한가</h2>
-    <p>매일 아침 전날 민원 현황을 직접 정리해 보고하는 대신, 정해진 시각에
-       자동으로 브리핑이 도착하면 하루 업무를 더 빠르게 시작할 수 있습니다.</p>
+    <p>마지막에만 두 갈래로 갈라집니다. 브리핑 글 하나를 <b>메일과 텔레그램 양쪽에
+       똑같이</b> 보내는 것이므로, 두 노드 모두 <code class="val">AI 브리핑 작성</code>에서
+       직접 선을 받습니다.</p>
   </section>
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <ol class="steps">
+      <li><span class="step-title">새 워크플로우 만들기</span>
+        새 워크플로우를 만들고 이름을
+        <code class="val">P2 매일 아침 민원 브리핑 봇</code>으로 바꿉니다.
+      </li>
+
+      <li><span class="step-title">시각 트리거 추가하기</span>
+        빈 캔버스 가운데 <code class="val">+</code>를 눌러
+        <code class="val">Schedule Trigger</code>를 고릅니다.
+        <p>노드가 열리면 실행 주기를 <code class="val">Days</code>(하루에 한 번)로 두고,
+           <code class="val">Trigger at Hour</code> 칸에서
+           <code class="val">9am</code>을 고릅니다.
+           <code class="val">Trigger at Minute</code>는 <code class="val">0</code>으로
+           둡니다.</p>
+        <div class="note">
+          <b>이 노드가 하는 일</b>
+          지금까지 쓴 트리거는 사람이 눌러야(수동 실행) 또는 사람이 제출해야(폼)
+          움직였습니다. 이 트리거는 <b>시계만 보고</b> 움직입니다. 매일 오전 9시
+          정각이 되면 워크플로우가 저절로 시작됩니다.
+        </div>
+        <figure class="capture" id="fig-d2-p2-2">
+          <div class="capture-cap">[그림 P2-2] 매일 9시로 설정한 Schedule Trigger</div>
+          <div class="capture-guide">캡처 위치: Schedule Trigger 노드 패널에서 Days와 Trigger at Hour 9am이 선택된 부분</div>
+        </figure>
+      </li>
+
+      <li><span class="step-title">구글 시트 읽어오기</span>
+        트리거 오른쪽 <code class="val">+</code>를 누르고
+        <code class="val">Google Sheets</code>를 고릅니다. 동작 목록에서
+        <code class="val">Get Row(s) in Sheet</code>(행 가져오기)와 비슷한 문구를
+        고릅니다.
+        <span class="hint">1일차 03강에서는 <code class="val">Append</code>(추가)를
+        골랐습니다. 이번에는 쓰는 게 아니라 <b>읽는</b> 것이므로 다른 동작입니다.</span>
+        <p>자격증명은 1일차에 만들어둔 구글 시트 자격증명을 목록에서 고르면 됩니다.
+           그다음 <code class="val">Document</code>에서 1일차에 쓰던 민원 시트를 고르고,
+           <code class="val">Sheet</code>에서 <code class="val">시트1</code>을 고릅니다.</p>
+      </li>
+
+      <li><span class="step-title">여러 줄을 한 덩어리로 합치기</span>
+        <code class="val">Google Sheets</code> 오른쪽 <code class="val">+</code>를
+        누르고 <code class="val">Aggregate</code>를 고릅니다.
+        <p>노드가 열리면 <code class="val">Aggregate</code> 칸을
+           <code class="val">All Item Data (Into a Single List)</code>로 바꿉니다.
+           <code class="val">Put Output in Field</code>는 기본값
+           <code class="val">data</code> 그대로 둡니다.</p>
+        <div class="note warn">
+          <b>이 노드를 빼면 브리핑 메일이 수십 통 날아옵니다</b>
+          <p>n8n에서 구글 시트 읽기는 <b>한 줄을 한 건씩 따로</b> 내보냅니다. 민원이
+             20건 쌓여 있으면 20건이 각각 따로 흘러갑니다. 그대로 AI 노드에 넣으면
+             AI가 <b>20번 실행되고</b>, 메일도 20통, 텔레그램도 20개가 갑니다.
+             게다가 각각은 민원 한 건만 보고 쓴 글이라 "전체 몇 건"도 알 수 없습니다.</p>
+          <p>이 노드가 <b>흩어진 20건을 하나로 묶어</b> 뒤에는 한 덩어리만 흘러가게
+             만듭니다. 그래야 AI가 한 번만 실행되고, 전체를 보고 쓸 수 있습니다.</p>
+        </div>
+        <figure class="capture" id="fig-d2-p2-3">
+          <div class="capture-cap">[그림 P2-3] 합치기 전과 후의 항목 수 비교</div>
+          <div class="capture-guide">캡처 위치: Aggregate 노드를 실행한 뒤 왼쪽 INPUT에 여러 항목, 오른쪽 OUTPUT에 항목 1개가 보이는 화면(항목 수 표시가 함께 보이도록)</div>
+        </figure>
+      </li>
+
+      <li><span class="step-title">AI 브리핑 노드 추가하기</span>
+        <code class="val">Aggregate</code> 오른쪽 <code class="val">+</code>를 누르고
+        <code class="val">Basic LLM Chain</code>을 고릅니다.
+        <code class="val">Source for Prompt</code>를
+        <code class="val">Define below</code>로 바꾸고 아래를 붙여넣습니다.
+<pre class="code-block">당신은 시청의 업무 비서입니다.
+아래는 오늘까지 접수된 민원 목록입니다.
+담당 공무원이 아침에 한눈에 볼 수 있도록 간단한 '일일 민원 브리핑'을 작성해 주세요.
+
+[규칙]
+- 전체 건수를 먼저 알려줍니다.
+- 종류별 건수를 정리합니다.
+- 특히 시급해 보이는 민원 1~2건을 짚어줍니다.
+- 5~8줄로 간결하게 작성합니다.
+
+[민원 목록]
+{{ JSON.stringify($json.data) }}</pre>
+        <span class="hint">맨 아래
+        <code class="val">{{ JSON.stringify($json.data) }}</code>가 앞 단계에서 하나로
+        묶은 민원 전체입니다. <code class="val">data</code>는 합치기 노드의
+        <code class="val">Put Output in Field</code>에 적혀 있던 그 이름이고,
+        <code class="val">JSON.stringify</code>는 <b>묶음을 AI가 읽을 수 있는 글자로
+        펴주는</b> 역할을 합니다.</span>
+      </li>
+
+      <li><span class="step-title">Gemini 모델 붙이고 모델 이름 고르기</span>
+        <code class="val">AI 브리핑 작성</code> 노드 아래쪽에 붙어 있는 작은
+        <code class="val">+</code>(모델을 꽂는 자리)를 눌러
+        <code class="val">Google Gemini Chat Model</code>을 고릅니다. 1일차 06강과 같은
+        자리, 같은 노드입니다.
+        <p>자격증명은 06강에서 만들어둔 것을 목록에서 고르고, <b>모델 목록을 열어
+           <code class="val">models/gemini-2.5-flash</code>를 직접 고릅니다.</b></p>
+        <div class="note warn">
+          <b>모델은 매번 직접 골라야 합니다</b>
+          노드를 추가하면 이름이 미리 채워져 있지만 그대로 두면 안 됩니다.
+          <code class="val">preview</code>가 들어간 모델은 구글이 예고 없이 없앨 수
+          있어서 어느 날 갑자기 작동하지 않습니다.
+        </div>
+      </li>
+
+      <li><span class="step-title">브리핑 메일 보내기</span>
+        <code class="val">AI 브리핑 작성</code> 오른쪽 <code class="val">+</code>를
+        누르고 <code class="val">Gmail</code>을 고릅니다. 1일차 04강에서 만든 자격증명을
+        고른 뒤 아래처럼 채웁니다.
+        <p>
+          <code class="val">To</code> → 본인 이메일 주소(글자 그대로 입력)<br>
+          <code class="val">Subject</code> → 표현식 모드로 바꾸고
+          <code class="val">[일일 민원 브리핑] {{ $now.toFormat('yyyy-MM-dd') }}</code><br>
+          <code class="val">Email Type</code> → <code class="val">Text</code><br>
+          <code class="val">Message</code> → 표현식 모드로 바꾸고
+          <code class="val">{{ $json.text }}</code>
+        </p>
+        <span class="hint"><code class="val">$now.toFormat</code>은 1일차 03·04강에서
+        쓴 것과 같습니다. 제목에 날짜가 들어가면 메일함에서 날짜별로 찾기 쉽습니다.</span>
+      </li>
+
+      <li><span class="step-title">텔레그램에도 같이 보내기</span>
+        이번에는 <code class="val">Gmail</code> 뒤가 아니라
+        <b><code class="val">AI 브리핑 작성</code> 노드 오른쪽</b>
+        <code class="val">+</code>를 다시 눌러 <code class="val">Telegram</code>을
+        고릅니다.
+        <div class="note warn">
+          <b>메일 노드 뒤에 붙이면 안 됩니다</b>
+          1일차 04강에서 배운 것과 같은 이유입니다.
+          <code class="val">Gmail</code> 노드를 지나면 흘러가는 값이 "메일을 보냈다"는
+          발송 결과로 바뀌어, 브리핑 글 자체가 사라집니다. 그러면 텔레그램에는 빈
+          메시지가 갑니다. 두 노드 모두 <code class="val">AI 브리핑 작성</code>에서
+          <b>각각 직접</b> 선을 받아야 합니다.
+        </div>
+        <p>자격증명은 P1에서 만든 텔레그램 자격증명을 고릅니다.
+           <code class="val">Chat ID</code>에 본인 chat id 숫자를 넣고,
+           <code class="val">Text</code>는 표현식 모드로 바꿔 아래를 붙여넣습니다.</p>
+<pre class="code-block">📋 일일 민원 브리핑
+
+{{ $json.text }}</pre>
+      </li>
+
+      <li><span class="step-title">노드 이름 정리하기</span>
+        노드 제목을 각각 더블클릭해 아래 이름으로 바꿉니다.
+        <p><code class="val">매일 아침 9시</code> ·
+           <code class="val">민원 현황 읽기</code> ·
+           <code class="val">한 건으로 합치기</code> ·
+           <code class="val">AI 브리핑 작성</code> ·
+           <code class="val">브리핑 메일</code> ·
+           <code class="val">텔레그램 알림</code></p>
+      </li>
+    </ol>
   </section>
 
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <p>내일 아침 9시까지 기다릴 필요는 없습니다. 아래쪽
+       <code class="val">Execute workflow</code>를 누르면 시각과 상관없이 지금 한 번
+       실행됩니다.</p>
+    <p>메일함에 <code class="val">[일일 민원 브리핑]</code>으로 시작하고 오늘 날짜가
+       붙은 메일이 <b>한 통</b> 도착하고, 텔레그램에도 같은 내용이 <b>하나</b> 오면
+       성공입니다. 본문에 전체 건수와 종류별 건수가 들어 있는지 확인하세요.</p>
+    <figure class="capture" id="fig-d2-p2-4">
+      <div class="capture-cap">[그림 P2-4] 도착한 브리핑 메일</div>
+      <div class="capture-guide">캡처 위치: 받은편지함에서 연 일일 민원 브리핑 메일, 제목의 날짜와 본문 요약이 함께 보이도록</div>
+    </figure>
+    <p>확인이 끝났으면 오른쪽 위 활성화 스위치(<code class="val">Active</code>)를
+       켜둡니다. <b>이 스위치를 켜야 내일 아침 9시에 저절로 실행됩니다.</b> 꺼두면
+       시각이 되어도 아무 일도 일어나지 않습니다.</p>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <p><b>브리핑이 여러 통 날아옵니다</b> —
+       <code class="val">한 건으로 합치기</code> 노드가 빠졌거나 엉뚱한 자리에 붙어
+       있습니다. 순서가 <code class="val">민원 현황 읽기</code> →
+       <code class="val">한 건으로 합치기</code> →
+       <code class="val">AI 브리핑 작성</code>인지 확인하세요. 합치기 노드를 열어
+       <code class="val">Aggregate</code>가 <code class="val">All Item Data</code>로
+       되어 있는지도 확인합니다.</p>
+    <p><b>브리핑에 "민원이 없습니다"라고 나옵니다</b> — 읽어온 시트가 비어 있습니다.
+       <code class="val">민원 현황 읽기</code> 노드를 실행해 오른쪽 OUTPUT에 줄이
+       나오는지 보세요. 비어 있다면 <code class="val">Document</code>와
+       <code class="val">Sheet</code>가 1일차에 쓰던 그 시트·그 탭이 맞는지
+       확인하세요.</p>
+    <p><b>프롬프트에 <code class="val">[object Object]</code>가 들어갑니다</b> —
+       <code class="val">JSON.stringify</code>를 빠뜨리고
+       <code class="val">{{ $json.data }}</code>만 적었습니다. 묶음은 그대로 글자로
+       바꿀 수 없어서 이런 표시가 나옵니다.</p>
+    <p><b>텔레그램 메시지가 비어서 옵니다</b> —
+       <code class="val">텔레그램 알림</code> 노드가
+       <code class="val">브리핑 메일</code> 뒤에 붙어 있습니다. 그 선을 지우고
+       <code class="val">AI 브리핑 작성</code>에서 새로 이어 붙이세요.</p>
+    <p><b>9시가 지났는데 아무것도 안 왔습니다</b> — 먼저 활성화
+       스위치(<code class="val">Active</code>)가 켜져 있는지 확인하세요. 켜져 있는데도
+       안 온다면 n8n 서버의 시간대가 한국 시간이 아닐 수 있습니다. 워크플로우 설정
+       화면의 시간대(<code class="val">Timezone</code>) 항목이
+       <code class="val">Asia/Seoul</code>로 되어 있는지 확인하세요.</p>
   </section>
 
   <section class="sec" id="download">
-    <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
+    <h2 class="sec-title">이번 프로젝트 워크플로우 받기</h2>
     <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <div class="note warn">
+      <b>불러온 뒤 반드시 확인하세요</b>
+      이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤
+      <code class="val">민원 현황 읽기</code> ·
+      <code class="val">Google Gemini Chat Model</code> ·
+      <code class="val">브리핑 메일</code> ·
+      <code class="val">텔레그램 알림</code> 네 노드를 각각 열어 자격증명을 다시 골라야
+      합니다. 그리고 아래 세 자리표시자를 본인 값으로 바꿔야 합니다.
+      <p><code class="val">민원 현황 읽기</code>의 <code class="val">Document</code> →
+         <code class="val">여기에_본인_시트_ID</code><br>
+         <code class="val">브리핑 메일</code>의 <code class="val">To</code> →
+         <code class="val">본인이메일@example.com</code><br>
+         <code class="val">텔레그램 알림</code>의 <code class="val">Chat ID</code> →
+         <code class="val">여기에_본인_chat_id</code></p>
+      시트 탭 이름은 <code class="val">시트1</code>로 들어 있으니 본인 시트의 탭 이름이
+      다르면 목록에서 다시 골라야 합니다. 자격증명과 자리표시자를 고치기 전에는
+      불러온 워크플로우에 빨간 오류 표시가 납니다 — 고장난 것이 아니라 원래 그렇습니다.
+    </div>
     <a class="dl" href="../downloads/day2-p2.json" download>
       워크플로우 내려받기 <span class="dl-name">day2-p2.json</span>
     </a>

@@ -1,1 +1,161 @@
-{"name":"[공무원] 2일차 P3 AI 민원 자동 분류·답변 초안","nodes":[],"connections":{}}
+{
+  "name": "[공무원] 2일차 P3 AI 민원 자동 분류·답변 초안",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "민원 내용 입력",
+        "formDescription": "분류할 민원 내용을 입력하세요.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "민원내용",
+              "fieldType": "textarea",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "a48d0c37-6e91-4f52-b0d8-3c71ae6b2905",
+      "id": "d2p3-form",
+      "name": "민원 내용 입력"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=당신은 민원 분류 담당 공무원입니다.\n아래 민원 내용을 읽고 다음을 작성하세요.\n\n1) 담당부서: [도로교통과 / 환경위생과 / 복지정책과 / 건축과 / 기타] 중 하나\n2) 긴급도: [높음 / 보통 / 낮음] 중 하나\n3) 답변초안: 민원인에게 보낼 정중한 답변 초안 (3~4문장, 존댓말)\n\n아래 형식 그대로만 출력하세요.\n담당부서: \n긴급도: \n답변초안: \n\n[민원 내용]\n{{ $json.민원내용 }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        220,
+        0
+      ],
+      "id": "d2p3-ai",
+      "name": "AI 분류·답변"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        180
+      ],
+      "id": "d2p3-gemini",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "여기에_본인_시트_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "분류결과"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "민원내용": "={{ $('민원 내용 입력').item.json.민원내용 }}",
+            "AI분류결과": "={{ $json.text }}",
+            "접수일시": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}"
+          },
+          "schema": [
+            {
+              "id": "민원내용",
+              "displayName": "민원내용",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI분류결과",
+              "displayName": "AI분류결과",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "접수일시",
+              "displayName": "접수일시",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        440,
+        0
+      ],
+      "id": "d2p3-sheets",
+      "name": "분류 결과 기록"
+    }
+  ],
+  "connections": {
+    "민원 내용 입력": {
+      "main": [
+        [
+          {
+            "node": "AI 분류·답변",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI 분류·답변": {
+      "main": [
+        [
+          {
+            "node": "분류 결과 기록",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI 분류·답변",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
