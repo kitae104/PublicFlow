@@ -23,9 +23,9 @@
 - **`figure.capture`의 속성 순서 고정:** `<figure class="capture" id="fig-...">`. `tools/apply_captures.py`가 이 순서를 문자열로 찾는다.
 - **캡처 자리표시자를 직접 채우지 않는다.** 새 그림이 필요하면 `figure.capture` 자리표시자를 추가하고 id를 `fig-d1-NN-N` 형식으로 페이지 내 연번으로 붙인다.
 - **강사 개인정보 금지:** 아래 값들은 원본에 박혀 있으나 **강의 자료에 그대로 쓰면 안 된다.** 반드시 "본인 것으로 바꾸세요"로 처리한다.
-  - 이메일 `aqua0405@gmail.com`
-  - 구글 시트 문서 ID `1nMbi2VfMxQ2Bud1M7WjyZjyz6XASN2QyX0Mecc3TjXM` 및 그 URL
-  - 캘린더 ID `aqua0405@gmail.com`
+  - 강사 개인 Gmail 주소 (`샘플 민원`·시트·메일의 이메일 필드) → `본인이메일@example.com`
+  - 강사 개인 구글 시트 문서 ID 및 그 URL → `여기에_본인_시트_ID`
+  - 강사 개인 Gmail 주소로 된 캘린더 ID → `본인이메일@example.com`
   - 이름 `김기태`는 예시 데이터이므로 **그대로 써도 된다**(가상의 민원인 역할).
 
 ---
@@ -84,7 +84,7 @@ n8n에서 노드의 출력은 그 노드가 만든 결과다. Gmail 노드를 �
 
 ### 결정 6: 07강 두 담당자 메일은 본인 주소로
 
-원본의 `생활 담당자`/`일반 담당자` 두 Gmail 노드는 `aqua0405@gmail.com`으로 **리터럴 하드코딩**되어 있다. 실습에서는 수강생 본인 주소를 넣게 한다. 제목으로 어느 갈래를 탔는지 구분하는 것이 이 강의의 확인 방법이므로, 두 노드 모두 같은 주소여도 학습에 지장이 없다 — 오히려 한 받은편지함에서 결과를 비교할 수 있어 낫다. 이 점을 본문에 밝힌다.
+원본의 `생활 담당자`/`일반 담당자` 두 Gmail 노드는 강사 개인 Gmail 주소로 **리터럴 하드코딩**되어 있다. 실습에서는 수강생 본인 주소를 넣게 한다. 제목으로 어느 갈래를 탔는지 구분하는 것이 이 강의의 확인 방법이므로, 두 노드 모두 같은 주소여도 학습에 지장이 없다 — 오히려 한 받은편지함에서 결과를 비교할 수 있어 낫다. 이 점을 본문에 밝힌다.
 
 ---
 
@@ -725,7 +725,9 @@ Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>"
 
 ```bash
 cd "D:/Github/n8n_WS/PublicFlow"
-grep -rn "aqua0405\|1nMbi2VfMxQ2Bud1M7WjyZjyz6XASN2QyX0Mecc3TjXM" public/ docs/ || echo "없음"
+# 강사 개인 Gmail 주소와 구글 시트 문서 ID를 여기에 넣고 실행한다.
+# 이 계획 파일 자체에 그 값을 적어두면 안 된다(그 자체가 유출이다).
+grep -rn "$INSTRUCTOR_EMAIL\|$INSTRUCTOR_SHEET_ID" public/ docs/ || echo "없음"
 ```
 
 Expected: 없음. 하나라도 나오면 "본인 것으로 교체" 안내로 바꾼다.
