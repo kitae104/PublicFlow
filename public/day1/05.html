@@ -50,17 +50,89 @@
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <ol class="steps">
+      <li><span class="step-title">Google Calendar 노드 추가하기</span>
+        <code class="val">샘플 민원</code> 노드 오른쪽 <code class="val">+</code>를 누르고
+        <code class="val">Google Calendar</code>를 고릅니다.
+        <span class="hint">이번에도 <code class="val">샘플 민원</code>에서 바로 갈라집니다 —
+        04강에서 설명한 것과 같은 이유입니다. 다른 노드를 거치면 민원 데이터가 그 노드의
+        결과로 바뀌어 사라집니다.</span>
+      </li>
+      <li><span class="step-title">자격증명 연결하기</span>
+        03·04강과 같은 방식입니다. 자격증명 칸에서 <code class="val">Create new credential</code>을
+        고르고, 같은 개인 구글 계정으로 로그인한 뒤 권한 허용과 비슷한 문구의 버튼을 눌러
+        동의합니다.
+        <span class="hint">이번에는 캘린더에 일정을 만들어도 되는지 묻기 때문에 03·04강에서
+        본 동의 화면과 문구가 또 다릅니다. 다른 화면이 나와도 잘못된 것이 아닙니다.</span>
+        <p>창이 닫히고 n8n 화면으로 돌아와 자격증명 칸에 방금 만든 이름이 채워져 있으면
+        연결이 끝난 것입니다.</p>
+        <figure class="capture" id="fig-d1-05-2">
+          <div class="capture-cap">[그림 5-2] Google Calendar 자격증명이 연결된 상태</div>
+          <div class="capture-guide">캡처 위치: Google Calendar 노드 패널 위쪽 자격증명 칸에 방금 만든 자격증명 이름이 채워져 있고 오류 표시가 없는 화면</div>
+        </figure>
+      </li>
+      <li><span class="step-title">Resource·Operation 확인하기</span>
+        <code class="val">Resource</code>와 <code class="val">Operation</code>은 노드를 추가하면
+        이미 각각 <code class="val">Event</code>와 <code class="val">Create</code>로 되어
+        있습니다. 다른 값으로 바뀌어 있지 않은지만 확인하고 그대로 둡니다.
+      </li>
+      <li><span class="step-title">캘린더 고르기</span>
+        <code class="val">Calendar</code> 칸을 눌러 목록에서 본인 캘린더를 고릅니다.
+        <span class="hint">보통 본인 Gmail 주소로 된 캘린더가 목록에 보입니다. 이 목록이
+        비어 있으면 자격증명이 제대로 연결되지 않은 것입니다 — 앞 단계로 돌아가 다시
+        확인하세요.</span>
+      </li>
+      <li><span class="step-title">Start 입력하기</span>
+        <code class="val">Start</code> 칸 오른쪽의 표현식 전환 스위치(<code class="val">fx</code>)를
+        눌러 <code class="val">Expression</code> 모드로 바꾸고
+        <code class="val">{{ $now.plus(3,'days').toISO() }}</code>를 입력합니다.
+      </li>
+      <li><span class="step-title">End 입력하기</span>
+        <code class="val">End</code> 칸도 같은 방법으로 <code class="val">Expression</code>
+        모드로 바꾸고 <code class="val">{{ $now.plus(3,'days').plus(1,'hour').toISO() }}</code>를
+        입력합니다.
+        <span class="hint">표현식 전환 스위치는 <b>Start·End 두 칸을 각각 따로</b> 눌러야
+        합니다. 한 칸에서 누른 것이 다른 칸까지 적용되지는 않습니다.</span>
+      </li>
+      <li><span class="step-title">일정 제목(Summary) 추가하기</span>
+        <code class="val">Additional Fields</code> 아래의 <code class="val">Add Field</code>를
+        누르고 목록에서 <code class="val">Summary</code>를 고릅니다. 새로 생긴 칸의 표현식
+        전환 스위치를 눌러 <code class="val">Expression</code> 모드로 바꾸고
+        <code class="val">민원 처리 마감 - {{ $json.이름 }}</code>를 입력합니다.
+      </li>
+      <li><span class="step-title">노드 이름 바꾸기</span>
+        노드 제목을 더블클릭해 <code class="val">처리 마감 일정</code>으로 바꿉니다.
+      </li>
+    </ol>
+    <div class="note">
+      <b>세 표현식의 의미</b>
+      <code class="val">$now</code>는 지금 이 순간의 날짜와 시간입니다.
+      <code class="val">.plus(3,'days')</code>는 거기에 3일을 더합니다.
+      <code class="val">.toISO()</code>는 그 결과를 구글 캘린더가 알아듣는 날짜 형식으로
+      바꿔줍니다 — 이 변환이 없으면 캘린더가 값을 날짜로 인식하지 못합니다.
+    </div>
   </section>
 
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <p>아래쪽 <code class="val">Execute workflow</code>를 누른 뒤 구글 캘린더로 가서
+       오늘이 아니라 <b>3일 뒤 날짜</b>를 확인합니다.
+       <code class="val">민원 처리 마감 - 김기태</code>라는 제목의 일정이 1시간짜리로
+       만들어져 있으면 성공입니다.</p>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <p><b>일정이 안 보입니다</b> — 오늘 날짜가 아니라 3일 뒤 날짜를 보고 있는지 확인하세요.
+       <code class="val">Calendar</code> 칸에서 맞는 캘린더를 골랐는지도 확인하세요.</p>
+    <p><b>Calendar 목록이 비어 있습니다</b> — 자격증명이 제대로 연결되지 않았습니다.
+       자격증명 연결 단계를 다시 확인하세요.</p>
+    <p><b>날짜·시간 오류가 납니다</b> — <code class="val">.toISO()</code>를 빠뜨렸을
+       가능성이 큽니다. <code class="val">Start</code>·<code class="val">End</code> 값을
+       다시 확인하세요.</p>
+    <p><b>Summary가 <code class="val">{{ $json.이름 }}</code> 글자 그대로 나옵니다</b> —
+       그 칸의 표현식 전환 스위치를 안 눌렀습니다. <code class="val">Expression</code> 모드로
+       바뀌어 있는지 확인하세요.</p>
   </section>
 
   <section class="sec" id="download">

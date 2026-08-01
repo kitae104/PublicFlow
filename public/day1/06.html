@@ -56,17 +56,119 @@
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <div class="note">
+      <b>이번에는 노드가 두 개 붙습니다</b>
+      지금까지는 새 노드 하나만 추가했지만, AI를 쓰려면 "무엇을 시킬지"를 맡는
+      <code class="val">Basic LLM Chain</code> 노드와 "어떤 AI 모델을 쓸지"를 맡는
+      <code class="val">Google Gemini Chat Model</code> 노드가 짝을 이뤄야 합니다. 아래
+      순서대로 하나씩 붙입니다.
+    </div>
+    <ol class="steps">
+      <li><span class="step-title">Basic LLM Chain 노드 추가하기</span>
+        <code class="val">샘플 민원</code> 노드 오른쪽 <code class="val">+</code>를 누르고
+        <code class="val">Basic LLM Chain</code>을 고릅니다.
+        <span class="hint">이번에도 <code class="val">샘플 민원</code>에서 바로 갈라집니다 —
+        지금까지와 같은 이유입니다.</span>
+      </li>
+      <li><span class="step-title">모델 연결하기</span>
+        노드를 캔버스에 놓으면 노드 카드 아래쪽에 모델을 연결하라는 안내가 있는 자리가
+        나타납니다. 그 자리를 눌러 목록에서 <code class="val">Google Gemini Chat Model</code>을
+        고릅니다.
+        <span class="hint">안내 문구의 정확한 표현은 n8n 버전마다 다를 수 있습니다. "모델을
+        선택하라"는 취지의 자리이면 됩니다.</span>
+        <figure class="capture" id="fig-d1-06-2">
+          <div class="capture-cap">[그림 6-2] 모델 연결 자리에서 Google Gemini Chat Model 고르기</div>
+          <div class="capture-guide">캡처 위치: Basic LLM Chain 노드 카드 아래쪽 모델 연결 자리를 클릭해 나온 노드 검색 목록에서 Google Gemini Chat Model을 찾은 화면</div>
+        </figure>
+      </li>
+      <li><span class="step-title">Gemini 자격증명 연결하기</span>
+        새로 붙은 <code class="val">Google Gemini Chat Model</code> 노드를 열고, 자격증명
+        칸에서 <code class="val">Create new credential</code>을 고릅니다. 구글 로그인 화면이
+        아니라 값을 직접 입력하는 화면이 뜹니다. <b>API Key</b>와 비슷한 이름의 칸에
+        준비물에서 미리 발급받아 복사해 둔 Gemini API 키를 붙여넣습니다.
+        <span class="hint">아직 키를 발급받지 못했다면
+        <a href="../prep/day1.html#gemini-key">준비물 ① Gemini API 키 발급</a>을 먼저 보고
+        오세요.</span>
+        <figure class="capture" id="fig-d1-06-3">
+          <div class="capture-cap">[그림 6-3] Gemini API 키를 붙여넣은 자격증명 화면</div>
+          <div class="capture-guide">캡처 위치: Google Gemini Chat Model 자격증명 설정 화면에서 API 키 입력 칸(키 값은 가려서 촬영)과 저장 버튼</div>
+        </figure>
+      </li>
+      <li><span class="step-title">모델 직접 고르기</span>
+        <code class="val">Model</code> 칸(드롭다운)을 누르면 목록이 뜹니다. 자동으로 채워진
+        값을 그대로 두지 말고, 목록에서 <code class="val">models/gemini-2.5-flash</code>를
+        직접 찾아 고릅니다.
+        <div class="note warn">
+          <b>자동으로 채워진 값을 그대로 두면 안 됩니다</b>
+          n8n 버전에 따라 이름에 <code class="val">preview</code>가 들어간 모델(예:
+          <code class="val">models/gemini-3-flash-preview</code>)이 기본값으로 미리 채워져
+          있을 수 있습니다. preview(미리보기) 모델은 구글이 예고 없이 이름을 바꾸거나
+          없애버릴 수 있어서, 실습 도중 갑자기 오류가 날 위험이 있습니다. 반드시 목록을
+          열어 <code class="val">models/gemini-2.5-flash</code>를 직접 골라야 합니다.
+        </div>
+        <span class="hint">목록에 <code class="val">gemini-2.5-flash</code>가 안 보이면
+        자격증명이 아직 제대로 연결되지 않은 것입니다 — 3단계로 돌아가 확인하세요.</span>
+        <figure class="capture" id="fig-d1-06-4">
+          <div class="capture-cap">[그림 6-4] 모델 드롭다운에서 models/gemini-2.5-flash를 고르는 화면</div>
+          <div class="capture-guide">캡처 위치: Google Gemini Chat Model 노드의 Model 드롭다운을 연 상태에서 gemini-2.5-flash 항목이 보이는 화면</div>
+        </figure>
+      </li>
+      <li><span class="step-title">프롬프트 작성하기</span>
+        <code class="val">Basic LLM Chain</code> 노드로 돌아옵니다.
+        <code class="val">Source for Prompt (User Message)</code> 칸을 눌러
+        <code class="val">Define below</code>를 고릅니다. 그러면 아래에
+        <code class="val">Prompt (User Message)</code> 칸이 나타납니다. 아래 내용을 통째로
+        복사해 그 칸에 붙여넣습니다.
+        <p>
+          <code class="val">당신은 친절한 시청 민원 담당 공무원입니다.</code><br>
+          <code class="val">아래 민원 접수 내용을 바탕으로, 민원인에게 보낼 정중한 '접수 확인 안내문'을 작성해 주세요.</code><br><br>
+          <code class="val">[작성 규칙]</code><br>
+          <code class="val">- 존댓말을 사용하고, 4~6문장으로 작성합니다.</code><br>
+          <code class="val">- 민원이 정상적으로 접수되었음을 안내합니다.</code><br>
+          <code class="val">- 처리에는 다소 시간이 걸릴 수 있음을 부드럽게 안내합니다.</code><br>
+          <code class="val">- 마지막은 '감사합니다.'로 끝맺습니다.</code><br><br>
+          <code class="val">[민원 접수 내용]</code><br>
+          <code class="val">- 접수자명: {{ $json.이름 }}</code><br>
+          <code class="val">- 민원 종류: {{ $json.종류 }}</code><br>
+          <code class="val">- 상세 설명: {{ $json.상세설명 }}</code>
+        </p>
+        <span class="hint">프롬프트는 세 부분으로 되어 있습니다. 첫 문장은 AI에게
+        "시청 민원 담당 공무원"이라는 역할을 맡깁니다. <code class="val">[작성 규칙]</code>
+        부분은 문장 수·말투·마무리 문구 같은 구체적인 지시를 나열합니다.
+        <code class="val">[민원 접수 내용]</code> 부분은 이중 중괄호로 감싼 표현식으로 실제
+        민원 데이터를 끼워 넣어, 어떤 민원이 들어와도 같은 프롬프트를 그대로 쓸 수 있게
+        합니다. 예를 들어 규칙의 "4~6문장으로 작성합니다"를 "2문장으로
+        작성합니다"로 바꾸면 훨씬 짧은 안내문이 나옵니다.</span>
+      </li>
+      <li><span class="step-title">노드 이름 바꾸기</span>
+        <code class="val">Basic LLM Chain</code> 노드 제목을 더블클릭해
+        <code class="val">AI 안내문 작성</code>으로 바꿉니다.
+      </li>
+    </ol>
   </section>
 
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <p>아래쪽 <code class="val">Execute workflow</code>를 누른 뒤
+       <code class="val">AI 안내문 작성</code> 노드를 클릭해 출력을 확인합니다.
+       <code class="val">text</code> 항목에 4~6문장의 안내문이 생성되어 있으면 성공입니다.
+       실행할 때마다 문장이 조금씩 달라지는 것은 정상입니다 — AI가 매번 새로 글을
+       쓰기 때문입니다.</p>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
-    <p class="hint">작성 예정입니다.</p>
+    <p><b>API 키 오류가 납니다</b> — 준비물에서 발급받은 키를 다시 확인하세요. 붙여넣을 때
+       키 앞뒤에 공백이 딸려 들어가지 않았는지도 확인하세요.</p>
+    <p><b>할당량 초과 안내가 뜹니다</b> — <code class="val">models/gemini-2.5-flash</code> 대신
+       <code class="val">models/gemini-2.5-flash-lite</code>로 바꿔서 계속 진행하세요.</p>
+    <p><b>결과가 영어로 나옵니다</b> — 프롬프트가 제대로 들어가지 않았습니다.
+       <code class="val">Source for Prompt (User Message)</code>가
+       <code class="val">Define below</code>로 되어 있는지, 붙여넣은 내용이 통째로 들어가
+       있는지 확인하세요.</p>
+    <p><b>모델 목록에 <code class="val">gemini-2.5-flash</code>가 안 보입니다</b> —
+       자격증명이 먼저 연결되어야 목록이 채워집니다. 자격증명 연결 단계를 다시
+       확인하세요.</p>
   </section>
 
   <section class="sec" id="download">
