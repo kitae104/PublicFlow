@@ -83,7 +83,7 @@
         확인하세요.</span>
       </li>
       <li><span class="step-title">Start 입력하기</span>
-        <code class="val">Start</code> 칸 오른쪽의 표현식 전환 스위치(<code class="val">fx</code>)를
+        <code class="val">Start</code> 칸 오른쪽의 표현식 전환 스위치(<code class="val">fx</code> 아이콘으로 보일 수도 있습니다)를
         눌러 <code class="val">Expression</code> 모드로 바꾸고
         <code class="val">{{ $now.plus(3,'days').toISO() }}</code>를 입력합니다.
       </li>
@@ -127,9 +127,11 @@
        <code class="val">Calendar</code> 칸에서 맞는 캘린더를 골랐는지도 확인하세요.</p>
     <p><b>Calendar 목록이 비어 있습니다</b> — 자격증명이 제대로 연결되지 않았습니다.
        자격증명 연결 단계를 다시 확인하세요.</p>
-    <p><b>날짜·시간 오류가 납니다</b> — <code class="val">.toISO()</code>를 빠뜨렸을
-       가능성이 큽니다. <code class="val">Start</code>·<code class="val">End</code> 값을
-       다시 확인하세요.</p>
+    <p><b>날짜·시간 오류가 납니다</b> — 두 가지를 순서대로 확인하세요. 먼저
+       <code class="val">Start</code>·<code class="val">End</code> 두 칸이 <b>각각</b>
+       <code class="val">Expression</code> 모드로 바뀌어 있는지 봅니다. 한 칸만 바꾸고
+       나머지를 그대로 두면 그 칸은 입력한 글자가 날짜가 아닌 그냥 글자로 넘어갑니다.
+       두 칸 모두 바뀌어 있다면 <code class="val">.toISO()</code>를 빠뜨렸는지 확인하세요.</p>
     <p><b>Summary가 <code class="val">{{ $json.이름 }}</code> 글자 그대로 나옵니다</b> —
        그 칸의 표현식 전환 스위치를 안 눌렀습니다. <code class="val">Expression</code> 모드로
        바뀌어 있는지 확인하세요.</p>
