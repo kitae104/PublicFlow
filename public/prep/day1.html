@@ -28,6 +28,8 @@
         <span class="hint">1일차 6강부터 사용합니다.</span></li>
       <li><span class="step-title">기상청 단기예보 API 키</span>
         <span class="hint">2일차용입니다 — 지금은 신청만 해둡니다.</span></li>
+      <li><span class="step-title">구글 시트 준비</span>
+        <span class="hint">1일차 3강부터 사용합니다. 페이지 아래쪽 "구글 시트 준비"에 안내가 있습니다.</span></li>
     </ol>
   </section>
 
@@ -144,6 +146,35 @@
     <div class="note tip">
       <b>지금 당장 승인이 안 나도 괜찮습니다</b>
       1일차에는 전혀 쓰지 않으니, 신청만 해두고 승인 메일이 올 때까지 기다리면 됩니다.
+    </div>
+  </section>
+
+  <section class="sec" id="sheet-prep">
+    <h2 class="sec-title">구글 시트 준비 — 1일차 3강부터 사용합니다</h2>
+    <p>1일차 3강에서는 민원 접수 내용을 구글 시트에 자동으로 기록합니다. 수업 시간에 헤매지
+       않도록 시트를 미리 만들어두세요.</p>
+    <ol class="steps">
+      <li><span class="step-title">새 스프레드시트 만들기</span>
+        준비한 구글 계정으로 구글 드라이브(<code class="val">drive.google.com</code>)에
+        들어가 새 스프레드시트를 하나 만듭니다.
+        <span class="hint">이름은 자유입니다. 예: <code class="val">민원 처리 리스트</code></span>
+      </li>
+      <li><span class="step-title">머리글 6개 입력하기</span>
+        시트의 1행(맨 윗줄)에 아래 여섯 칸을 <b>정확히 이 순서로</b> 입력합니다.
+        <p><code class="val">이름</code> · <code class="val">연락처</code> ·
+           <code class="val">이메일</code> · <code class="val">종류</code> ·
+           <code class="val">상세설명</code> · <code class="val">등록일</code></p>
+        <figure class="capture" id="fig-prep1-7">
+          <div class="capture-cap">[그림 준1-7] 머리글이 입력된 시트 화면</div>
+          <div class="capture-guide">캡처 위치: 스프레드시트 1행에 여섯 개 머리글(이름/연락처/이메일/종류/상세설명/등록일)이 순서대로 입력된 화면 전체, 시트 탭 이름이 보이도록</div>
+        </figure>
+      </li>
+    </ol>
+    <div class="note warn">
+      <b>머리글 철자를 정확히 맞추세요</b>
+      1일차 3강에서 n8n은 이 머리글 이름 그대로를 기준으로 각 칸에 값을 채워 넣습니다.
+      철자가 하나라도 다르면(띄어쓰기, 오타 포함) 값이 엉뚱한 칸에 들어가거나
+      아예 비어 보입니다. 지금 정확히 맞춰두면 3강에서 헤매지 않습니다.
     </div>
   </section>
 
