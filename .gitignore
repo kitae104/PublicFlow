@@ -6,3 +6,6 @@ Thumbs.db
 __pycache__/
 .superpowers/
 .playwright-mcp/
+
+.vercel
+.env*
