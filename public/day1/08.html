@@ -75,11 +75,14 @@
       </li>
       <li><span class="step-title">Form Trigger 노드 추가하기</span>
         지금까지는 기존 노드 오른쪽의 <code class="val">+</code>를 눌러 다음 노드를
-        추가했지만, 이번에는 기준이 될 노드가 없습니다. 빈 캔버스에 있는 노드
-        추가 버튼과 비슷한 곳(화면 오른쪽 위의 <code class="val">+</code> 버튼이거나,
-        빈 캔버스 가운데의 "첫 단계 추가"와 비슷한 안내일 수 있습니다)을 눌러 노드
-        검색창을 엽니다. 검색창에 <code class="val">Form</code>을 입력해
-        <code class="val">n8n Form Trigger</code>를 찾아 고릅니다.
+        추가했지만, 이번에는 기준이 될 노드가 없습니다. 빈 캔버스 가운데의 안내(첫 단계
+        추가와 비슷한 문구입니다)를 눌러 노드 검색창을 엽니다. 검색창에
+        <code class="val">Form</code>을 입력해 <code class="val">n8n Form Trigger</code>를
+        찾아 고릅니다.
+        <figure class="capture" id="fig-d1-08-2">
+          <div class="capture-cap">[그림 8-2] 빈 캔버스에서 노드 검색창 열기</div>
+          <div class="capture-guide">캡처 위치: 빈 캔버스 가운데 안내를 클릭해 나온 노드 검색창에 Form을 입력한 화면</div>
+        </figure>
       </li>
       <li><span class="step-title">폼 제목·설명 입력하기</span>
         <code class="val">Form Title</code> 칸에 <code class="val">민원 접수</code>를,
@@ -94,8 +97,8 @@
         스위치(Required Field와 비슷한 문구)가 있습니다.
         <span class="hint">드롭다운 항목의 정확한 문구는 n8n 버전마다 다를 수
         있습니다. 아래 괄호 안 설명에 맞는 뜻의 항목을 고르면 됩니다.</span>
-        <figure class="capture" id="fig-d1-08-2">
-          <div class="capture-cap">[그림 8-2] 필드 추가 버튼과 필드 한 칸의 구성</div>
+        <figure class="capture" id="fig-d1-08-3">
+          <div class="capture-cap">[그림 8-3] 필드 추가 버튼과 필드 한 칸의 구성</div>
           <div class="capture-guide">캡처 위치: Form Trigger 노드 패널에서 필드 추가 버튼과, 추가된 필드 하나의 레이블·종류·필수 여부 칸이 모두 보이는 화면</div>
         </figure>
         <p>
@@ -117,8 +120,8 @@
         문구)을 <b>세 번</b> 눌러 빈 칸을 세 개 만들고,
         순서대로 <code class="val">생활</code>, <code class="val">음식물</code>,
         <code class="val">대형</code>을 입력합니다.
-        <figure class="capture" id="fig-d1-08-3">
-          <div class="capture-cap">[그림 8-3] 종류 필드의 드롭다운 옵션 세 개 입력 화면</div>
+        <figure class="capture" id="fig-d1-08-4">
+          <div class="capture-cap">[그림 8-4] 종류 필드의 드롭다운 옵션 세 개 입력 화면</div>
           <div class="capture-guide">캡처 위치: 종류 필드를 드롭다운으로 설정한 뒤 생활/음식물/대형 세 옵션이 순서대로 입력된 화면 전체</div>
         </figure>
       </li>
@@ -153,17 +156,23 @@
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
     <p>워크플로우 오른쪽 위의 활성화 스위치(<code class="val">Active</code>)를
-       켜면 폼 주소가 생깁니다. 그 주소를 새 브라우저 탭에서
-       열어 실제로 민원을 입력하고 제출해 봅니다.</p>
+       켜면 폼 주소가 생깁니다. 이 주소는 <code class="val">민원 입력 폼</code> 노드를
+       열면 패널 안에 표시됩니다(Production URL과 비슷한 이름의 항목일 수 있습니다).
+       그 주소를 복사해 새 브라우저 탭에서 열어 실제로 민원을 입력하고 제출해 봅니다.</p>
+    <figure class="capture" id="fig-d1-08-5">
+      <div class="capture-cap">[그림 8-5] 민원 입력 폼 노드 패널에 표시된 폼 주소</div>
+      <div class="capture-guide">캡처 위치: 민원 입력 폼 노드를 연 패널 안에서 폼 주소(URL) 항목이 보이는 화면(주소 값은 가려서 촬영)</div>
+    </figure>
     <p>제출하면 시트에 새 줄이 추가되고, 접수 메일이 오고, 3일 뒤 캘린더
        일정이 잡히고, 입력한 <code class="val">종류</code>에 따라
        <code class="val">[생활 관련] 민원</code> 또는 <code class="val">[일반]
        민원</code> 메일까지 도착합니다 — <b>1일차에 만든 모든 것이 한 번에
        동작합니다.</b></p>
     <p>아직 활성화하지 않고 테스트만 하고 싶다면, 아래쪽
-       <code class="val">Execute workflow</code>를 누르면 한 번만 쓸 수 있는
-       임시 폼 주소가 뜹니다. 그 주소로 제출해도 같은 결과를 확인할 수
-       있습니다.</p>
+       <code class="val">Execute workflow</code>를 누른 뒤 같은
+       <code class="val">민원 입력 폼</code> 노드 패널을 열어 봅니다. 한 번만 쓸 수 있는
+       임시 폼 주소가 표시됩니다(Test URL과 비슷한 이름의 항목일 수 있습니다). 그 주소로
+       제출해도 같은 결과를 확인할 수 있습니다.</p>
   </section>
 
   <section class="sec" id="trouble">
@@ -189,6 +198,22 @@
   <section class="sec" id="download">
     <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
     <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <div class="note warn">
+      <b>불러온 뒤 반드시 확인하세요</b>
+      이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤 <code class="val">시트에 기록</code>·
+      <code class="val">접수 메일 보내기</code>·<code class="val">처리 마감 일정</code>·
+      <code class="val">Google Gemini Chat Model</code>·<code class="val">생활 담당자</code>·
+      <code class="val">일반 담당자</code> 여섯 노드를 각각 열어 자격증명을 다시 골라야
+      합니다. <code class="val">시트에 기록</code>의 <code class="val">Document</code> 칸과
+      <code class="val">처리 마감 일정</code>의 <code class="val">Calendar</code> 칸에는 각각
+      <code class="val">여기에_본인_시트_ID</code>·<code class="val">본인이메일@example.com</code>
+      자리표시자가, <code class="val">생활 담당자</code>·<code class="val">일반 담당자</code>의
+      <code class="val">To</code> 칸에도 <code class="val">본인이메일@example.com</code>
+      자리표시자가 들어 있으므로 모두 본인 값으로 바꿔야 합니다(이번 강의부터
+      <code class="val">이메일</code> 값은 폼 입력을 그대로 쓰므로 따로 바꿀 자리표시자가
+      없습니다). 시트 탭 이름은 <code class="val">시트1</code>로 들어 있으니 본인 시트의
+      탭 이름이 다르면 목록에서 다시 골라야 합니다.
+    </div>
     <a class="dl" href="../downloads/day1-08.json" download>
       워크플로우 내려받기 <span class="dl-name">day1-08.json</span>
     </a>

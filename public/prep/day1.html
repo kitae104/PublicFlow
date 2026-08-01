@@ -13,23 +13,26 @@
 
   <header class="page-head">
     <h1>1일차 준비물</h1>
-    <p class="sub">구글 계정과 Gemini API 키를 미리 준비합니다 — 약 30분</p>
+    <p class="sub">구글 계정·시트, n8n 접속, Gemini API 키를 미리 준비합니다 — 약 40분</p>
   </header>
 
   <section class="sec" id="summary">
     <h2 class="sec-title">무엇을, 왜 준비하나요</h2>
-    <p>1일차 수업은 구글 계정으로 로그인해 여러 구글 서비스(시트, 지메일, 캘린더)와
-       구글의 AI 모델(Gemini)을 연결하는 방식으로 진행됩니다. 아래 세 가지만
+    <p>1일차 수업은 n8n 화면에 로그인한 뒤, 구글 계정으로 여러 구글 서비스(시트, 지메일,
+       캘린더)와 구글의 AI 모델(Gemini)을 연결하는 방식으로 진행됩니다. 아래 다섯 가지만
        미리 준비해두면 수업 시간에 헤매지 않습니다.</p>
     <ol class="steps">
+      <li><span class="step-title">n8n 접속</span>
+        <span class="hint">1일차 01강부터 필요합니다. 접속 주소와 로그인 정보를 미리
+        확인해두세요 — 페이지 아래쪽 "n8n 접속 준비"에 안내가 있습니다.</span></li>
       <li><span class="step-title">구글 계정</span>
         개인 Gmail 권장. <span class="hint">1일차·2일차 공통으로 씁니다.</span></li>
+      <li><span class="step-title">구글 시트 준비</span>
+        <span class="hint">1일차 3강부터 사용합니다. 페이지 아래쪽 "구글 시트 준비"에 안내가 있습니다.</span></li>
       <li><span class="step-title">Gemini API 키</span>
         <span class="hint">1일차 6강부터 사용합니다.</span></li>
       <li><span class="step-title">기상청 단기예보 API 키</span>
         <span class="hint">2일차용입니다 — 지금은 신청만 해둡니다.</span></li>
-      <li><span class="step-title">구글 시트 준비</span>
-        <span class="hint">1일차 3강부터 사용합니다. 페이지 아래쪽 "구글 시트 준비"에 안내가 있습니다.</span></li>
     </ol>
   </section>
 
@@ -111,6 +114,53 @@
        <code class="val">models/gemini-2.5-flash-lite</code>로 바꿔서 계속 진행하세요.</p>
   </div>
 
+  <section class="sec" id="n8n-access">
+    <h2 class="sec-title">③ n8n 접속 준비</h2>
+    <p>n8n은 따로 설치하는 프로그램이 아니라 웹 브라우저로 여는 화면입니다. 접속하려면
+       주소와 로그인 정보가 필요합니다.</p>
+    <div class="note warn">
+      <b>운영자가 채워야 하는 자리 — 아직 비어 있습니다</b>
+      <p>n8n 접속 주소: <b>&lt;&lt; 여기에 n8n 인스턴스 주소를 입력하세요 &gt;&gt;</b></p>
+      <p>주소가 정해지면 이 자리를 실제 주소로 바꿔 넣어야 합니다. 로그인 방법(아이디·
+         비밀번호 또는 초대 메일)도 함께 안내해주세요.</p>
+    </div>
+    <p>위 주소로 접속해 로그인한 뒤, 워크플로우 목록 화면이 보이는지 확인하세요. 01강을
+       시작하기 전에 이 화면까지 미리 확인해두면 수업 시간에 헤매지 않습니다.</p>
+    <figure class="capture" id="fig-prep1-5">
+      <div class="capture-cap">[그림 준1-5] 로그인 후 보이는 n8n 워크플로우 목록 화면</div>
+      <div class="capture-guide">캡처 위치: n8n에 로그인한 직후 워크플로우 목록이 보이는 홈 화면 전체</div>
+    </figure>
+  </section>
+
+  <section class="sec" id="sheet-prep">
+    <h2 class="sec-title">구글 시트 준비 — 1일차 3강부터 사용합니다</h2>
+    <p>1일차 3강에서는 민원 접수 내용을 구글 시트에 자동으로 기록합니다. 수업 시간에 헤매지
+       않도록 시트를 미리 만들어두세요.</p>
+    <ol class="steps">
+      <li><span class="step-title">새 스프레드시트 만들기</span>
+        준비한 구글 계정으로 구글 드라이브(<code class="val">drive.google.com</code>)에
+        들어가 새 스프레드시트를 하나 만듭니다.
+        <span class="hint">이름은 자유입니다. 예: <code class="val">민원 처리 리스트</code></span>
+      </li>
+      <li><span class="step-title">머리글 6개 입력하기</span>
+        시트의 1행(맨 윗줄)에 아래 여섯 칸을 <b>정확히 이 순서로</b> 입력합니다.
+        <p><code class="val">이름</code> · <code class="val">연락처</code> ·
+           <code class="val">이메일</code> · <code class="val">종류</code> ·
+           <code class="val">상세설명</code> · <code class="val">등록일</code></p>
+        <figure class="capture" id="fig-prep1-6">
+          <div class="capture-cap">[그림 준1-6] 머리글이 입력된 시트 화면</div>
+          <div class="capture-guide">캡처 위치: 스프레드시트 1행에 여섯 개 머리글(이름/연락처/이메일/종류/상세설명/등록일)이 순서대로 입력된 화면 전체, 시트 탭 이름이 보이도록</div>
+        </figure>
+      </li>
+    </ol>
+    <div class="note warn">
+      <b>머리글 철자를 정확히 맞추세요</b>
+      1일차 3강에서 n8n은 이 머리글 이름 그대로를 기준으로 각 칸에 값을 채워 넣습니다.
+      철자가 하나라도 다르면(띄어쓰기, 오타 포함) 값이 엉뚱한 칸에 들어가거나
+      아예 비어 보입니다. 지금 정확히 맞춰두면 3강에서 헤매지 않습니다.
+    </div>
+  </section>
+
   <section class="sec" id="weather-api">
     <h2 class="sec-title">2일차에 쓸 것 — 지금 미리 신청해두세요</h2>
     <p><b>1일차 실습에는 이 항목이 전혀 필요 없습니다.</b> 아래 절차만 지금 시작해두면
@@ -129,16 +179,16 @@
         검색 결과에서 해당 API를 찾아 활용신청과 비슷한 문구의 버튼을 누르고
         사용 목적을 간단히 적어 제출합니다.
         <span class="hint">승인까지 보통 몇 시간에서 하루 정도 걸릴 수 있습니다. 그래서 미리 신청해두는 것입니다.</span>
-        <figure class="capture" id="fig-prep1-5">
-          <div class="capture-cap">[그림 준1-5] API 상세 페이지의 활용신청 버튼</div>
+        <figure class="capture" id="fig-prep1-7">
+          <div class="capture-cap">[그림 준1-7] API 상세 페이지의 활용신청 버튼</div>
           <div class="capture-guide">캡처 위치: 기상청 단기예보 API 상세 페이지에서 활용신청 버튼이 보이는 화면 전체</div>
         </figure>
       </li>
       <li><span class="step-title">승인 후 인증키 확인</span>
         승인되면 마이페이지 안, 발급된 인증키를 보여주는 메뉴에서
         인증키(서비스키)를 확인할 수 있습니다. 2일차에 이 키를 사용합니다.
-        <figure class="capture" id="fig-prep1-6">
-          <div class="capture-cap">[그림 준1-6] 마이페이지에서 인증키가 표시된 화면</div>
+        <figure class="capture" id="fig-prep1-8">
+          <div class="capture-cap">[그림 준1-8] 마이페이지에서 인증키가 표시된 화면</div>
           <div class="capture-guide">캡처 위치: 공공데이터포털 마이페이지에서 발급된 인증키(서비스키) 문자열이 보이는 화면, 메뉴 위치 포함</div>
         </figure>
       </li>
@@ -146,35 +196,6 @@
     <div class="note tip">
       <b>지금 당장 승인이 안 나도 괜찮습니다</b>
       1일차에는 전혀 쓰지 않으니, 신청만 해두고 승인 메일이 올 때까지 기다리면 됩니다.
-    </div>
-  </section>
-
-  <section class="sec" id="sheet-prep">
-    <h2 class="sec-title">구글 시트 준비 — 1일차 3강부터 사용합니다</h2>
-    <p>1일차 3강에서는 민원 접수 내용을 구글 시트에 자동으로 기록합니다. 수업 시간에 헤매지
-       않도록 시트를 미리 만들어두세요.</p>
-    <ol class="steps">
-      <li><span class="step-title">새 스프레드시트 만들기</span>
-        준비한 구글 계정으로 구글 드라이브(<code class="val">drive.google.com</code>)에
-        들어가 새 스프레드시트를 하나 만듭니다.
-        <span class="hint">이름은 자유입니다. 예: <code class="val">민원 처리 리스트</code></span>
-      </li>
-      <li><span class="step-title">머리글 6개 입력하기</span>
-        시트의 1행(맨 윗줄)에 아래 여섯 칸을 <b>정확히 이 순서로</b> 입력합니다.
-        <p><code class="val">이름</code> · <code class="val">연락처</code> ·
-           <code class="val">이메일</code> · <code class="val">종류</code> ·
-           <code class="val">상세설명</code> · <code class="val">등록일</code></p>
-        <figure class="capture" id="fig-prep1-7">
-          <div class="capture-cap">[그림 준1-7] 머리글이 입력된 시트 화면</div>
-          <div class="capture-guide">캡처 위치: 스프레드시트 1행에 여섯 개 머리글(이름/연락처/이메일/종류/상세설명/등록일)이 순서대로 입력된 화면 전체, 시트 탭 이름이 보이도록</div>
-        </figure>
-      </li>
-    </ol>
-    <div class="note warn">
-      <b>머리글 철자를 정확히 맞추세요</b>
-      1일차 3강에서 n8n은 이 머리글 이름 그대로를 기준으로 각 칸에 값을 채워 넣습니다.
-      철자가 하나라도 다르면(띄어쓰기, 오타 포함) 값이 엉뚱한 칸에 들어가거나
-      아예 비어 보입니다. 지금 정확히 맞춰두면 3강에서 헤매지 않습니다.
     </div>
   </section>
 

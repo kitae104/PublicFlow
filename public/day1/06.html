@@ -154,6 +154,8 @@
        <code class="val">text</code> 항목에 4~6문장의 안내문이 생성되어 있으면 성공입니다.
        실행할 때마다 문장이 조금씩 달라지는 것은 정상입니다 — AI가 매번 새로 글을
        쓰기 때문입니다.</p>
+    <p>이 안내문은 이 강좌 안에서는 메일이나 다른 곳으로 자동 전송되지 않습니다 — 지금은
+       노드 출력 화면에서 확인만 하는 용도로 씁니다.</p>
   </section>
 
   <section class="sec" id="trouble">
@@ -174,6 +176,20 @@
   <section class="sec" id="download">
     <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
     <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <div class="note warn">
+      <b>불러온 뒤 반드시 확인하세요</b>
+      이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤 <code class="val">시트에 기록</code>·
+      <code class="val">접수 메일 보내기</code>·<code class="val">처리 마감 일정</code>·
+      <code class="val">Google Gemini Chat Model</code> 네 노드를 각각 열어 자격증명을
+      다시 골라야 합니다(Gemini는 구글 로그인 화면이 아니라 API 키를 새로 입력하는
+      화면입니다). <code class="val">시트에 기록</code>의 <code class="val">Document</code>
+      칸, <code class="val">처리 마감 일정</code>의 <code class="val">Calendar</code> 칸,
+      <code class="val">샘플 민원</code> 노드의 <code class="val">이메일</code> 값에는 각각
+      <code class="val">여기에_본인_시트_ID</code>·<code class="val">본인이메일@example.com</code>
+      자리표시자가 들어 있으므로 본인 값으로 바꿔야 합니다. 시트 탭 이름은
+      <code class="val">시트1</code>로 들어 있으니 본인 시트의 탭 이름이 다르면 목록에서
+      다시 골라야 합니다.
+    </div>
     <a class="dl" href="../downloads/day1-06.json" download>
       워크플로우 내려받기 <span class="dl-name">day1-06.json</span>
     </a>

@@ -112,6 +112,14 @@
           기관에서 발급한 구글 계정(예: @korea.kr)은 관리자가 외부 앱 연결을 막아둔 경우가
           많습니다. 권한 허용 화면에서 오류가 나면 개인 Gmail 계정으로 다시 시도하세요.
         </div>
+        <div class="note">
+          <b>체크포인트 — 여기까지 잘 됐는지 확인하세요</b>
+          자격증명 칸에 방금 만든 자격증명 이름이 채워져 있고, 노드 위에 오류를 나타내는
+          빨간 표시가 없으면 여기까지는 정상입니다. 이름이 비어 있거나 오류 표시가 보이면
+          이 단계(자격증명 연결하기)로 돌아가 처음부터 다시 해보세요 — 특히 기관 계정으로
+          로그인하지 않았는지 확인하세요. 정상이면 이어서 Resource·Operation 설정으로
+          넘어갑니다.
+        </div>
       </li>
       <li><span class="step-title">Resource·Operation 설정하기</span>
         <code class="val">Resource</code>는 기본값인 <code class="val">Sheet Within Document</code>
@@ -148,6 +156,10 @@
           <code class="val">상세설명</code> = <code class="val">{{ $json.상세설명 }}</code><br>
           <code class="val">등록일</code> = <code class="val">{{ $now.toFormat('yyyy-MM-dd') }}</code>
         </p>
+        <figure class="capture" id="fig-d1-03-5">
+          <div class="capture-cap">[그림 3-5] 여섯 칸이 각각 Expression 모드로 전환된 매핑 패널</div>
+          <div class="capture-guide">캡처 위치: Google Sheets 노드의 칸 매핑 영역 전체 — 이름·연락처·이메일·종류·상세설명·등록일 여섯 칸 각각의 표현식 전환 스위치가 켜져 있고 값이 채워진 화면</div>
+        </figure>
         <span class="hint"><code class="val">$now</code>는 지금 이 순간의 날짜와 시간입니다.
         <code class="val">.toFormat('yyyy-MM-dd')</code>는 그 날짜를
         <code class="val">2026-08-01</code> 같은 모양으로 바꿔줍니다.</span>
@@ -181,6 +193,17 @@
   <section class="sec" id="download">
     <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
     <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <div class="note warn">
+      <b>불러온 뒤 반드시 확인하세요</b>
+      이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤 <code class="val">시트에 기록</code>
+      노드를 열어 자격증명을 다시 골라야 합니다. <code class="val">Document</code> 칸에는
+      <code class="val">여기에_본인_시트_ID</code>라는 자리표시자가, <code class="val">샘플
+      민원</code> 노드의 <code class="val">이메일</code> 값에는
+      <code class="val">본인이메일@example.com</code>이라는 자리표시자가 들어 있으므로 각각
+      본인 시트·본인 주소로 바꿔야 합니다. 시트 탭 이름은 <code class="val">시트1</code>로
+      들어 있으니, 본인 시트의 탭 이름이 다르면 <code class="val">Sheet</code> 목록에서
+      다시 골라야 합니다.
+    </div>
     <a class="dl" href="../downloads/day1-03.json" download>
       워크플로우 내려받기 <span class="dl-name">day1-03.json</span>
     </a>

@@ -140,6 +140,19 @@
   <section class="sec" id="download">
     <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
     <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <div class="note warn">
+      <b>불러온 뒤 반드시 확인하세요</b>
+      이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤 <code class="val">시트에 기록</code>·
+      <code class="val">접수 메일 보내기</code>·<code class="val">처리 마감 일정</code> 세
+      노드를 각각 열어 자격증명을 다시 골라야 합니다. <code class="val">시트에 기록</code>의
+      <code class="val">Document</code> 칸과 <code class="val">처리 마감 일정</code>의
+      <code class="val">Calendar</code> 칸에는 각각 <code class="val">여기에_본인_시트_ID</code>·
+      <code class="val">본인이메일@example.com</code> 자리표시자가 들어 있고,
+      <code class="val">샘플 민원</code> 노드의 <code class="val">이메일</code> 값에도 같은
+      <code class="val">본인이메일@example.com</code> 자리표시자가 들어 있으므로 모두 본인
+      값으로 바꿔야 합니다. 시트 탭 이름은 <code class="val">시트1</code>로 들어 있으니
+      본인 시트의 탭 이름이 다르면 목록에서 다시 골라야 합니다.
+    </div>
     <a class="dl" href="../downloads/day1-05.json" download>
       워크플로우 내려받기 <span class="dl-name">day1-05.json</span>
     </a>

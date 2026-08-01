@@ -14,12 +14,13 @@
 
   <header class="page-head">
     <h1>04 이메일 자동 발송</h1>
-    <p class="sub">접수 내용을 담당자에게 보냅니다</p>
+    <p class="sub">접수 확인 메일을 접수자에게 보냅니다</p>
   </header>
 
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
-    <p>접수된 민원 내용을 바탕으로 담당자에게 안내 메일을 자동으로 보내는 단계를 추가합니다.</p>
+    <p>접수된 민원 내용을 바탕으로 접수자(민원인) 본인에게 접수 확인 메일을 자동으로 보내는
+       단계를 추가합니다. 실제 담당자에게 가는 메일은 07강에서 따로 만듭니다.</p>
     <figure class="capture" id="fig-d1-04-1">
       <div class="capture-cap">[그림 4-1] 완성된 모습</div>
       <div class="capture-guide">캡처 위치: 발송된 접수 안내 메일함 화면</div>
@@ -43,8 +44,9 @@
 
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
-    <p>새 민원이 들어올 때마다 담당자에게 일일이 알리는 대신, 접수와 동시에 메일이
-       자동 발송되면 보고 누락 없이 신속하게 처리 담당자에게 전달됩니다.</p>
+    <p>민원인 입장에서는 접수가 제대로 됐는지 알 방법이 없으면 불안해서 전화로 확인하게
+       됩니다. 접수 즉시 확인 메일이 자동으로 발송되면 이런 문의가 줄어듭니다. 담당자에게
+       실제로 알리는 메일은 07강에서 조건에 따라 나눠 보냅니다.</p>
   </section>
 
   <section class="sec" id="steps">
@@ -98,21 +100,23 @@
         <code class="val">Message</code> 칸 오른쪽의 표현식 전환 스위치를 눌러
         <code class="val">Expression</code> 모드로 바꾼 뒤 아래 내용을 그대로 붙여넣습니다.
         <p>
-          <code class="val">담당팀께,</code><br>
-          <code class="val">아래와 같이 민원이 접수되었습니다.</code><br>
+          <code class="val">담당팀께,</code><br><br>
+          <code class="val">아래와 같이 민원이 접수되었습니다.</code><br><br>
           <code class="val">- 접수자명: {{ $json.이름 }}</code><br>
           <code class="val">- 연락처: {{ $json.연락처 }}</code><br>
           <code class="val">- 이메일: {{ $json.이메일 }}</code><br>
           <code class="val">- 민원 종류: {{ $json.종류 }}</code><br>
           <code class="val">- 상세 설명: {{ $json.상세설명 }}</code><br>
-          <code class="val">- 등록일: {{ $now.toFormat('yyyy년 MM월 dd일 HH시 mm분') }}</code><br>
-          <code class="val">내용 확인 후 신속한 처리 바랍니다.</code><br>
+          <code class="val">- 등록일: {{ $now.toFormat('yyyy년 MM월 dd일 HH시 mm분') }}</code><br><br>
+          <code class="val">내용 확인 후 신속한 처리 바랍니다.</code><br><br>
           <code class="val">감사합니다.</code>
         </p>
-        <span class="hint">본문 전체가 표현식 모드라고 해서 전부 계산식이어야 하는 것은
-        아닙니다. "담당팀께," 같은 보통 글자와 <code class="val">{{ $json.이름 }}</code> 같은
-        계산식이 한 칸 안에 섞여 있어도 됩니다. n8n은 이중 중괄호로 감싼 부분만 계산하고
-        나머지는 글자 그대로 둡니다.</span>
+        <span class="hint">본문이 <code class="val">담당팀께,</code>로 시작하지만 실제로는
+        접수자(민원인) 본인에게 가는 메일입니다 — 원본 워크플로우의 문구를 그대로 옮겼기
+        때문이며, 내용은 바꾸지 않고 그대로 둡니다. 그리고 본문 전체가 표현식 모드라고 해서
+        전부 계산식이어야 하는 것은 아닙니다. "담당팀께," 같은 보통 글자와
+        <code class="val">{{ $json.이름 }}</code> 같은 계산식이 한 칸 안에 섞여 있어도
+        됩니다. n8n은 이중 중괄호로 감싼 부분만 계산하고 나머지는 글자 그대로 둡니다.</span>
       </li>
       <li><span class="step-title">노드 이름 바꾸기</span>
         노드 제목을 더블클릭해 <code class="val">접수 메일 보내기</code>로 바꿉니다.
@@ -146,6 +150,18 @@
   <section class="sec" id="download">
     <h2 class="sec-title">이번 단계 워크플로우 받기</h2>
     <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <div class="note warn">
+      <b>불러온 뒤 반드시 확인하세요</b>
+      이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤 <code class="val">시트에 기록</code>과
+      <code class="val">접수 메일 보내기</code> 두 노드를 각각 열어 자격증명을 다시 골라야
+      합니다. <code class="val">시트에 기록</code>의 <code class="val">Document</code> 칸에는
+      <code class="val">여기에_본인_시트_ID</code> 자리표시자가, <code class="val">샘플
+      민원</code> 노드의 <code class="val">이메일</code> 값에는
+      <code class="val">본인이메일@example.com</code> 자리표시자가 들어 있으므로 각각 본인
+      시트·본인 주소로 바꿔야 합니다(이 이메일 값이 접수 메일의 받는 사람이기도 합니다).
+      시트 탭 이름은 <code class="val">시트1</code>로 들어 있으니 본인 시트의 탭 이름이
+      다르면 목록에서 다시 골라야 합니다.
+    </div>
     <a class="dl" href="../downloads/day1-04.json" download>
       워크플로우 내려받기 <span class="dl-name">day1-04.json</span>
     </a>
