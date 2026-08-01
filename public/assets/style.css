@@ -1,147 +1,265 @@
-/* ── 색·간격 토큰 ───────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   공무원을 위한 n8n 업무 자동화 — 공통 스타일
+
+   화면 개념: 페이지 배경은 n8n 캔버스(점 격자), 본문은 그 위에
+   놓인 흰 노드 패널. 색은 흑연 계열 하나로 통일하고, n8n 코럴은
+   "자동화되는 것"에만 씁니다 — 링크, 이번 시간 새 노드, 내려받기.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── 토큰 ──────────────────────────────────────────────── */
 :root {
-  --paper: #ffffff;
-  --paper-2: #f6f9fb;
-  --ink: #16202a;
-  --muted: #5b6b7a;
-  --line: #dde5ec;
-  --accent: #0f766e;
-  --accent-ink: #ffffff;
-  --accent-soft: #ccfbf1;
-  --new: #c2410c;
-  --new-soft: #ffedd5;
-  --warn: #b45309;
-  --warn-soft: #fef3c7;
-  --radius: 10px;
-  --maxw: 46rem;
+  --canvas:     #eaedf1;   /* 페이지 바닥 — n8n 캔버스 */
+  --canvas-dot: #d2d8e0;
+  --panel:      #ffffff;   /* 본문 패널 */
+  --paper-2:    #f4f6f9;   /* 패널 안 옅은 면 */
+  --ink:        #131920;
+  --ink-2:      #39434f;
+  --muted:      #6a7683;
+  --line:       #dfe4ea;
+  --line-2:     #c6ced7;
+
+  --brand:      #ea4b71;   /* n8n 코럴 — 그래픽·테두리 */
+  --brand-ink:  #c22b52;   /* 같은 계열, 글자·버튼용(AA) */
+  --brand-deep: #a92146;
+  --brand-soft: #fdecf1;
+
+  --warn:       #94590a;
+  --warn-soft:  #fdf4de;
+  --warn-line:  #e3c374;
+
+  --radius:     12px;
+  --radius-sm:  7px;
+  --pad:        2rem;      /* 패널 좌우 여백 */
+  --maxw:       47rem;
+
+  --font-body: "Pretendard Variable", Pretendard, -apple-system,
+               BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI",
+               "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+  /* 표제용 명조 — 설치된 것이 없으면 윈도우 바탕/맥 명조로 내려갑니다 */
+  --font-display: "Nanum Myeongjo", AppleMyungjo, Batang, "바탕",
+               "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", Consolas,
+               "D2Coding", "Malgun Gothic", monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #11171d;
-    --paper-2: #171f27;
-    --ink: #e6edf3;
-    --muted: #9fb0bf;
-    --line: #2a3641;
-    --accent: #5eead4;
-    --accent-ink: #06231f;
-    --accent-soft: #10403a;
-    --new: #fb923c;
-    --new-soft: #46220d;
-    --warn: #fbbf24;
-    --warn-soft: #3d2f0a;
+    --canvas:     #12161b;
+    --canvas-dot: #232a33;
+    --panel:      #1a1f26;
+    --paper-2:    #222933;
+    --ink:        #e7edf3;
+    --ink-2:      #bcc7d2;
+    --muted:      #93a1af;
+    --line:       #2c343e;
+    --line-2:     #3e4854;
+
+    --brand:      #ff7b9c;
+    --brand-ink:  #ff8fab;
+    --brand-deep: #ff6b90;
+    --brand-soft: #35202a;
+
+    --warn:       #f0c14b;
+    --warn-soft:  #2f2711;
+    --warn-line:  #5c4a17;
   }
+}
+
+@media (max-width: 46rem) {
+  :root { --pad: 1.15rem; --maxw: none; }
 }
 
 /* ── 기본 ──────────────────────────────────────────────── */
 * { box-sizing: border-box; }
 
+html { -webkit-text-size-adjust: 100%; }
+
 body {
   margin: 0;
-  padding: 0 1rem 5rem;
-  background: var(--paper);
+  padding: 1.5rem 1rem 4rem;
+  background-color: var(--canvas);
+  background-image: radial-gradient(circle at 1px 1px, var(--canvas-dot) 1px, transparent 0);
+  background-size: 24px 24px;
   color: var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-               "Malgun Gothic", "맑은 고딕", AppleSDGothicNeo-Regular,
-               "Apple SD Gothic Neo", sans-serif;
+  font-family: var(--font-body);
   font-size: 17px;
   line-height: 1.85;
+  letter-spacing: -0.003em;
   word-break: keep-all;
   overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
 }
 
-.wrap { max-width: var(--maxw); margin: 0 auto; }
+@media (max-width: 46rem) {
+  body { padding: 0 0 3rem; }
+}
 
-a { color: var(--accent); }
+/* 본문 패널 — 캔버스 위에 놓인 카드 */
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--pad) 3.5rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(16, 24, 32, .05),
+              0 18px 40px -26px rgba(16, 24, 32, .35);
+}
+
+@media (max-width: 46rem) {
+  .wrap { border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; }
+}
+
+p { margin: 0 0 1.05em; }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--brand-ink); text-underline-offset: .18em; text-decoration-thickness: 1px; }
 a:hover { text-decoration: none; }
 
-h1, h2, h3 { line-height: 1.4; letter-spacing: -0.01em; }
-h1 { font-size: 1.9rem; margin: 0 0 .3rem; }
-h2 { font-size: 1.3rem; margin: 2.6rem 0 .9rem; }
-h3 { font-size: 1.05rem; margin: 1.8rem 0 .5rem; }
+b, strong { font-weight: 700; color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+h1, h2, h3 { line-height: 1.4; letter-spacing: -0.022em; font-weight: 700; }
+h1 { font-size: 1.8rem; margin: 0 0 .35rem; }
+h2 { font-size: 1.22rem; margin: 0 0 .9rem; }
+h3 { font-size: 1.02rem; margin: 1.8rem 0 .45rem; }
 
 /* ── 머리말·이동 ───────────────────────────────────────── */
 .crumb {
-  font-size: .85rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin: 0 calc(var(--pad) * -1);
+  padding: .7rem var(--pad);
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  border-radius: var(--radius) var(--radius) 0 0;
+  font-size: .84rem;
   color: var(--muted);
-  padding: 1.5rem 0 0;
 }
-.crumb a { color: var(--muted); }
+.crumb a { color: var(--muted); text-decoration: none; }
+.crumb a:hover { color: var(--brand-ink); text-decoration: underline; }
 
-.page-head {
-  padding: .5rem 0 1.5rem;
-  border-bottom: 2px solid var(--line);
-  margin-bottom: 1rem;
+.page-head { padding: 2.2rem 0 1.6rem; }
+.page-head h1 { text-wrap: balance; }
+.page-head .sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: .98rem;
 }
-.page-head .sub { color: var(--muted); margin: 0; }
 
 .pager {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 4rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--line);
-  font-size: .95rem;
+  gap: .7rem;
+  margin-top: 3.5rem;
+  font-size: .92rem;
 }
-.pager span { color: var(--muted); }
+.pager a,
+.pager span {
+  flex: 1 1 0;
+  padding: .85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-2);
+  text-decoration: none;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.pager a:hover { border-color: var(--brand); background: var(--brand-soft); }
+.pager span { color: var(--muted); background: transparent; border-style: dashed; }
+.pager a + a { text-align: right; }
+.pager > :only-child { flex: 0 1 auto; }
+
+@media (max-width: 34rem) {
+  .pager { flex-direction: column; }
+  .pager a + a { text-align: left; }
+}
 
 /* ── 섹션 ──────────────────────────────────────────────── */
-.sec { scroll-margin-top: 1rem; }
+.sec {
+  scroll-margin-top: 4rem;
+  margin-top: 2.6rem;
+  padding-top: 2.2rem;
+  border-top: 1px solid var(--line);
+}
+.sec:first-of-type { margin-top: .6rem; padding-top: 0; border-top: 0; }
 
 .sec-title {
   display: flex;
-  align-items: center;
-  gap: .55rem;
+  align-items: baseline;
+  gap: .6rem;
 }
 .sec-title::before {
   content: "";
-  width: .3rem;
-  height: 1.1em;
-  background: var(--accent);
+  align-self: center;
+  width: .28rem;
+  height: 1.05em;
+  background: var(--brand);
   border-radius: 2px;
   flex: none;
 }
 
 /* ── 따라하기 단계 ─────────────────────────────────────── */
-ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 0; }
+ol.steps { list-style: none; counter-reset: s; padding: 0; margin: .4rem 0 0; }
 
 ol.steps > li {
   counter-increment: s;
   position: relative;
-  padding: 0 0 1.6rem 3rem;
+  padding: 0 0 1.9rem 3.1rem;
+  margin-left: 1.05rem;
   border-left: 2px solid var(--line);
-  margin-left: 1rem;
 }
 ol.steps > li:last-child { border-left-color: transparent; padding-bottom: 0; }
 
 ol.steps > li::before {
   content: counter(s);
   position: absolute;
-  left: -1rem;
-  top: 0;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--accent-ink);
-  font-size: .9rem;
+  left: -1.05rem;
+  top: -.1rem;
+  width: 2.05rem;
+  height: 2.05rem;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--panel);
+  font-size: .88rem;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
   display: grid;
   place-items: center;
 }
 
-.step-title { font-weight: 700; display: block; margin-bottom: .2rem; }
-.hint { color: var(--muted); font-size: .92rem; }
+.step-title {
+  display: block;
+  font-size: 1.04rem;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  margin-bottom: .3rem;
+}
 
-/* ── 입력값 강조 ───────────────────────────────────────── */
+/* 곁들이는 참고 — 따라하기 안에서는 한 단 낮춰 따로 읽히게 */
+.hint { color: var(--muted); font-size: .92rem; }
+ol.steps .hint,
+p.hint {
+  display: block;
+  margin: .6rem 0 0;
+  padding-left: .8rem;
+  border-left: 2px solid var(--line);
+}
+
+/* ── 입력값·화면 문구 강조 ─────────────────────────────── */
 code.val {
-  background: var(--accent-soft);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
   color: var(--ink);
-  padding: .12em .45em;
+  padding: .08em .38em;
   border-radius: 5px;
-  font-size: .92em;
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: .89em;
+  font-family: var(--font-mono);
   word-break: break-all;
 }
 
@@ -149,94 +267,171 @@ code.val {
 .note {
   background: var(--paper-2);
   border: 1px solid var(--line);
-  border-left: 4px solid var(--accent);
-  border-radius: var(--radius);
-  padding: .9rem 1.1rem;
-  margin: 1.2rem 0;
+  border-left: 3px solid var(--line-2);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.15rem;
+  margin: 1.35rem 0;
 }
-.note p:first-child { margin-top: 0; }
-.note p:last-child { margin-bottom: 0; }
+.note > b:first-child {
+  display: block;
+  font-size: 1rem;
+  letter-spacing: -0.018em;
+  margin-bottom: .3rem;
+}
+.note > p:first-child { margin-top: 0; }
+.note > p:last-child { margin-bottom: 0; }
+
+.note.tip  { border-left-color: var(--brand); background: var(--brand-soft); }
 .note.warn { border-left-color: var(--warn); background: var(--warn-soft); }
-.note.tip  { border-left-color: var(--accent); background: var(--accent-soft); }
-.note b { display: block; margin-bottom: .2rem; }
+.note.warn code.val { background: rgba(255, 255, 255, .55); border-color: var(--warn-line); }
+.note.tip  code.val { background: rgba(255, 255, 255, .6); border-color: var(--line-2); }
 
-/* ── 캡처 자리표시자 ───────────────────────────────────── */
-figure.capture { margin: 1rem 0; }
+ol.steps .note { margin: .85rem 0; }
 
-figure.capture img { max-width: 100%; border-radius: var(--radius); border: 1px solid var(--line); }
+/* ── 캡처 ──────────────────────────────────────────────── */
+figure.capture { margin: 1.4rem 0; }
 
 .capture-cap {
-  font-size: .88rem;
+  font-size: .85rem;
   font-weight: 700;
   color: var(--muted);
-  margin-bottom: .4rem;
+  letter-spacing: -0.01em;
+  margin-bottom: .5rem;
 }
 
+figure.capture img {
+  display: block;
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-2);
+  box-shadow: 0 1px 3px rgba(16, 24, 32, .09);
+}
+
+/* 아직 안 찍은 자리 — 캔버스 격자를 그대로 비워둔 슬롯 */
 .capture-guide {
-  border: 2px dashed var(--line);
-  border-radius: var(--radius);
-  background: var(--paper-2);
+  border: 1px dashed var(--line-2);
+  border-radius: var(--radius-sm);
+  background-color: var(--paper-2);
+  background-image: radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0);
+  background-size: 18px 18px;
   color: var(--muted);
-  padding: 1.6rem 1.1rem;
+  padding: 1.7rem 1.2rem;
   text-align: center;
-  font-size: .92rem;
+  font-size: .89rem;
+  line-height: 1.7;
 }
-.capture-guide::before { content: "📷"; display: block; font-size: 1.5rem; margin-bottom: .3rem; }
+.capture-guide::before {
+  content: "촬영 예정";
+  display: inline-block;
+  margin-bottom: .45rem;
+  padding: .1rem .5rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--panel);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
 
-/* ── 다운로드 ──────────────────────────────────────────── */
-/* ── 붙여넣기용 코드 블록 ─────────────────────────────── */
+/* ── 붙여넣기용 코드 블록 ──────────────────────────────── */
 pre.code-block {
   background: var(--paper-2);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: .9rem 1rem;
-  margin: .8rem 0;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.1rem;
+  margin: .9rem 0;
   overflow-x: auto;
-  font-family: ui-monospace, Consolas, "D2Coding", monospace;
+  font-family: var(--font-mono);
   font-size: .8rem;
-  line-height: 1.6;
+  line-height: 1.7;
   tab-size: 2;
   word-break: normal;
+  color: var(--ink-2);
 }
 
+/* ── 내려받기 ──────────────────────────────────────────── */
 .dl {
   display: inline-flex;
   align-items: center;
-  gap: .6rem;
-  background: var(--accent);
-  color: var(--accent-ink);
+  gap: .65rem;
+  background: var(--brand-ink);
+  color: #fff;
   text-decoration: none;
-  padding: .8rem 1.2rem;
-  border-radius: var(--radius);
+  padding: .85rem 1.25rem;
+  border-radius: var(--radius-sm);
   font-weight: 700;
+  transition: background-color .15s ease;
 }
-.dl:hover { filter: brightness(1.08); }
-.dl-name { font-family: ui-monospace, Consolas, monospace; font-weight: 400; font-size: .85em; opacity: .85; }
+.dl:hover { background: var(--brand-deep); }
+.dl-name {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: .84em;
+  opacity: .85;
+}
 
-/* ── 목차(index) ───────────────────────────────────────── */
-.toc { list-style: none; padding: 0; }
-.toc li { border-bottom: 1px solid var(--line); }
+@media (prefers-color-scheme: dark) {
+  .dl { color: #2a0a15; }
+}
+
+/* ── 목차 목록 ─────────────────────────────────────────── */
+.toc { list-style: none; padding: 0; margin: .4rem 0 0; }
+.toc li + li { margin-top: .4rem; }
 .toc a {
   display: flex;
-  gap: .9rem;
+  gap: .85rem;
   align-items: baseline;
-  padding: .85rem .3rem;
+  padding: .8rem .95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-2);
   text-decoration: none;
   color: var(--ink);
+  transition: border-color .15s ease, background-color .15s ease;
 }
-.toc a:hover { background: var(--paper-2); }
-.toc .n { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; flex: none; }
-.toc .d { color: var(--muted); font-size: .88rem; margin-left: auto; text-align: right; flex: none; }
+.toc a:hover { border-color: var(--brand); background: var(--brand-soft); }
+.toc .n {
+  color: var(--brand-ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.toc .d {
+  color: var(--muted);
+  font-size: .86rem;
+  margin-left: auto;
+  text-align: right;
+  flex: none;
+}
+
+@media (max-width: 34rem) {
+  .toc a { flex-wrap: wrap; }
+  .toc .d { margin-left: 0; width: 100%; text-align: left; }
+}
+
+/* ── 접근성 ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* ── 인쇄 ──────────────────────────────────────────────── */
 @media print {
   :root {
-    --paper: #fff; --paper-2: #fff; --ink: #000; --muted: #444; --line: #bbb;
-    --accent-soft: #e8f7f4; --new-soft: #fdece0; --warn-soft: #fdf3d8; --accent-ink: #ffffff;
+    --canvas: #fff; --canvas-dot: transparent; --panel: #fff; --paper-2: #fff;
+    --ink: #000; --ink-2: #222; --muted: #444; --line: #bbb; --line-2: #999;
+    --brand: #000; --brand-ink: #000; --brand-soft: #f2f2f2;
+    --warn: #444; --warn-soft: #f7f7f7; --warn-line: #bbb;
+    --pad: 0;
   }
-  body { font-size: 11pt; padding: 0; }
+  body { font-size: 11pt; padding: 0; background: #fff; }
+  .wrap { border: 0; box-shadow: none; padding: 0; max-width: none; }
   .pager, .crumb { display: none; }
-  .sec, .note { break-inside: avoid; }
-  .note b + p { margin-top: 0; }
-  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .85em; color: var(--muted); }
+  .sec, .note, figure.capture, ol.steps > li { break-inside: avoid; }
+  .dl { color: #000; border: 1px solid #000; background: #fff; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .85em; color: #444; }
 }

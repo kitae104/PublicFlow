@@ -1,50 +1,70 @@
-/* 워크플로우 흐름도 — 화면 안에서 줄바꿈, 아주 좁은 화면만 가로 스크롤 */
+/* ══════════════════════════════════════════════════════════
+   워크플로우 흐름도 — n8n 캔버스를 그대로 축소한 그림.
+   회색 = 이미 만들어 둔 노드, 코럴 = 이번 시간에 새로 붙이는 노드.
+   화면 안에서 줄바꿈하고, 아주 좁은 화면만 가로 스크롤.
+   ══════════════════════════════════════════════════════════ */
 .flow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: .8rem 0;
+  gap: .7rem 0;
   overflow-x: auto;
-  padding: 1rem .2rem;
-  margin: 1rem 0;
-  background: var(--paper-2);
+  padding: 1.2rem .4rem;
+  margin: 1.2rem 0;
+  background-color: var(--paper-2);
+  background-image: radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0);
+  background-size: 18px 18px;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
 }
 
 .flow-node {
   flex: none;
   min-width: 7.5rem;
   max-width: 10rem;
-  padding: .7rem .8rem;
-  border: 2px solid var(--accent);
-  border-radius: var(--radius);
-  background: var(--paper);
+  padding: .65rem .8rem;
+  border: 1.5px solid var(--line-2);
+  border-radius: 9px;
+  background: var(--panel);
   font-size: .85rem;
   line-height: 1.45;
   text-align: center;
+  color: var(--ink);
 }
 
-.flow-node .t { display: block; font-weight: 700; }
-.flow-node .k { display: block; color: var(--muted); font-size: .78rem; }
+.flow-node .t { display: block; font-weight: 700; letter-spacing: -0.015em; }
+.flow-node .k {
+  display: block;
+  color: var(--muted);
+  font-size: .74rem;
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
 
 /* 이전 시간까지 만든 노드 — 존재감 낮춤 */
-.flow-node.is-dim { border-color: var(--line); color: var(--muted); }
+.flow-node.is-dim {
+  border-color: var(--line);
+  border-style: dashed;
+  background: transparent;
+  color: var(--muted);
+}
 .flow-node.is-dim .t { font-weight: 400; }
 
 /* 이번 시간에 새로 붙이는 노드 */
 .flow-node.is-new {
-  border-color: var(--new);
-  background: var(--new-soft);
-  box-shadow: 0 0 0 3px var(--new-soft);
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  box-shadow: 0 0 0 4px var(--brand-soft);
 }
-.flow-node.is-new .t { color: var(--new); }
+.flow-node.is-new .t { color: var(--brand-ink); }
+.flow-node.is-new .k { color: var(--brand-ink); opacity: .8; }
 
+/* 연결선 */
 .flow-arrow {
   flex: none;
-  padding: 0 .45rem;
-  color: var(--muted);
-  font-size: 1.1rem;
+  padding: 0 .4rem;
+  color: var(--line-2);
+  font-size: 1rem;
 }
 
 /* IF 분기 — 참/거짓 두 갈래를 세로로 쌓는다 */
@@ -63,14 +83,20 @@
   padding: .5rem .6rem;
   gap: .45rem 0;
   overflow-x: visible;
+  background-image: none;
 }
 
-.flow-legend { font-size: .85rem; color: var(--muted); margin-top: -.4rem; }
+.flow-legend {
+  font-size: .85rem;
+  color: var(--muted);
+  margin-top: -.5rem;
+}
 .flow-legend .sw {
   display: inline-block;
-  width: .8rem; height: .8rem;
-  border: 2px solid var(--new);
-  background: var(--new-soft);
+  width: .8rem;
+  height: .8rem;
+  border: 1.5px solid var(--brand);
+  background: var(--brand-soft);
   border-radius: 3px;
   vertical-align: -1px;
   margin-right: .25rem;

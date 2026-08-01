@@ -1,0 +1,434 @@
+/* ══════════════════════════════════════════════════════════
+   랜딩 페이지 전용 — 강의 페이지에서는 읽지 않습니다.
+
+   페이지 전체가 n8n 캔버스이고, 각 단원이 그 위에 놓인 노드 패널입니다.
+   1일차는 하나의 워크플로우가 자라는 것이므로 세로 배선(spine)으로,
+   2일차는 서로 독립된 네 프로젝트이므로 카드 네 장으로 그립니다.
+   ══════════════════════════════════════════════════════════ */
+
+body.home { padding: 0 1.15rem 0; }
+
+.home-wrap {
+  max-width: 58rem;
+  margin: 0 auto;
+}
+
+/* ── 상단 이름표 ───────────────────────────────────────── */
+.masthead {
+  max-width: 58rem;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: 1.4rem .25rem 0;
+  font-size: .85rem;
+  color: var(--muted);
+}
+.masthead .mark {
+  width: .62rem;
+  height: .62rem;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 4px var(--brand-soft);
+  flex: none;
+}
+.masthead-name { font-weight: 700; color: var(--ink-2); letter-spacing: -0.015em; }
+.masthead-meta {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  letter-spacing: .01em;
+}
+
+/* ── 히어로 ────────────────────────────────────────────── */
+.hero { padding: 3.6rem .25rem 3.2rem; }
+
+.eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0 0 1.4rem;
+}
+.eyebrow span {
+  padding: .18rem .6rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: .74rem;
+  letter-spacing: .01em;
+  color: var(--muted);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5.6vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.32;
+  letter-spacing: -0.025em;
+  margin: 0 0 1.1rem;
+  color: var(--ink);
+}
+
+.lead {
+  max-width: 34rem;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--ink-2);
+}
+
+/* ── 히어로 캔버스 — 1일차 완성형 워크플로우 ───────────── */
+.hero-canvas { margin: 2.4rem 0 2rem; }
+
+.chain {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.chain-node {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: .85rem .7rem;
+  background: var(--panel);
+  border: 1.5px solid var(--line-2);
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(16, 24, 32, .06);
+  animation: node-in .5s cubic-bezier(.2, .7, .3, 1) backwards;
+}
+.chain-node .t {
+  display: block;
+  font-weight: 700;
+  font-size: .92rem;
+  letter-spacing: -0.02em;
+}
+.chain-node .k {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  color: var(--muted);
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 배선은 코럴 — 이 선이 곧 자동화입니다 */
+.chain-node + .chain-node { margin-left: 1.1rem; }
+.chain-node + .chain-node::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 1.1rem;
+  height: 2px;
+  background: var(--brand);
+  transform-origin: left center;
+  animation: wire-in .35s ease-out backwards;
+}
+
+.chain-node:nth-child(1) { animation-delay: .05s; }
+.chain-node:nth-child(2) { animation-delay: .20s; }
+.chain-node:nth-child(3) { animation-delay: .35s; }
+.chain-node:nth-child(4) { animation-delay: .50s; }
+.chain-node:nth-child(5) { animation-delay: .65s; }
+.chain-node:nth-child(2)::before { animation-delay: .14s; }
+.chain-node:nth-child(3)::before { animation-delay: .29s; }
+.chain-node:nth-child(4)::before { animation-delay: .44s; }
+.chain-node:nth-child(5)::before { animation-delay: .59s; }
+
+@keyframes node-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes wire-in {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.canvas-note {
+  margin: 1rem 0 0;
+  font-size: .88rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+@media (max-width: 52rem) {
+  .chain { display: grid; grid-template-columns: 1fr; gap: 1.1rem; }
+  .chain-node + .chain-node { margin-left: 0; }
+  .chain-node + .chain-node::before {
+    top: auto;
+    right: auto;
+    bottom: 100%;
+    left: 50%;
+    width: 2px;
+    height: 1.1rem;
+    transform-origin: center top;
+    animation-name: wire-in-v;
+  }
+}
+
+@keyframes wire-in-v {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* ── 시작 버튼 ─────────────────────────────────────────── */
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin: 0;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  padding: .8rem 1.35rem;
+  border: 1px solid var(--line-2);
+  border-radius: 9px;
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.cta:hover { border-color: var(--brand); background: var(--brand-soft); }
+.cta-go {
+  background: var(--brand-ink);
+  border-color: var(--brand-ink);
+  color: #fff;
+}
+.cta-go:hover { background: var(--brand-deep); border-color: var(--brand-deep); }
+
+@media (prefers-color-scheme: dark) {
+  .cta-go { color: #2a0a15; }
+}
+
+/* ── 단원 패널 ─────────────────────────────────────────── */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 2rem 2rem 2.1rem;
+  margin-bottom: 1.15rem;
+  box-shadow: 0 1px 2px rgba(16, 24, 32, .05),
+              0 18px 40px -28px rgba(16, 24, 32, .35);
+}
+.panel-plain { background: transparent; border: 0; box-shadow: none; padding: 1.5rem 0 0; }
+
+.panel-label {
+  margin: 0 0 .3rem;
+  font-family: var(--font-mono);
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--brand-ink);
+}
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+  margin: 0 0 .7rem;
+}
+.panel-lead {
+  margin: 0;
+  max-width: 38rem;
+  color: var(--ink-2);
+  font-size: .97rem;
+}
+
+@media (max-width: 46rem) {
+  .panel { padding: 1.5rem 1.15rem 1.6rem; }
+  .panel-title { font-size: 1.4rem; }
+}
+
+/* ── 준비물 줄 ─────────────────────────────────────────── */
+.rows { list-style: none; margin: 1.3rem 0 0; padding: 0; }
+.rows li + li { margin-top: .45rem; }
+.rows a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: .85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--paper-2);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.rows a:hover { border-color: var(--brand); background: var(--brand-soft); }
+.rows-n {
+  flex: none;
+  width: 3.6rem;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--brand-ink);
+  letter-spacing: -0.01em;
+}
+.rows-body { flex: 1 1 auto; min-width: 0; line-height: 1.55; }
+.rows-body .t { display: block; font-weight: 700; letter-spacing: -0.018em; }
+.rows-body .s { display: block; font-size: .87rem; color: var(--muted); }
+.rows-d {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: .76rem;
+  color: var(--muted);
+  padding: .15rem .55rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--panel);
+}
+
+/* ── 1일차 배선 목록 ───────────────────────────────────── */
+.spine {
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  position: relative;
+}
+/* 여덟 강을 잇는 한 줄 — 이 과정이 하나의 워크플로우라는 뜻 */
+.spine::before {
+  content: "";
+  position: absolute;
+  left: calc(1.95rem - 1px);
+  top: 1.7rem;
+  bottom: 1.7rem;
+  width: 2px;
+  background: var(--brand);
+  opacity: .35;
+}
+.spine li + li { margin-top: .25rem; }
+.spine a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  padding: .6rem .9rem;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.spine a:hover { border-color: var(--line-2); background: var(--paper-2); }
+
+.spine-n {
+  flex: none;
+  width: 2.1rem;
+  height: 2.1rem;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  border: 1.5px solid var(--line-2);
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.spine a:hover .spine-n { border-color: var(--brand); color: var(--brand-ink); }
+
+.spine-body { flex: 1 1 auto; min-width: 0; line-height: 1.55; }
+.spine-body .t { display: block; font-weight: 700; letter-spacing: -0.018em; }
+.spine-body .s { display: block; font-size: .87rem; color: var(--muted); }
+
+.spine-k {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: .74rem;
+  color: var(--muted);
+  padding: .15rem .55rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--paper-2);
+}
+
+@media (max-width: 40rem) {
+  .spine-k { display: none; }
+}
+
+/* ── 2일차 프로젝트 카드 ───────────────────────────────── */
+.projects {
+  list-style: none;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .7rem;
+}
+.projects li { display: flex; }
+.projects a {
+  flex: 1 1 auto;
+  padding: 1.1rem 1.15rem 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper-2);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.projects a:hover { border-color: var(--brand); background: var(--brand-soft); }
+.projects .tag {
+  display: inline-block;
+  margin-bottom: .5rem;
+  padding: .1rem .5rem;
+  border-radius: 5px;
+  background: var(--ink);
+  color: var(--panel);
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  font-weight: 700;
+}
+.projects .t {
+  display: block;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  margin-bottom: .25rem;
+}
+.projects .s {
+  display: block;
+  font-size: .9rem;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+.projects .k {
+  display: block;
+  margin-top: .7rem;
+  padding-top: .6rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 44rem) {
+  .projects { grid-template-columns: 1fr; }
+}
+
+/* ── 바닥 ──────────────────────────────────────────────── */
+.home-foot {
+  max-width: 58rem;
+  margin: 2.5rem auto 0;
+  padding: 1.4rem .25rem 3rem;
+  border-top: 1px solid var(--line-2);
+  color: var(--muted);
+  font-size: .84rem;
+}
+.home-foot p { margin: 0; }
+
+/* ── 인쇄 ──────────────────────────────────────────────── */
+@media print {
+  .panel { border: 1px solid #bbb; box-shadow: none; break-inside: avoid; }
+  .hero { padding: 1rem 0 1.5rem; }
+  .cta-row { display: none; }
+  .chain-node { animation: none; }
+  .chain-node + .chain-node::before { animation: none; background: #666; }
+  .spine::before { background: #666; }
+}

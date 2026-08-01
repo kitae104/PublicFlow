@@ -4,60 +4,200 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>공무원을 위한 n8n 업무 자동화 — 2일 과정</title>
+<meta name="description" content="코딩 없이 민원 접수·기록·통보·일정·AI 초안까지 자동으로 처리하는 시스템을 이틀 동안 직접 만드는 공무원 실무 과정입니다.">
 <link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/home.css">
 </head>
-<body>
-<main class="wrap">
+<body class="home">
 
-  <header class="page-head">
-    <h1>공무원을 위한 n8n 업무 자동화</h1>
-    <p class="sub">코딩 없이 반복 업무를 자동으로 — 2일 과정</p>
-  </header>
+<header class="masthead">
+  <span class="mark" aria-hidden="true"></span>
+  <span class="masthead-name">공무원을 위한 n8n 업무 자동화</span>
+  <span class="masthead-meta">2일 과정</span>
+</header>
 
-  <div class="note tip">
-    <b>이 과정을 마치면</b>
-    민원이 접수되면 시트에 기록되고, 담당자에게 메일이 가고, 처리 마감이 캘린더에 잡히고,
-    AI가 안내문 초안까지 써주는 시스템을 직접 만들 수 있습니다.
-  </div>
+<main class="home-wrap">
 
-  <h2>시작하기 전에</h2>
-  <ul class="toc">
-    <li><a href="prep/n8n-setup.html"><span class="n">접속</span><span>n8n을 쓰는 세 가지 방법 — 강사 서버·클라우드·내 컴퓨터에 설치</span><span class="d">먼저 읽기</span></a></li>
-    <li><a href="prep/day1.html"><span class="n">준비 ①</span><span>1일차 준비물 — 구글 계정·시트, n8n 접속, Gemini API 키</span><span class="d">40분</span></a></li>
-    <li><a href="prep/day2.html"><span class="n">준비 ②</span><span>2일차 준비물 — 텔레그램 봇 만들기</span><span class="d">20분</span></a></li>
-  </ul>
+  <section class="hero">
+    <p class="eyebrow"><span>2일</span><span>12강</span><span>코딩 없음</span></p>
+    <h1 class="hero-title">손으로 옮겨 적던 일을<br>워크플로우 하나에 맡깁니다</h1>
+    <p class="lead">민원이 접수되면 시트에 한 줄이 쌓이고, 담당자에게 메일이 가고,
+      처리 마감이 캘린더에 잡히고, AI가 안내문 초안까지 씁니다.
+      이틀 동안 그 시스템을 직접 만듭니다.</p>
 
-  <h2>1일차 — 민원 접수 자동화 시스템 만들기</h2>
-  <p>워크플로우 하나를 8단계에 걸쳐 조금씩 키웁니다. 매 시간 노드를 하나씩 얹습니다.</p>
-  <ul class="toc">
-    <li><a href="day1/01.html"><span class="n">01</span><span>첫 워크플로우</span><span class="d">노드와 실행</span></a></li>
-    <li><a href="day1/02.html"><span class="n">02</span><span>데이터 흐름과 표현식</span><span class="d">{{ }} 문법</span></a></li>
-    <li><a href="day1/03.html"><span class="n">03</span><span>구글 시트에 자동 기록</span><span class="d">계정 연결</span></a></li>
-    <li><a href="day1/04.html"><span class="n">04</span><span>이메일 자동 발송</span><span class="d">Gmail</span></a></li>
-    <li><a href="day1/05.html"><span class="n">05</span><span>캘린더 일정 자동 생성</span><span class="d">날짜 계산</span></a></li>
-    <li><a href="day1/06.html"><span class="n">06</span><span>AI 안내문 자동 생성</span><span class="d">Gemini</span></a></li>
-    <li><a href="day1/07.html"><span class="n">07</span><span>조건에 따라 나누기</span><span class="d">IF 분기</span></a></li>
-    <li><a href="day1/08.html"><span class="n">08</span><span>입력 폼으로 실제 접수받기</span><span class="d">완성</span></a></li>
-  </ul>
+    <div class="hero-canvas">
+      <div class="chain">
+        <div class="chain-node"><span class="t">민원 접수</span><span class="k">Form Trigger</span></div>
+        <div class="chain-node"><span class="t">시트에 기록</span><span class="k">Google Sheets</span></div>
+        <div class="chain-node"><span class="t">메일 발송</span><span class="k">Gmail</span></div>
+        <div class="chain-node"><span class="t">마감 일정</span><span class="k">Google Calendar</span></div>
+        <div class="chain-node"><span class="t">안내문 초안</span><span class="k">Gemini</span></div>
+      </div>
+      <p class="canvas-note">1일차가 끝나면 이 워크플로우가 손에 남습니다. 여덟 시간에 걸쳐 노드를 하나씩 얹어 만듭니다.</p>
+    </div>
 
-  <h2>2일차 — 업무별 자동화 프로젝트</h2>
-  <p>1일차에서 배운 것을 조합해 실제 업무에 쓸 수 있는 자동화를 네 가지 만듭니다.</p>
-  <ul class="toc">
-    <li><a href="day2/p1.html"><span class="n">P1</span><span>공문서 요약 서비스</span><span class="d">PDF 요약</span></a></li>
-    <li><a href="day2/p2.html"><span class="n">P2</span><span>매일 아침 민원 브리핑 봇</span><span class="d">정시 자동실행</span></a></li>
-    <li><a href="day2/p3.html"><span class="n">P3</span><span>AI 민원 자동 분류·답변 초안</span><span class="d">AI 분류</span></a></li>
-    <li><a href="day2/p4.html"><span class="n">P4</span><span>날씨 알리미</span><span class="d">공공데이터 API</span></a></li>
-  </ul>
+    <p class="cta-row">
+      <a class="cta cta-go" href="prep/n8n-setup.html">n8n 접속 방법 보기</a>
+      <a class="cta" href="day1/01.html">01강 미리 보기</a>
+    </p>
+  </section>
 
-  <div class="note warn">
-    <b>준비물을 먼저 확인하세요</b>
-    n8n에 접속할 주소가 없으면 1일차 01강부터 시작할 수 없습니다. 강사가 준비한 서버가
-    없다면 <a href="prep/n8n-setup.html">n8n을 쓰는 세 가지 방법</a>에서 클라우드 가입이나
-    내 컴퓨터 설치 중 하나를 골라 먼저 마쳐두세요.
-    구글 계정이 없으면 3강부터, Gemini API 키가 없으면 6강부터 진행할 수 없습니다.
-    기상청 API는 신청 후 승인까지 시간이 걸리니 <a href="prep/day1.html">준비 ①</a> 맨 아래를 미리 봐두세요.
-  </div>
+  <section class="panel" id="prep" aria-labelledby="prep-h">
+    <p class="panel-label">먼저</p>
+    <h2 class="panel-title" id="prep-h">시작하기 전에</h2>
+    <p class="panel-lead">수업 시작 전에 각자 컴퓨터에서 끝내두어야 하는 준비입니다.
+      셋 다 하는 데 한 시간이 채 걸리지 않습니다.</p>
+    <ul class="rows">
+      <li><a href="prep/n8n-setup.html">
+        <span class="rows-n">접속</span>
+        <span class="rows-body">
+          <span class="t">n8n을 쓰는 세 가지 방법</span>
+          <span class="s">강사 서버 · n8n 클라우드 · 내 컴퓨터에 설치</span>
+        </span>
+        <span class="rows-d">먼저 읽기</span>
+      </a></li>
+      <li><a href="prep/day1.html">
+        <span class="rows-n">준비 ①</span>
+        <span class="rows-body">
+          <span class="t">1일차 준비물</span>
+          <span class="s">구글 계정과 시트, n8n 접속, Gemini API 키</span>
+        </span>
+        <span class="rows-d">40분</span>
+      </a></li>
+      <li><a href="prep/day2.html">
+        <span class="rows-n">준비 ②</span>
+        <span class="rows-body">
+          <span class="t">2일차 준비물</span>
+          <span class="s">텔레그램 봇 만들기</span>
+        </span>
+        <span class="rows-d">20분</span>
+      </a></li>
+    </ul>
+  </section>
+
+  <section class="panel" id="day1" aria-labelledby="day1-h">
+    <p class="panel-label">1일차</p>
+    <h2 class="panel-title" id="day1-h">민원 접수 자동화 시스템 만들기</h2>
+    <p class="panel-lead">여덟 강이 모두 <b>하나의 워크플로우</b>입니다. 매 시간 노드를 하나씩
+      얹어 앞 시간에 만든 것 위에 이어 붙입니다.</p>
+    <ol class="spine">
+      <li><a href="day1/01.html">
+        <span class="spine-n">01</span>
+        <span class="spine-body">
+          <span class="t">첫 워크플로우</span>
+          <span class="s">노드를 놓고 실행해 봅니다</span>
+        </span>
+        <span class="spine-k">Manual Trigger</span>
+      </a></li>
+      <li><a href="day1/02.html">
+        <span class="spine-n">02</span>
+        <span class="spine-body">
+          <span class="t">데이터 흐름과 표현식</span>
+          <span class="s">앞 노드의 값을 뒤 노드에서 꺼내 씁니다</span>
+        </span>
+        <span class="spine-k">{{ }}</span>
+      </a></li>
+      <li><a href="day1/03.html">
+        <span class="spine-n">03</span>
+        <span class="spine-body">
+          <span class="t">구글 시트에 자동 기록</span>
+          <span class="s">접수와 동시에 시트에 한 줄이 쌓입니다</span>
+        </span>
+        <span class="spine-k">Google Sheets</span>
+      </a></li>
+      <li><a href="day1/04.html">
+        <span class="spine-n">04</span>
+        <span class="spine-body">
+          <span class="t">이메일 자동 발송</span>
+          <span class="s">접수 안내 메일이 저절로 나갑니다</span>
+        </span>
+        <span class="spine-k">Gmail</span>
+      </a></li>
+      <li><a href="day1/05.html">
+        <span class="spine-n">05</span>
+        <span class="spine-body">
+          <span class="t">캘린더 일정 자동 생성</span>
+          <span class="s">처리 마감일을 계산해 일정으로 잡습니다</span>
+        </span>
+        <span class="spine-k">Google Calendar</span>
+      </a></li>
+      <li><a href="day1/06.html">
+        <span class="spine-n">06</span>
+        <span class="spine-body">
+          <span class="t">AI 안내문 자동 생성</span>
+          <span class="s">민원 내용에 맞춘 안내문 초안을 받습니다</span>
+        </span>
+        <span class="spine-k">Gemini</span>
+      </a></li>
+      <li><a href="day1/07.html">
+        <span class="spine-n">07</span>
+        <span class="spine-body">
+          <span class="t">조건에 따라 나누기</span>
+          <span class="s">민원 종류에 따라 처리 경로를 가릅니다</span>
+        </span>
+        <span class="spine-k">If</span>
+      </a></li>
+      <li><a href="day1/08.html">
+        <span class="spine-n">08</span>
+        <span class="spine-body">
+          <span class="t">입력 폼으로 실제 접수받기</span>
+          <span class="s">주소만 알려주면 누구나 접수할 수 있습니다</span>
+        </span>
+        <span class="spine-k">Form Trigger</span>
+      </a></li>
+    </ol>
+  </section>
+
+  <section class="panel" id="day2" aria-labelledby="day2-h">
+    <p class="panel-label">2일차</p>
+    <h2 class="panel-title" id="day2-h">업무별 자동화 프로젝트</h2>
+    <p class="panel-lead">1일차에서 배운 것을 조합해 실제 업무에 바로 쓸 수 있는 자동화를
+      네 가지 만듭니다. 네 프로젝트는 서로 독립적이라 필요한 것부터 골라 만들어도 됩니다.</p>
+    <ul class="projects">
+      <li><a href="day2/p1.html">
+        <span class="tag">P1</span>
+        <span class="t">공문서 요약 서비스</span>
+        <span class="s">PDF를 올리면 다섯 줄 요약이 텔레그램으로 도착합니다.</span>
+        <span class="k">Form · Extract from File · Gemini · Telegram</span>
+      </a></li>
+      <li><a href="day2/p2.html">
+        <span class="tag">P2</span>
+        <span class="t">매일 아침 민원 브리핑 봇</span>
+        <span class="s">매일 아침 9시, 쌓인 민원을 종류별로 정리해 메일로 보냅니다.</span>
+        <span class="k">Schedule · Google Sheets · Aggregate · Gmail</span>
+      </a></li>
+      <li><a href="day2/p3.html">
+        <span class="tag">P3</span>
+        <span class="t">AI 민원 자동 분류·답변 초안</span>
+        <span class="s">접수된 민원을 AI가 분류하고 답변 초안과 함께 시트에 쌓습니다.</span>
+        <span class="k">Form · Gemini · Google Sheets</span>
+      </a></li>
+      <li><a href="day2/p4.html">
+        <span class="tag">P4</span>
+        <span class="t">날씨 알리미</span>
+        <span class="s">기상청 공공데이터를 읽어 아침마다 오늘 날씨를 알려줍니다.</span>
+        <span class="k">Schedule · Code · HTTP Request · Telegram</span>
+      </a></li>
+    </ul>
+  </section>
+
+  <section class="panel panel-plain" aria-labelledby="check-h">
+    <h2 class="panel-title" id="check-h">시작하기 전에 확인할 것</h2>
+    <div class="note warn">
+      <b>n8n 접속 주소가 없으면 01강을 시작할 수 없습니다</b>
+      <p>강사가 준비한 서버가 없다면 <a href="prep/n8n-setup.html">n8n을 쓰는 세 가지 방법</a>에서
+        클라우드 가입이나 내 컴퓨터 설치 중 하나를 골라 먼저 마쳐두세요.</p>
+      <p>구글 계정이 없으면 03강부터, Gemini API 키가 없으면 06강부터 진행할 수 없습니다.
+        기상청 API는 신청 후 승인까지 시간이 걸리니
+        <a href="prep/day1.html">1일차 준비물</a> 맨 아래를 미리 봐두세요.</p>
+    </div>
+  </section>
 
 </main>
+
+<footer class="home-foot">
+  <p>공무원을 위한 n8n 업무 자동화 · 2일 과정</p>
+</footer>
+
 </body>
 </html>
