@@ -61,14 +61,15 @@
     <ol class="steps">
       <li><span class="step-title">가입 페이지 열기</span>
         브라우저에서 <code class="val">https://n8n.io</code>에 접속하면 첫 화면
-        가운데에 주황색 <code class="val">Get started for free</code> 버튼이
-        보입니다. 이것을 누릅니다.
-        <span class="hint">오른쪽 위의 <code class="val">Get Started</code> 버튼을
-        눌러도 같은 곳으로 갑니다. 이미 계정이 있다면 그 옆
-        <code class="val">Sign in</code>입니다.</span>
+        <b>왼쪽</b>, 큰 제목(<code class="val">AI agents and workflows you can see and
+        control</code>) 바로 아래에 주황색 <code class="val">Get started for free</code>
+        버튼이 보입니다. 이것을 누릅니다.
+        <span class="hint">맨 위 검은 띠 오른쪽 끝의 주황색
+        <code class="val">Get Started</code> 버튼을 눌러도 같은 곳으로 갑니다. 이미 계정이
+        있다면 그 <b>왼쪽</b>의 <code class="val">Sign in</code>입니다. 화면 문구와 배치는
+        n8n 쪽에서 수시로 바뀌므로 그림과 조금 달라도 괜찮습니다.</span>
         <figure class="capture" id="fig-setup-1">
           <div class="capture-cap">[그림 접속-1] n8n 홈페이지의 무료 시작 버튼</div>
-          <!-- 캡처 위치: n8n.io 첫 화면에서 무료 시작 버튼이 보이는 부분 -->
           <img src="../assets/img/fig-setup-1.png" alt="n8n 홈페이지의 무료 시작 버튼">
         </figure>
       </li>
@@ -92,19 +93,23 @@
       </li>
       <li><span class="step-title">워크플로우 목록 화면으로 가기</span>
         처음 열리는 화면은 <code class="val">What do you want to automate?</code>라고
-        묻는 <b>AI 어시스턴트 화면</b>입니다. 여기에 하고 싶은 일을 적으면 AI가
-        대신 워크플로우를 만들어주지만, <b>우리는 직접 만들 것이므로 이 화면은
-        쓰지 않습니다.</b> 왼쪽 메뉴의 <code class="val">Overview</code>를 누르면
-        수업에서 쓸 <b>워크플로우 목록 화면</b>이 나옵니다.
+        묻는 <b>AI 어시스턴트 화면</b>입니다(주소도 <code class="val">/assistant</code>로
+        끝납니다). 여기에 하고 싶은 일을 적으면 AI가 대신 워크플로우를 만들어주지만,
+        <b>우리는 직접 만들 것이므로 이 화면은 쓰지 않습니다.</b> 왼쪽 메뉴에서
+        <code class="val">AI Assistant</code> 바로 아래의
+        <code class="val">Overview</code>를 누르면 수업에서 쓸 <b>워크플로우 목록
+        화면</b>이 나옵니다.
         <span class="hint">화면 맨 위에 <code class="val">14 days left</code>와
         <code class="val">0/1000 Executions</code>가 보입니다. 각각 <b>남은 체험
         기간</b>과 <b>지금까지 워크플로우를 실행한 횟수</b>입니다. 실습 이틀 동안
         1000회를 쓸 일은 없습니다.</span>
         <figure class="capture" id="fig-setup-2">
-          <div class="capture-cap">[그림 접속-2] 가입 직후 열린 내 n8n 클라우드 화면</div>
-          <!-- 캡처 위치: 가입 완료 후 처음 열린 n8n 화면 전체, 브라우저 주소창의 …app.n8n.cloud 주소와 화면 위쪽 14 days left 표시가 함께 보이도록 -->
+          <div class="capture-cap">[그림 접속-2] 가입 직후 열린 내 n8n 클라우드 화면 — 주소창의 내 전용 주소와 <code class="val">14 days left</code></div>
           <img src="../assets/img/fig-setup-2.png" alt="가입 직후 열린 내 n8n 클라우드 화면">
         </figure>
+        <span class="hint">그림의 주소는 <code class="val">kitae104.app.n8n.cloud</code>이지만
+        앞부분은 사람마다 다릅니다. 왼쪽 메뉴의 <code class="val">Personal</code>은 내
+        개인 작업 공간으로, 01강에서 워크플로우를 만들 곳입니다.</span>
       </li>
     </ol>
     <div class="note warn">
@@ -309,9 +314,14 @@ http://localhost:5678</pre>
     </div>
 
     <figure class="capture" id="fig-setup-3">
-      <div class="capture-cap">[그림 접속-3] n8n 클라우드에서 본 구글 자격증명 창</div>
-      <div class="capture-guide">캡처 위치: n8n 클라우드에서 구글 시트 자격증명 만들기 창을 연 화면, 구글 계정으로 로그인하는 버튼이 바로 보이는 상태</div>
+      <div class="capture-cap">[그림 접속-3] n8n 클라우드에서 본 구글 자격증명 항목 — <code class="val">Sign in with Google</code> 버튼이 바로 보입니다</div>
+      <img src="../assets/img/fig-d1-03-2.png" alt="n8n 클라우드에서 본 구글 자격증명 항목">
     </figure>
+    <p class="hint">방법 ②(내 컴퓨터에 설치)를 쓰면 이 자리에
+      <code class="val">Sign in with Google</code> 버튼 대신
+      <code class="val">Client ID</code>·<code class="val">Client Secret</code> 칸이 먼저
+      나옵니다. 버튼 옆의 <code class="val">or setup manually</code>를 눌렀을 때 나오는
+      화면과 같습니다.</p>
   </section>
 
   <section class="sec" id="trouble">

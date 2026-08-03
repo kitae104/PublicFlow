@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>03 구글 시트에 자동 기록 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/flow.css">
 </head>
 <body>
 <main class="wrap">
@@ -55,25 +54,16 @@
       <a href="../prep/day1.html#sheet-prep">구글 시트 준비</a>를 먼저 보고 오세요.
     </div>
     <figure class="capture" id="fig-d1-03-1">
-      <div class="capture-cap">[그림 3-1] 완성된 모습</div>
-      <!-- 캡처 위치: 새 행이 추가된 구글 시트 화면 전체 -->
+      <div class="capture-cap">[그림 3-1] 완성된 모습 — <code class="val">수동 실행</code> → <code class="val">샘플 민원</code> → <code class="val">시트에 기록</code></div>
       <img src="../assets/img/fig-d1-03-1.png" alt="완성된 모습">
     </figure>
+    <p class="hint">01·02강에서 만든 <code class="val">값 만들기</code>·
+      <code class="val">값 가져오기</code>는 사라지고, 그 자리에 실제 민원 데이터를 담은
+      <code class="val">샘플 민원</code>이 들어갑니다. 이 노드는 <b>07강까지 그대로
+      재사용</b>하니, 여기서 정한 필드 이름을 잘 기억해두세요. 마지막 노드 이름 아래 흐리게 적힌
+      <code class="val">append: sheet</code>는 "시트에 한 줄 추가"라는 설정이 제대로 잡혔다는
+      표시입니다.</p>
   </section>
-
-  <section class="sec" id="flow">
-    <h2 class="sec-title">지금까지의 흐름</h2>
-    <div class="flow">
-      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">수동 트리거</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">샘플 민원</span><span class="k">Edit Fields</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">시트에 기록</span><span class="k">Google Sheets</span></div>
-    </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
-    <p class="flow-legend">01·02강에서 만든 <b>값 만들기</b>와 <b>값 가져오기</b> 두 노드는 이번 시간에 삭제됩니다. 그 자리에 실제 민원 데이터를 담은 <b>샘플 민원</b> 노드가 새로 생깁니다. 이 노드는 앞으로 몇 강 동안 그대로 재사용됩니다.</p>
-  </section>
-
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
@@ -110,29 +100,39 @@
         <code class="val">Google Sheets</code>를 고릅니다.
       </li>
       <li><span class="step-title">자격증명 연결하기</span>
-        노드 패널 위쪽에서 자격증명을 선택하는 칸을 누르고
-        <code class="val">Create new credential</code>을 고릅니다. 새 창(또는 팝업)이 뜨면
-        준비해둔 개인 구글 계정으로 로그인합니다.
+        노드를 열면 맨 위 <code class="val">Credential</code> 항목에
+        <code class="val">Sign in with Google</code>이라는 구글 로고가 붙은 버튼이 바로
+        보입니다([그림 3-2]). 이 버튼을 누르면 새 창(또는 팝업)이 뜹니다.
+        <span class="hint">버튼 오른쪽의 <code class="val">or setup manually</code>는
+        <code class="val">Client ID</code>·<code class="val">Client Secret</code>을 직접
+        넣는 방식입니다. n8n을 <b>내 컴퓨터에 설치</b>해 쓰는 경우에는 이 쪽으로 가야
+        하며, 그때는
+        <a href="../prep/n8n-setup.html#google-oauth">두 가지 방법 페이지의 구글 연결
+        항목</a>을 따르세요.</span>
         <figure class="capture" id="fig-d1-03-2">
-          <div class="capture-cap">[그림 3-2] 자격증명 만들기 선택 화면</div>
-          <!-- 캡처 위치: Google Sheets 노드 패널에서 자격증명 드롭다운을 열어 Create new credential을 고르기 직전 화면 -->
-          <img src="../assets/img/fig-d1-03-2.png" alt="자격증명 만들기 선택 화면">
+          <div class="capture-cap">[그림 3-2] <code class="val">Credential</code> 항목의 <code class="val">Sign in with Google</code> 버튼</div>
+          <img src="../assets/img/fig-d1-03-2.png" alt="Credential 항목의 Sign in with Google 버튼">
         </figure>
-        이어서 이 앱이 내 구글 데이터에 접근하도록 허용할지 묻는 화면이 나옵니다.
-        허용과 비슷한 문구의 버튼을 눌러 동의합니다.
+        새 창에서는 먼저 <code class="val">계정을 선택하세요.</code>라는 화면이 나옵니다
+        ([그림 3-3]). <code class="val">n8n.cloud(으)로 이동</code>이라고 적혀 있고 그 아래
+        내 구글 계정이 보이는데, <b>준비해둔 개인 구글 계정</b>을 고릅니다. 이어서 이 앱이
+        내 구글 데이터에 접근하도록 허용할지 묻는 화면이 나오면 허용과 비슷한 문구의
+        버튼을 눌러 동의합니다.
         <span class="hint">화면 문구는 구글 쪽에서 수시로 바뀌므로 정확한 문구를 외울 필요는
-        없습니다. "접근을 허용하겠느냐"는 취지의 화면이면 진행하면 됩니다.</span>
+        없습니다. "계정을 고르고", "접근을 허용하겠느냐"는 취지의 화면이면 진행하면 됩니다.</span>
         <figure class="capture" id="fig-d1-03-3">
-          <div class="capture-cap">[그림 3-3] 구글 로그인·권한 허용 화면</div>
-          <!-- 캡처 위치: 구글 계정 로그인 후 나오는 데이터 접근 허용 동의 화면(개인정보 보호를 위해 계정 이메일은 가리고 촬영) -->
-          <img src="../assets/img/fig-d1-03-3.png" alt="구글 로그인·권한 허용 화면">
+          <div class="capture-cap">[그림 3-3] 구글 계정 선택 화면</div>
+          <img src="../assets/img/fig-d1-03-3.png" alt="구글 계정 선택 화면">
         </figure>
-        창이 닫히고 n8n 화면으로 돌아와 방금 만든 자격증명 이름이 칸에 채워져 있으면
-        연결이 끝난 것입니다.
+        창이 닫히고 n8n 화면으로 돌아오면 <code class="val">Credential</code> 칸에
+        <code class="val">Google Sheets account</code>라는 자격증명이 만들어져 있습니다.
+        칸을 눌러보면 [그림 3-4]처럼 그 자격증명(<code class="val">Google Sheets OAuth2
+        API</code>)이 목록에 들어 있는 것을 확인할 수 있습니다.
+        <span class="hint">목록 아래의 <code class="val">+ Create new credential</code>은
+        자격증명을 <b>하나 더</b> 만들 때 쓰는 항목입니다. 지금은 누르지 않아도 됩니다.</span>
         <figure class="capture" id="fig-d1-03-4">
-          <div class="capture-cap">[그림 3-4] 자격증명 연결 완료 상태</div>
-          <!-- 캡처 위치: Google Sheets 노드 패널에서 자격증명 칸에 방금 만든 자격증명 이름이 채워져 있는 화면 -->
-          <img src="../assets/img/fig-d1-03-4.png" alt="자격증명 연결 완료 상태">
+          <div class="capture-cap">[그림 3-4] 만들어진 <code class="val">Google Sheets account</code> 자격증명</div>
+          <img src="../assets/img/fig-d1-03-4.png" alt="만들어진 Google Sheets account 자격증명">
         </figure>
         <div class="note warn">
           <b>기관 계정은 막혀 있을 수 있습니다</b>
@@ -141,35 +141,46 @@
         </div>
         <div class="note">
           <b>체크포인트 — 여기까지 잘 됐는지 확인하세요</b>
-          자격증명 칸에 방금 만든 자격증명 이름이 채워져 있고, 노드 위에 오류를 나타내는
-          빨간 표시가 없으면 여기까지는 정상입니다. 이름이 비어 있거나 오류 표시가 보이면
+          <code class="val">Credential</code> 칸에
+          <code class="val">Google Sheets account</code>가 채워져 있고, 노드 위에 오류를
+          나타내는 빨간 표시가 없으면 여기까지는 정상입니다. 이름이 비어 있거나 오류 표시가 보이면
           이 단계(자격증명 연결하기)로 돌아가 처음부터 다시 해보세요 — 특히 기관 계정으로
           로그인하지 않았는지 확인하세요. 정상이면 이어서 Resource·Operation 설정으로
           넘어갑니다.
         </div>
       </li>
       <li><span class="step-title">Resource·Operation 설정하기</span>
-        <code class="val">Resource</code>는 기본값인 <code class="val">Sheet Within Document</code>
-        그대로 둡니다. <code class="val">Operation</code>은 기본값이
-        <code class="val">Get Row(s)</code>(가져오기)로 되어 있는데, 이걸 눌러
-        <code class="val">Append Row</code>(한 줄 추가하기)로 바꿉니다.
+        <code class="val">Resource</code>는 <code class="val">Sheet Within Document</code>
+        그대로 둡니다. <code class="val">Operation</code>은 눌러서
+        <code class="val">Append Row</code>(한 줄 추가하기)로 바꿉니다 —
+        [그림 3-2]가 두 칸을 이렇게 맞춰둔 상태입니다.
+        <span class="hint">처음 채워져 있는 값은 n8n 버전에 따라
+        <code class="val">Get Row(s)</code>(가져오기)나
+        <code class="val">Append or Update Row</code>일 수 있습니다. 무엇으로 되어 있든
+        <code class="val">Append Row</code>로 바꾸면 됩니다. 제대로 바뀌면 캔버스의 노드
+        이름 아래에 <code class="val">append: sheet</code>라고 표시됩니다.</span>
       </li>
       <li><span class="step-title">시트 고르기</span>
-        <code class="val">Document</code> 칸을 눌러 목록에서 준비물에서 만든 시트를
-        고릅니다.
-        <span class="hint">이 목록이 비어 있으면 자격증명이 제대로 연결되지 않은
+        <code class="val">Document</code> 칸은 왼쪽이 <code class="val">From list</code>로
+        되어 있습니다. 오른쪽 <code class="val">Choose…</code> 칸을 눌러 목록에서 준비물에서
+        만든 시트(예: <code class="val">민원 처리 리스트</code>)를 고릅니다.
+        <span class="hint">고르기 전에는 칸 오른쪽에 빨간 경고 표시가 떠 있습니다 — 아직 안
+        골랐다는 뜻이니 놀라지 마세요. 이 목록이 비어 있으면 자격증명이 제대로 연결되지 않은
         것입니다 — 5단계로 돌아가 다시 확인하세요.</span>
       </li>
       <li><span class="step-title">탭 고르기</span>
         <code class="val">Sheet</code> 칸을 눌러 목록에서 시트 탭을 고릅니다. 새로 만든
-        스프레드시트라면 탭이 하나뿐일 것이므로 그 탭을 고르면 됩니다.
+        스프레드시트라면 탭이 하나뿐일 것이므로 그 탭을 고르면 됩니다. 고르고 나면 왼쪽에
+        <code class="val">By Name</code>, 오른쪽에 탭 이름(예: <code class="val">시트1</code>)이
+        표시됩니다.
         <span class="hint">탭 이름이 <code class="val">Sheet1</code>이든 <code class="val">시트1</code>이든
         상관없습니다 — 직접 입력하지 않고 목록에서 골라 쓰기 때문입니다.</span>
       </li>
       <li><span class="step-title">칸 매핑하기</span>
-        <code class="val">Mapping</code>은 기본값인
-        <code class="val">Map Each Column Manually</code> 그대로 둡니다. 그 아래 준비물에서
-        만든 여섯 칸(이름·연락처·이메일·종류·상세설명·등록일)이 나타납니다. 각 칸 오른쪽의
+        <code class="val">Mapping Column Mode</code>는 기본값인
+        <code class="val">Map Each Column Manually</code> 그대로 둡니다. 그 아래
+        <code class="val">Values to Send</code>라는 제목과 함께 준비물에서 만든 여섯 칸
+        (이름·연락처·이메일·종류·상세설명·등록일)이 나타납니다. 각 칸 오른쪽의
         표현식 전환 스위치를 눌러 <code class="val">Expression</code> 모드로 바꾼 뒤 아래 값을
         그대로 입력합니다.
         <span class="hint">스위치는 <b>여섯 칸을 각각 따로 눌러야 합니다.</b> 한 칸에서
@@ -184,13 +195,16 @@
           <code class="val">등록일</code> = <code class="val">{{ $now.toFormat('yyyy-MM-dd') }}</code>
         </p>
         <figure class="capture" id="fig-d1-03-5">
-          <div class="capture-cap">[그림 3-5] 여섯 칸이 각각 Expression 모드로 전환된 매핑 패널</div>
-          <!-- 캡처 위치: Google Sheets 노드의 칸 매핑 영역 전체 — 이름·연락처·이메일·종류·상세설명·등록일 여섯 칸 각각의 표현식 전환 스위치가 켜져 있고 값이 채워진 화면 -->
+          <div class="capture-cap">[그림 3-5] 여섯 칸이 각각 <code class="val">Expression</code> 모드로 전환된 매핑 패널</div>
           <img src="../assets/img/fig-d1-03-5.png" alt="여섯 칸이 각각 Expression 모드로 전환된 매핑 패널">
         </figure>
+        <span class="hint">제대로 바뀐 칸은 [그림 3-5]처럼 왼쪽에 회색
+        <code class="val">fx</code> 표시가 붙습니다. <b>여섯 칸 모두에 이 표시가 있는지</b>
+        눈으로 확인하세요 — 표시가 없는 칸은 아직 <code class="val">Fixed</code> 모드입니다.</span>
         <span class="hint"><code class="val">$now</code>는 지금 이 순간의 날짜와 시간입니다.
         <code class="val">.toFormat('yyyy-MM-dd')</code>는 그 날짜를
-        <code class="val">2026-08-01</code> 같은 모양으로 바꿔줍니다.</span>
+        <code class="val">2026-08-03</code> 같은 모양으로 바꿔줍니다 — [그림 3-5]의 맨 아래
+        <code class="val">등록일</code> 칸 밑에 그 결과가 미리 보입니다.</span>
       </li>
       <li><span class="step-title">노드 이름 바꾸기</span>
         노드 제목을 더블클릭해 <code class="val">시트에 기록</code>으로 바꿉니다.

@@ -39,10 +39,12 @@
       <li><span class="step-title">BotFather 찾기</span>
         텔레그램 위쪽 검색창에 <code class="val">@BotFather</code>를 입력해 검색하고,
         파란 확인 배지가 붙은 공식 계정을 열어 시작(Start)과 비슷한 문구의 버튼을 누릅니다.
+        <span class="hint">검색 결과에는 이름이 비슷한 가짜 계정이 여럿 섞여 있습니다
+        ([그림 준2-1] 아래쪽 목록). <b>파란 확인 배지가 붙은 맨 위의
+        <code class="val">BotFather</code></b>가 공식 계정입니다.</span>
         <figure class="capture" id="fig-prep2-1">
-          <div class="capture-cap">[그림 준2-1] 검색 결과에서 공식 BotFather 계정</div>
-          <!-- 캡처 위치: 검색창에 BotFather 입력 후 나오는 검색 결과 목록, 확인 배지가 보이도록 -->
-          <img src="../assets/img/fig-prep2-1.png" alt="검색 결과에서 공식 BotFather 계정">
+          <div class="capture-cap">[그림 준2-1] 검색 결과의 공식 BotFather 계정(왼쪽)과 사용자명을 정하는 대화(오른쪽)</div>
+          <img src="../assets/img/fig-prep2-1.png" alt="검색 결과의 공식 BotFather 계정과 사용자명을 정하는 대화">
         </figure>
       </li>
       <li><span class="step-title">새 봇 만들기 명령 보내기</span>
@@ -55,26 +57,35 @@
       <li><span class="step-title">사용자명(username) 정하기</span>
         이어서 사용자명을 물으면 영문과 숫자로 된 고유한 이름을 입력합니다.
         <div class="note warn">
-          <b>사용자명은 반드시 bot으로 끝나야 합니다</b>
-          예를 들어 <code class="val">wooridept_bot</code>처럼 마지막이
-          <code class="val">bot</code>으로 끝나지 않으면 BotFather가 거부하고 다시 입력하라고
-          합니다. 이미 다른 사람이 쓰고 있는 이름도 거부되니, 거부되면 뒤에 숫자를
-          붙이는 식으로 다시 시도하세요.
+          <b>사용자명은 반드시 <code class="val">bot</code>으로 끝나야 합니다</b>
+          BotFather도 <code class="val">It must end in `bot`</code>이라고 안내합니다.
+          <code class="val">mydept_bot</code>처럼 끝이 <code class="val">bot</code>이어야
+          하고, 그렇지 않으면 다시 입력하라고 합니다.
+          이미 다른 사람이 쓰고 있는 이름이면
+          <code class="val">Sorry, this username is already taken.</code>이라는 답이
+          돌아옵니다. 그럴 때는 뒤에 숫자를 붙이는 식으로 다시 시도하세요 —
+          [그림 준2-1]도 두 번 거부당한 뒤 세 번째에 성공한 모습입니다.
         </div>
         <figure class="capture" id="fig-prep2-2">
-          <div class="capture-cap">[그림 준2-2] 봇 이름과 사용자명을 입력하는 대화</div>
-          <!-- 캡처 위치: BotFather와의 대화창에서 이름 입력, 사용자명 입력, 성공 메시지까지 이어지는 부분 -->
-          <img src="../assets/img/fig-prep2-2.png" alt="봇 이름과 사용자명을 입력하는 대화">
+          <div class="capture-cap">[그림 준2-2] <code class="val">/newbot</code>부터 토큰 발급까지의 대화 전체</div>
+          <img src="../assets/img/fig-prep2-2.png" alt="/newbot부터 토큰 발급까지의 대화 전체">
         </figure>
+        <span class="hint">그림에서는 이름을 <code class="val">우리부서 민원봇</code>,
+        사용자명을 <code class="val">mydept_bot</code>으로 정했습니다. 이름이 통과하면
+        <code class="val">Done! Congratulations on your new bot.</code>이라는 답과 함께
+        아래 5단계의 토큰이 바로 이어서 옵니다.</span>
       </li>
       <li><span class="step-title">토큰 복사해서 보관</span>
-        성공하면 BotFather가 긴 문자열(토큰)을 보내줍니다. 이 토큰을 복사해
-        메모장 등에 잠시 붙여둡니다. 수업 중 n8n에 등록할 값입니다.
-        <span class="hint">토큰도 API 키와 마찬가지로 비밀번호처럼 다루세요. 남에게 보여주거나 전송하지 마세요.</span>
+        성공 메시지 아래에 <code class="val">Use this token to access the HTTP API:</code>라는
+        줄이 있고, 그 밑에 긴 문자열(토큰)이 있습니다. 이 토큰을 복사해 메모장 등에 잠시
+        붙여둡니다. 수업 중 n8n에 등록할 값입니다.
+        <span class="hint">토큰도 API 키와 마찬가지로 비밀번호처럼 다루세요. 남에게 보여주거나 전송하지 마세요.
+        BotFather도 바로 아래에 <code class="val">Keep your token secure and store it safely</code>라고
+        적어 보냅니다. 아래 그림에서 토큰 가운데가 빨갛게 덮여 있는 것은 교재에서 일부러 가린
+        것이고, 실제 화면에는 문자열이 그대로 보입니다.</span>
         <figure class="capture" id="fig-prep2-3">
-          <div class="capture-cap">[그림 준2-3] BotFather가 발급한 토큰 메시지</div>
-          <!-- 캡처 위치: 토큰 문자열이 포함된 BotFather의 마지막 안내 메시지(토큰 값은 실제로는 가려서 촬영) -->
-          <img src="../assets/img/fig-prep2-3.png" alt="BotFather가 발급한 토큰 메시지">
+          <div class="capture-cap">[그림 준2-3] 토큰 부분만 확대한 모습</div>
+          <img src="../assets/img/fig-prep2-3.png" alt="토큰 부분만 확대한 모습">
         </figure>
       </li>
     </ol>
@@ -95,10 +106,13 @@
           건너뛰고 바로 다음 단계로 가면 결과가 비어 있어서 실패한 줄 착각하게 됩니다.
           반드시 내가 먼저 메시지를 보낸 뒤에 다음 단계로 넘어가세요.
         </div>
+        <span class="hint">검색창에 사용자명(예: <code class="val">mydept_bot</code>)을 넣으면
+        비슷한 이름이 여럿 나옵니다. 내가 만든 봇은 <b>봇 이름</b>(예:
+        <code class="val">우리부서 민원봇</code>)으로 표시되니 그것을 고르세요.
+        [그림 준2-4]는 <code class="val">/start</code>와 <code class="val">안녕</code>을 보낸 모습입니다.</span>
         <figure class="capture" id="fig-prep2-4">
-          <div class="capture-cap">[그림 준2-4] 내 봇에게 메시지를 보낸 대화창</div>
-          <!-- 캡처 위치: 내가 만든 봇과의 대화창, 내가 보낸 메시지가 보이도록 -->
-          <img src="../assets/img/fig-prep2-4.png" alt="내 봇에게 메시지를 보낸 대화창">
+          <div class="capture-cap">[그림 준2-4] 내 봇을 찾아 메시지를 보낸 대화창</div>
+          <img src="../assets/img/fig-prep2-4.png" alt="내 봇을 찾아 메시지를 보낸 대화창">
         </figure>
       </li>
       <li><span class="step-title">getUpdates 주소로 접속하기</span>
@@ -108,11 +122,16 @@
         <span class="hint">예: 토큰이 123:ABC라면 https://api.telegram.org/bot123:ABC/getUpdates</span>
       </li>
       <li><span class="step-title">화면에서 chat id 찾기</span>
-        화면에 복잡한 글자가 나타나는데, 그 안에서
-        <code class="val">"chat":{"id":숫자}</code> 부분을 찾습니다. 그 숫자가 내 chat id입니다.
+        화면에 복잡한 글자가 나타나는데, 그 안에서 <code class="val">"chat"</code> 아래에
+        있는 <code class="val">"id"</code> 값을 찾습니다. 그 숫자가 내 chat id입니다.
+        <span class="hint">바로 위 <code class="val">"from"</code> 아래에도 같은 모양의
+        <code class="val">"id"</code>가 있습니다. 개인 대화에서는 두 값이 같지만,
+        <b>우리가 쓸 것은 <code class="val">"chat"</code> 쪽</b>입니다. 그 아래
+        <code class="val">"first_name"</code>·<code class="val">"type": "private"</code>이
+        함께 보이면 제대로 찾은 것입니다. 그림에서 숫자가 빨갛게 덮여 있는 것은 교재에서
+        일부러 가린 것입니다.</span>
         <figure class="capture" id="fig-prep2-5">
           <div class="capture-cap">[그림 준2-5] getUpdates 결과 화면에서 chat id 위치</div>
-          <!-- 캡처 위치: 브라우저에 표시된 getUpdates 응답 전체, "chat":{"id": 부분에 표시나 동그라미 -->
           <img src="../assets/img/fig-prep2-5.png" alt="getUpdates 결과 화면에서 chat id 위치">
         </figure>
       </li>

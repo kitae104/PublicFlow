@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>04 이메일 자동 발송 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/flow.css">
 </head>
 <body>
 <main class="wrap">
@@ -44,27 +43,14 @@
     <p>접수된 민원 내용을 바탕으로 접수자(민원인) 본인에게 접수 확인 메일을 자동으로 보내는
        단계를 추가합니다. 실제 담당자에게 가는 메일은 07강에서 따로 만듭니다.</p>
     <figure class="capture" id="fig-d1-04-1">
-      <div class="capture-cap">[그림 4-1] 완성된 모습</div>
-      <!-- 캡처 위치: 발송된 접수 안내 메일함 화면 -->
+      <div class="capture-cap">[그림 4-1] 완성된 모습 — <code class="val">샘플 민원</code>에서 두 갈래로 갈라진 캔버스</div>
       <img src="../assets/img/fig-d1-04-1.png" alt="완성된 모습">
     </figure>
+    <p class="hint">한 번 실행하고 난 뒤의 모습입니다. 실행된 노드에는 초록 체크가 붙고,
+      노드를 잇는 선이 초록색으로 바뀌며 그 위에 <code class="val">1 item</code>(민원 한
+      건이 지나갔다는 뜻)이 표시됩니다. 새로 붙인 Gmail 노드 이름 아래의
+      <code class="val">send: message</code>는 "메일 보내기" 설정이 잡혔다는 표시입니다.</p>
   </section>
-
-  <section class="sec" id="flow">
-    <h2 class="sec-title">지금까지의 흐름</h2>
-    <div class="flow">
-      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">수동 트리거</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">샘플 민원</span><span class="k">Edit Fields</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-split">
-        <div class="flow-node is-dim"><span class="t">시트에 기록</span><span class="k">Google Sheets</span></div>
-        <div class="flow-node is-new"><span class="t">접수 메일 보내기</span><span class="k">Gmail</span></div>
-      </div>
-    </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
-  </section>
-
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
@@ -84,18 +70,16 @@
         <code class="val">샘플 민원</code> 노드 오른쪽에서 눌러야 합니다.</span>
       </li>
       <li><span class="step-title">자격증명 연결하기</span>
-        03강에서 구글 시트 자격증명을 연결했던 것과 같은 방식입니다. 자격증명 칸에서
-        <code class="val">Create new credential</code>을 고르고, 뜨는 화면에서 같은 개인
-        구글 계정으로 로그인한 뒤 권한 허용과 비슷한 문구의 버튼을 눌러 동의합니다.
+        03강에서 구글 시트 자격증명을 연결했던 것과 같은 방식입니다. 노드 맨 위
+        <code class="val">Credential</code> 항목의
+        <code class="val">Sign in with Google</code> 버튼을 누르고, 뜨는 화면에서 같은 개인
+        구글 계정을 고른 뒤 권한 허용과 비슷한 문구의 버튼을 눌러 동의합니다.
         <span class="hint">이번에는 메일을 대신 보내도 되는지 묻기 때문에 03강에서 본
         동의 화면과 문구가 다릅니다. 다른 화면이 나와도 잘못된 것이 아닙니다.</span>
-        <p>창이 닫히고 n8n 화면으로 돌아와 자격증명 칸에 방금 만든 이름이 채워져 있으면
-        연결이 끝난 것입니다.</p>
-        <figure class="capture" id="fig-d1-04-2">
-          <div class="capture-cap">[그림 4-2] Gmail 자격증명이 연결된 상태</div>
-          <!-- 캡처 위치: Gmail 노드 패널 위쪽 자격증명 칸에 방금 만든 자격증명 이름이 채워져 있고 오류 표시가 없는 화면 -->
-          <img src="../assets/img/fig-d1-04-2.png" alt="Gmail 자격증명이 연결된 상태">
-        </figure>
+        <p>창이 닫히고 n8n 화면으로 돌아와 <code class="val">Credential</code> 칸에
+        <code class="val">Gmail account</code>가 채워져 있으면 연결이 끝난 것입니다.
+        03강의 <code class="val">Google Sheets account</code>와는 <b>별개의 자격증명</b>이라
+        새로 만드는 것이 맞습니다.</p>
       </li>
       <li><span class="step-title">받는 사람 입력하기</span>
         <code class="val">To</code> 칸 오른쪽의 표현식 전환 스위치를 눌러
@@ -135,6 +119,20 @@
         전부 계산식이어야 하는 것은 아닙니다. "담당팀께," 같은 보통 글자와
         <code class="val">{{ $json.이름 }}</code> 같은 계산식이 한 칸 안에 섞여 있어도
         됩니다. n8n은 이중 중괄호로 감싼 부분만 계산하고 나머지는 글자 그대로 둡니다.</span>
+        <figure class="capture" id="fig-d1-04-2">
+          <div class="capture-cap">[그림 4-2] 여기까지 설정을 마친 Gmail 노드</div>
+          <img src="../assets/img/fig-d1-04-2.png" alt="여기까지 설정을 마친 Gmail 노드">
+        </figure>
+        <span class="hint">[그림 4-2]에서 확인할 것 — 위에서부터
+        <code class="val">Credential</code>에 <code class="val">Gmail account</code>,
+        <code class="val">Resource</code>는 <code class="val">Message</code>,
+        <code class="val">Operation</code>은 <code class="val">Send</code>,
+        <code class="val">To</code>와 <code class="val">Message</code>에는 왼쪽에
+        <code class="val">fx</code> 표시(표현식 모드),
+        <code class="val">Subject</code>는 <code class="val">민원 접수</code>,
+        <code class="val">Email Type</code>은 <code class="val">Text</code>입니다.
+        <code class="val">To</code> 칸 아래에 실제 이메일 주소가 회색으로 미리 보이면
+        표현식이 제대로 값을 찾은 것입니다.</span>
       </li>
       <li><span class="step-title">노드 이름 바꾸기</span>
         노드 제목을 더블클릭해 <code class="val">접수 메일 보내기</code>로 바꿉니다.

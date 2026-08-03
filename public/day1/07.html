@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>07 조건에 따라 나누기 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/flow.css">
 </head>
 <body>
 <main class="wrap">
@@ -42,37 +41,14 @@
     <p>민원이 '생활' 관련인지 아닌지를 조건으로 나누어, 담당자에게 서로 다른 경로로
        전달되게 만듭니다.</p>
     <figure class="capture" id="fig-d1-07-1">
-      <div class="capture-cap">[그림 7-1] 완성된 모습</div>
-      <!-- 캡처 위치: IF 노드로 갈라진 두 개의 처리 경로 전체 -->
+      <div class="capture-cap">[그림 7-1] 완성된 모습 — <code class="val">생활인가?</code>에서 <code class="val">true</code>·<code class="val">false</code> 두 갈래로 다시 나뉩니다</div>
       <img src="../assets/img/fig-d1-07-1.png" alt="완성된 모습">
     </figure>
+    <p class="hint">지금까지 붙인 노드는 출력이 하나뿐이었습니다.
+      <code class="val">생활인가?</code>만 오른쪽에 <code class="val">true</code>·
+      <code class="val">false</code> 두 개의 출력점을 갖고, 거기서 각각 다른 Gmail 노드로
+      선이 갈라집니다.</p>
   </section>
-
-  <section class="sec" id="flow">
-    <h2 class="sec-title">지금까지의 흐름</h2>
-    <div class="flow">
-      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">수동 트리거</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">샘플 민원</span><span class="k">Edit Fields</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-split">
-        <div class="flow-node is-dim"><span class="t">시트에 기록</span><span class="k">Google Sheets</span></div>
-        <div class="flow-node is-dim"><span class="t">접수 메일 보내기</span><span class="k">Gmail</span></div>
-        <div class="flow-node is-dim"><span class="t">처리 마감 일정</span><span class="k">Google Calendar</span></div>
-        <div class="flow-node is-dim"><span class="t">AI 안내문 작성</span><span class="k">Gemini</span></div>
-        <div class="flow">
-          <div class="flow-node is-new"><span class="t">생활인가?</span><span class="k">IF</span></div>
-          <div class="flow-arrow">▶</div>
-          <div class="flow-split">
-            <div class="flow-node is-new"><span class="t">생활 담당자</span><span class="k">참</span></div>
-            <div class="flow-node is-new"><span class="t">일반 담당자</span><span class="k">거짓</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드 — <b>생활인가?</b> 노드는 조건 결과(참/거짓)에 따라 다시 두 갈래로 나뉩니다.</p>
-  </section>
-
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
@@ -87,17 +63,22 @@
         노드를 열면 조건을 넣는 줄이 하나 보입니다. 왼쪽 값 칸 오른쪽의 표현식 전환
         스위치(<code class="val">fx</code> 아이콘으로 보일 수도 있습니다)를 눌러
         <code class="val">Expression</code> 모드로 바꾸고
-        <code class="val">{{ $json.종류 }}</code>를 입력합니다. 가운데 연산자
-        드롭다운에서는 "같다"는 뜻의 항목을 고릅니다(is equal to와 비슷한 문구입니다).
-        오른쪽 값 칸은 표현식으로 바꾸지 않고 <code class="val">생활</code>이라고
+        <code class="val">{{ $json.종류 }}</code>를 입력합니다. 오른쪽 연산자 드롭다운을
+        누르면 <code class="val">String</code>·<code class="val">Number</code>·
+        <code class="val">Date &amp; Time</code>·<code class="val">Boolean</code>·
+        <code class="val">Array</code>·<code class="val">Object</code>처럼 <b>자료형별로
+        묶인 목록</b>이 나옵니다. 맨 위 <code class="val">String</code>(글자) 아래에서
+        <code class="val">is equal to</code>(같다)를 고릅니다. 조건 줄
+        <b>아래쪽</b> 값 칸은 표현식으로 바꾸지 않고 <code class="val">생활</code>이라고
         글자 그대로 입력합니다.
-        <span class="hint">연산자 드롭다운의 정확한 문구는 n8n 버전마다 다를 수
-        있습니다. "왼쪽 값과 오른쪽 값이 같은지" 비교하는 뜻의 항목이면 됩니다.
-        오른쪽 값은 왼쪽과 달리 표현식 모드로 바꾸지 않습니다 — 비교할 상대가
-        그냥 글자 "생활"이기 때문입니다.</span>
+        <span class="hint">비교할 값은 글자이므로 <code class="val">String</code>
+        묶음에서 고릅니다. 오른쪽 값은 왼쪽과 달리 표현식 모드로 바꾸지 않습니다 —
+        비교할 상대가 그냥 글자 "생활"이기 때문입니다.</span>
+        <span class="hint">조건 줄 아래의 <code class="val">Convert types where required</code>
+        스위치는 꺼진 채로 둡니다. 그 아래 <code class="val">+ Add condition</code>은 조건을
+        하나 더 붙일 때 쓰는 것이니 지금은 누르지 않습니다.</span>
         <figure class="capture" id="fig-d1-07-2">
-          <div class="capture-cap">[그림 7-2] If 노드 조건 입력 화면</div>
-          <!-- 캡처 위치: If 노드 패널에서 왼쪽 값·연산자·오른쪽 값이 모두 채워진 조건 한 줄 전체(연산자 드롭다운의 정확한 문구가 보이도록) -->
+          <div class="capture-cap">[그림 7-2] If 노드 조건 입력 화면 — 자료형별로 묶인 연산자 목록</div>
           <img src="../assets/img/fig-d1-07-2.png" alt="If 노드 조건 입력 화면">
         </figure>
       </li>
@@ -106,16 +87,12 @@
       </li>
       <li><span class="step-title">두 개의 출력 확인하기</span>
         이름을 바꾸고 나면 <code class="val">생활인가?</code> 노드 오른쪽에 출력
-        연결점이 두 개 생긴 것을 볼 수 있습니다. <b>위쪽이 조건이 참(true)일 때</b>,
-        <b>아래쪽이 거짓(false)일 때</b> 나가는 자리입니다.
-        <span class="hint">출력점 옆에 표시되는 글자(true/false 등)는 n8n 버전에 따라
-        다르게 보이거나 마우스를 올려야 보일 수 있습니다. 위치(위=참, 아래=거짓)만
+        연결점이 두 개 생긴 것을 볼 수 있습니다. 각각 옆에
+        <code class="val">true</code>·<code class="val">false</code>라고 적혀 있습니다 —
+        <b>위쪽이 조건이 참(true)일 때</b>, <b>아래쪽이 거짓(false)일 때</b> 나가는
+        자리입니다.
+        <span class="hint">글자가 안 보이면 마우스를 올려보세요. 위치(위=참, 아래=거짓)만
         기억해두면 됩니다.</span>
-        <figure class="capture" id="fig-d1-07-3">
-          <div class="capture-cap">[그림 7-3] 생활인가? 노드의 두 출력점</div>
-          <!-- 캡처 위치: 생활인가? 노드 오른쪽의 위·아래 두 출력 연결점 전체, 가능하면 참/거짓을 나타내는 표시가 함께 보이도록 -->
-          <img src="../assets/img/fig-d1-07-3.png" alt="생활인가? 노드의 두 출력점">
-        </figure>
       </li>
       <li><span class="step-title">참 출력에 담당자 메일 연결하기</span>
         위쪽 출력점의 <code class="val">+</code>를 누르고 <code class="val">Gmail</code>을
@@ -140,6 +117,13 @@
         <code class="val">Message</code>는 표현식 모드로 바꾼 뒤
         <code class="val">일반 민원: {{ $json.이름 }}</code>을 입력합니다.
         노드 제목을 더블클릭해 <code class="val">일반 담당자</code>로 바꿉니다.
+        <figure class="capture" id="fig-d1-07-3">
+          <div class="capture-cap">[그림 7-3] <code class="val">true</code>·<code class="val">false</code> 두 출력에 각각 담당자 메일 노드를 붙인 모습</div>
+          <img src="../assets/img/fig-d1-07-3.png" alt="true·false 두 출력에 각각 담당자 메일 노드를 붙인 모습">
+        </figure>
+        <span class="hint">노드에 빨간 느낌표가 붙어 있다면 아직 채우지 않은 칸이 있다는
+        뜻입니다. 노드를 열어 <code class="val">To</code>·<code class="val">Subject</code>·
+        <code class="val">Message</code>가 모두 채워졌는지 확인하세요.</span>
       </li>
     </ol>
     <div class="note">

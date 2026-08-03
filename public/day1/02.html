@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>02 데이터 흐름과 표현식 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/flow.css">
 </head>
 <body>
 <main class="wrap">
@@ -45,24 +44,10 @@
     <p>01강에서 만든 두 노드 뒤에 <code class="val">값 가져오기</code> 노드 하나가 더 붙어,
        모두 세 개가 한 줄로 이어진 모습이 됩니다.</p>
     <figure class="capture" id="fig-d1-02-1">
-      <div class="capture-cap">[그림 2-1] 완성된 모습</div>
-      <!-- 캡처 위치: 수동 실행 → 값 만들기 → 값 가져오기 세 노드가 이어진 캔버스 전체(이번에 새로 붙인 값 가져오기 노드가 보이게) -->
+      <div class="capture-cap">[그림 2-1] 완성된 모습 — 빨간 표시가 이번에 새로 붙이는 <code class="val">값 가져오기</code></div>
       <img src="../assets/img/fig-d1-02-1.png" alt="완성된 모습">
     </figure>
   </section>
-
-  <section class="sec" id="flow">
-    <h2 class="sec-title">지금까지의 흐름</h2>
-    <div class="flow">
-      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">수동 트리거</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">값 만들기</span><span class="k">Edit Fields</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">값 가져오기</span><span class="k">Edit Fields</span></div>
-    </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
-  </section>
-
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
@@ -84,8 +69,7 @@
         값 칸(<code class="val">value</code>) 순서입니다. 아래 그림에 빨갛게 표시된
         <code class="val">Expression</code>은 5단계에서 누를 스위치입니다. 지금은 그냥 위치만 봐두세요.</span>
         <figure class="capture" id="fig-d1-02-2">
-          <div class="capture-cap">[그림 2-2] 빈 필드 줄과 Fixed / Expression 전환 스위치</div>
-          <!-- 캡처 위치: Set 노드 패널에서 name / String / value 빈 줄과 그 아래 오른쪽의 Fixed / Expression 전환 스위치가 함께 보이는 화면(아직 아무것도 입력하지 않은 상태) -->
+          <div class="capture-cap">[그림 2-2] 빈 필드 줄과 <code class="val">Fixed</code> / <code class="val">Expression</code> 전환 스위치</div>
           <img src="../assets/img/fig-d1-02-2.png" alt="빈 필드 줄과 Fixed / Expression 전환 스위치">
         </figure>
       </li>
@@ -103,22 +87,28 @@
         누르세요.</span>
         <span class="hint">제대로 바뀌었다면 값 칸 왼쪽에 <code class="val">=</code> 표시가 붙고, 칸 아래에
         <code class="val">Result</code> 미리보기 상자가 새로 생깁니다. 아직 아무것도 입력하지 않았으니
-        <code class="val">[empty]</code>라고 나오는 것이 정상입니다.</span>
+        <code class="val">[empty]</code>라고 나오고, 그 아래에
+        <code class="val">Tip: Execute previous nodes to use input data</code>라는 안내가
+        함께 뜨는 것이 정상입니다.</span>
         <figure class="capture" id="fig-d1-02-3">
-          <div class="capture-cap">[그림 2-3] 표현식 모드로 바뀐 값 칸</div>
-          <!-- 캡처 위치: 표현식 모드로 바꾼 직후의 값 칸 - 왼쪽 = 표시와 그 아래 Result [empty] 미리보기가 함께 보이는 화면 -->
+          <div class="capture-cap">[그림 2-3] 표현식 모드로 바뀐 값 칸 — 왼쪽 <code class="val">=</code> 표시와 <code class="val">Result</code> 미리보기</div>
           <img src="../assets/img/fig-d1-02-3.png" alt="표현식 모드로 바뀐 값 칸">
         </figure>
+        <span class="hint">그림 2-3은 <b>스위치를 누른 직후</b>라 맨 윗칸이 아직
+        <code class="val">name</code>으로 비어 보입니다. 4단계에서
+        <code class="val">최종문구</code>를 이미 넣었다면 그 자리에 글자가 보이는 것이
+        맞습니다.</span>
       </li>
       <li><span class="step-title">표현식 입력하기</span>
         표현식 모드로 바뀐 값 칸에 <code class="val">{{ $json.인사말 }} 반갑습니다.</code>를 입력합니다.
-        <span class="hint">값 칸 오른쪽 끝의 확대 아이콘을 누르면 [그림 2-4]처럼 큰 편집창이 열립니다.
-        왼쪽에는 앞 노드들이 넘겨준 값 목록(<code class="val">값 만들기</code> 아래
-        <code class="val">인사말 · 안녕하세요, 홍길동님</code>)이, 오른쪽 <code class="val">Result</code>에는
-        지금 입력한 표현식이 실제로 어떤 문장이 되는지가 바로 나옵니다.</span>
+        <span class="hint">값 칸 오른쪽 끝의 확대 아이콘을 누르면 [그림 2-4]처럼 큰 편집창이
+        <b>세 칸</b>으로 열립니다. 왼쪽은 앞 노드들이 넘겨준 값 목록
+        (<code class="val">값 만들기</code> 아래 <code class="val">인사말 ·
+        안녕하세요, 홍길동님</code>), 가운데 <code class="val">Expression</code>은 표현식을
+        입력하는 곳, 오른쪽 <code class="val">Result</code>는 그 표현식이 실제로 어떤 문장이
+        되는지 바로 보여주는 곳입니다.</span>
         <figure class="capture" id="fig-d1-02-4">
-          <div class="capture-cap">[그림 2-4] 표현식 입력 후 미리보기</div>
-          <!-- 캡처 위치: 확대한 표현식 편집창 - 왼쪽 앞 노드 값 목록, 가운데 Expression 입력 내용, 오른쪽 Result에 안녕하세요, 홍길동님 반갑습니다.가 함께 보이는 화면 -->
+          <div class="capture-cap">[그림 2-4] 표현식 입력 후 미리보기 — 왼쪽 값 목록 · 가운데 <code class="val">Expression</code> · 오른쪽 <code class="val">Result</code></div>
           <img src="../assets/img/fig-d1-02-4.png" alt="표현식 입력 후 미리보기">
         </figure>
         <span class="hint"><code class="val">Result</code>에 <code class="val">안녕하세요, 홍길동님 반갑습니다.</code>가

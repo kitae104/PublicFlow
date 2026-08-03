@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>05 캘린더 일정 자동 생성 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/flow.css">
 </head>
 <body>
 <main class="wrap">
@@ -40,28 +39,14 @@
     <h2 class="sec-title">이번 시간에 만들 것</h2>
     <p>민원이 접수된 날짜로부터 3일 뒤를 처리 마감일로 계산해 캘린더에 자동 등록하는 단계를 추가합니다.</p>
     <figure class="capture" id="fig-d1-05-1">
-      <div class="capture-cap">[그림 5-1] 완성된 모습</div>
-      <!-- 캡처 위치: 캘린더에 등록된 처리 마감 일정 화면 -->
+      <div class="capture-cap">[그림 5-1] 완성된 모습 — <code class="val">샘플 민원</code>에서 세 갈래로 갈라진 캔버스</div>
       <img src="../assets/img/fig-d1-05-1.png" alt="완성된 모습">
     </figure>
+    <p class="hint">새로 붙인 캘린더 노드 이름 아래의 <code class="val">create: event</code>는
+      "일정 만들기" 설정이 잡혔다는 표시입니다. 세 갈래 모두
+      <code class="val">샘플 민원</code> 한 노드에서 <b>각각 직접</b> 나온다는 점을
+      눈으로 확인해 두세요.</p>
   </section>
-
-  <section class="sec" id="flow">
-    <h2 class="sec-title">지금까지의 흐름</h2>
-    <div class="flow">
-      <div class="flow-node is-dim"><span class="t">수동 실행</span><span class="k">수동 트리거</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-dim"><span class="t">샘플 민원</span><span class="k">Edit Fields</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-split">
-        <div class="flow-node is-dim"><span class="t">시트에 기록</span><span class="k">Google Sheets</span></div>
-        <div class="flow-node is-dim"><span class="t">접수 메일 보내기</span><span class="k">Gmail</span></div>
-        <div class="flow-node is-new"><span class="t">처리 마감 일정</span><span class="k">Google Calendar</span></div>
-      </div>
-    </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
-  </section>
-
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
@@ -74,18 +59,14 @@
         결과로 바뀌어 사라집니다.</span>
       </li>
       <li><span class="step-title">자격증명 연결하기</span>
-        03·04강과 같은 방식입니다. 자격증명 칸에서 <code class="val">Create new credential</code>을
-        고르고, 같은 개인 구글 계정으로 로그인한 뒤 권한 허용과 비슷한 문구의 버튼을 눌러
-        동의합니다.
+        03·04강과 같은 방식입니다. 노드 맨 위 <code class="val">Credential</code> 항목의
+        <code class="val">Sign in with Google</code> 버튼을 누르고, 같은 개인 구글 계정을
+        고른 뒤 권한 허용과 비슷한 문구의 버튼을 눌러 동의합니다.
         <span class="hint">이번에는 캘린더에 일정을 만들어도 되는지 묻기 때문에 03·04강에서
         본 동의 화면과 문구가 또 다릅니다. 다른 화면이 나와도 잘못된 것이 아닙니다.</span>
-        <p>창이 닫히고 n8n 화면으로 돌아와 자격증명 칸에 방금 만든 이름이 채워져 있으면
-        연결이 끝난 것입니다.</p>
-        <figure class="capture" id="fig-d1-05-2">
-          <div class="capture-cap">[그림 5-2] Google Calendar 자격증명이 연결된 상태</div>
-          <!-- 캡처 위치: Google Calendar 노드 패널 위쪽 자격증명 칸에 방금 만든 자격증명 이름이 채워져 있고 오류 표시가 없는 화면 -->
-          <img src="../assets/img/fig-d1-05-2.png" alt="Google Calendar 자격증명이 연결된 상태">
-        </figure>
+        <p>창이 닫히고 n8n 화면으로 돌아와 <code class="val">Credential</code> 칸에
+        <code class="val">Google Calendar account</code>가 채워져 있으면 연결이 끝난
+        것입니다.</p>
       </li>
       <li><span class="step-title">Resource·Operation 확인하기</span>
         <code class="val">Resource</code>와 <code class="val">Operation</code>은 노드를 추가하면
@@ -93,8 +74,10 @@
         있습니다. 다른 값으로 바뀌어 있지 않은지만 확인하고 그대로 둡니다.
       </li>
       <li><span class="step-title">캘린더 고르기</span>
-        <code class="val">Calendar</code> 칸을 눌러 목록에서 본인 캘린더를 고릅니다.
-        <span class="hint">보통 본인 Gmail 주소로 된 캘린더가 목록에 보입니다. 이 목록이
+        <code class="val">Calendar</code> 칸은 왼쪽이 <code class="val">From list</code>로
+        되어 있습니다. 오른쪽 칸을 눌러 목록에서 본인 캘린더를 고릅니다.
+        <span class="hint">보통 본인 Gmail 주소로 된 캘린더가 목록에 보입니다(예:
+        <code class="val">aqua0405.kitae@gmail.com</code>). 이 목록이
         비어 있으면 자격증명이 제대로 연결되지 않은 것입니다 — 앞 단계로 돌아가 다시
         확인하세요.</span>
       </li>
@@ -108,13 +91,25 @@
         모드로 바꾸고 <code class="val">{{ $now.plus(3,'days').plus(1,'hour').toISO() }}</code>를
         입력합니다.
         <span class="hint">표현식 전환 스위치는 <b>Start·End 두 칸을 각각 따로</b> 눌러야
-        합니다. 한 칸에서 누른 것이 다른 칸까지 적용되지는 않습니다.</span>
+        합니다. 한 칸에서 누른 것이 다른 칸까지 적용되지는 않습니다. 제대로 되면 각 칸
+        아래에 <code class="val">2026-08-06T09:35:51.607+09:00</code> 같은 실제 날짜가
+        회색으로 미리 보이고, End가 Start보다 <b>정확히 1시간 뒤</b>여야 합니다.</span>
+        <span class="hint">두 칸 사이의 <code class="val">Use Default Reminders</code>
+        스위치는 켜진 채로 그대로 둡니다. 구글 캘린더의 기본 알림을 쓰겠다는 뜻입니다.</span>
       </li>
       <li><span class="step-title">일정 제목(Summary) 추가하기</span>
-        <code class="val">Additional Fields</code> 아래의 <code class="val">Add Field</code>를
-        누르고 목록에서 <code class="val">Summary</code>를 고릅니다. 새로 생긴 칸의 표현식
-        전환 스위치를 눌러 <code class="val">Expression</code> 모드로 바꾸고
+        <code class="val">Additional Fields</code> 줄 <b>오른쪽 끝의
+        <code class="val">+</code> 버튼</b>을 누르고 목록에서 <code class="val">Summary</code>를
+        고릅니다. 새로 생긴 칸의 표현식 전환 스위치를 눌러
+        <code class="val">Expression</code> 모드로 바꾸고
         <code class="val">민원 처리 마감 - {{ $json.이름 }}</code>를 입력합니다.
+        <span class="hint">제대로 되면 칸 아래에
+        <code class="val">민원 처리 마감 - 김기태</code>처럼 완성된 제목이 회색으로
+        미리 보입니다.</span>
+        <figure class="capture" id="fig-d1-05-2">
+          <div class="capture-cap">[그림 5-2] 여기까지 설정을 마친 Google Calendar 노드</div>
+          <img src="../assets/img/fig-d1-05-2.png" alt="여기까지 설정을 마친 Google Calendar 노드">
+        </figure>
       </li>
       <li><span class="step-title">노드 이름 바꾸기</span>
         노드 제목을 더블클릭해 <code class="val">처리 마감 일정</code>으로 바꿉니다.

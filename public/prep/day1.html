@@ -47,8 +47,7 @@
       풀 수 없는 문제입니다. 처음부터 개인 Gmail 계정으로 진행하세요.
     </div>
     <figure class="capture" id="fig-prep1-1">
-      <div class="capture-cap">[그림 준1-1] 개인 Gmail 계정으로 로그인한 상태</div>
-      <!-- 캡처 위치: 구글 계정 로그인 후 우측 상단 프로필 아이콘과 이메일 주소가 보이는 화면 -->
+      <div class="capture-cap">[그림 준1-1] 개인 Gmail 계정으로 로그인한 상태 — 오른쪽 위 프로필을 누르면 지금 로그인한 주소가 보입니다</div>
       <img src="../assets/img/fig-prep1-1.png" alt="개인 Gmail 계정으로 로그인한 상태">
     </figure>
   </section>
@@ -60,29 +59,46 @@
     <ol class="steps">
       <li><span class="step-title">AI Studio 접속</span>
         방금 준비한 구글 계정으로 로그인한 브라우저에서
-        <code class="val">https://aistudio.google.com/apikey</code> 주소로 들어갑니다.
+        <code class="val">https://aistudio.google.com</code> 주소로 들어갑니다.
+        <span class="hint"><code class="val">Explore Google models</code>라고 적힌
+        <code class="val">Playground</code> 화면이 열리면 제대로 들어온 것입니다. 화면 왼쪽
+        맨 아래에 지금 로그인한 구글 계정 주소가 보이니, 준비한 계정이 맞는지 여기서
+        확인하세요.</span>
         <figure class="capture" id="fig-prep1-2">
-          <div class="capture-cap">[그림 준1-2] AI Studio 로그인 후 첫 화면</div>
-          <!-- 캡처 위치: aistudio.google.com/apikey 접속 직후 화면 전체, 좌측 메뉴 포함 -->
-          <img src="../assets/img/fig-prep1-2.png" alt="AI Studio 로그인 후 첫 화면">
+          <div class="capture-cap">[그림 준1-2] AI Studio에 로그인하면 열리는 Playground 화면</div>
+          <img src="../assets/img/fig-prep1-2.png" alt="AI Studio에 로그인하면 열리는 Playground 화면">
         </figure>
       </li>
-      <li><span class="step-title">키 만들기</span>
-        화면에 보이는 API 키 만들기와 비슷한 문구의 버튼을 누릅니다.
-        <span class="hint">이미 만든 키가 있다는 안내가 나오면, 그 키를 그대로 써도 됩니다.</span>
+      <li><span class="step-title">API 키 화면으로 이동해 키 만들기</span>
+        주소창에 <code class="val">https://aistudio.google.com/apikey</code>를 입력해
+        <b>API 키</b> 화면으로 갑니다([그림 준1-4]와 같은 목록 화면입니다). 오른쪽 위
+        <code class="val">API 키 만들기</code> 버튼을 누르면 [그림 준1-3]처럼 작은 창이
+        열립니다. <code class="val">가져온 프로젝트 선택</code>에서
+        <code class="val">My First Project</code>를 고르고,
+        <code class="val">키 이름 지정</code> 칸에 <code class="val">Gemini API Key</code>처럼
+        나중에 알아볼 이름을 적은 뒤 아래 만들기 버튼을 누릅니다.
+        <span class="hint">창 제목이나 버튼 문구는 계정 상태에 따라 다르게 보일 수 있습니다
+        (예: <code class="val">유료 API 키 연결</code>, <code class="val">키 만들기 및 연결</code>).
+        <b>프로젝트를 고르고 키 이름을 적는다</b>는 뼈대는 같으니 그대로 진행하면 됩니다.
+        결제 정보를 등록하라는 안내가 함께 보여도 지금 등록할 필요는 없습니다.</span>
+        <span class="hint">이미 만든 키가 있다면 새로 만들지 않고 그 키를 그대로 써도 됩니다.</span>
         <figure class="capture" id="fig-prep1-3">
-          <div class="capture-cap">[그림 준1-3] API 키 만들기 버튼</div>
-          <!-- 캡처 위치: API 키 만들기 버튼과 그 주변, 클릭 전 상태 -->
-          <img src="../assets/img/fig-prep1-3.png" alt="API 키 만들기 버튼">
+          <div class="capture-cap">[그림 준1-3] 프로젝트와 키 이름을 정하는 창</div>
+          <img src="../assets/img/fig-prep1-3.png" alt="프로젝트와 키 이름을 정하는 창">
         </figure>
       </li>
       <li><span class="step-title">키 복사해서 보관</span>
-        키가 만들어지면 긴 문자열이 화면에 나타납니다. 복사와 비슷한 문구의 버튼을 눌러
-        메모장 등 나만 볼 수 있는 곳에 잠시 붙여둡니다. 수업 시간에 n8n에 붙여넣을 것입니다.
+        키가 만들어지면 [그림 준1-4]처럼 <b>API 키 목록에 한 줄</b>이 생깁니다. 보안을 위해
+        키 값은 <code class="val">…hnvA</code>처럼 뒷자리 몇 글자만 보이고, 그 아래에 아까
+        정한 키 이름이 적혀 있습니다. 그 줄 오른쪽 끝의 <b>복사 아이콘</b>(겹친 사각형
+        모양)을 누르면 키 전체가 복사됩니다. 메모장 등 나만 볼 수 있는 곳에 잠시
+        붙여둡니다. 수업 시간에 n8n에 붙여넣을 것입니다.
+        <span class="hint">같은 줄에 보이는 <code class="val">프로젝트</code>·
+        <code class="val">생성일</code>·<code class="val">결제 등급</code>은 지금 신경 쓰지
+        않아도 됩니다.</span>
         <figure class="capture" id="fig-prep1-4">
-          <div class="capture-cap">[그림 준1-4] 발급된 API 키와 복사 버튼</div>
-          <!-- 캡처 위치: 발급 직후 키 문자열 전체와 복사 버튼(키 값은 실제로는 가려서 촬영) -->
-          <img src="../assets/img/fig-prep1-4.png" alt="발급된 API 키와 복사 버튼">
+          <div class="capture-cap">[그림 준1-4] 발급된 키가 한 줄로 표시된 API 키 목록</div>
+          <img src="../assets/img/fig-prep1-4.png" alt="발급된 키가 한 줄로 표시된 API 키 목록">
         </figure>
       </li>
     </ol>
@@ -157,10 +173,12 @@
            <code class="val">이메일</code> · <code class="val">종류</code> ·
            <code class="val">상세설명</code> · <code class="val">등록일</code></p>
         <figure class="capture" id="fig-prep1-5">
-          <div class="capture-cap">[그림 준1-5] 머리글이 입력된 시트 화면</div>
-          <!-- 캡처 위치: 스프레드시트 1행에 여섯 개 머리글(이름/연락처/이메일/종류/상세설명/등록일)이 순서대로 입력된 화면 전체, 시트 탭 이름이 보이도록 -->
-          <img src="../assets/img/fig-prep1-5.png" alt="머리글이 입력된 시트 화면">
+          <div class="capture-cap">[그림 준1-5] 머리글 여섯 개가 1행에 입력된 시트 (문서 이름: 민원 처리 리스트)</div>
+          <img src="../assets/img/fig-prep1-5.png" alt="머리글 여섯 개가 1행에 입력된 시트">
         </figure>
+        <span class="hint">그림에는 2행 아래로 값이 들어가 있지만, <b>지금 준비할 것은 1행
+        머리글뿐입니다.</b> 아래 줄들은 1일차 3강 실습을 마치면 n8n이 자동으로 채워 넣는
+        모습입니다 — 지금은 1행만 있으면 됩니다.</span>
       </li>
     </ol>
     <div class="note warn">
@@ -186,13 +204,14 @@
         <code class="val">단기예보 조회서비스</code>를 검색합니다.
       </li>
       <li><span class="step-title">활용신청</span>
-        검색 결과에서 해당 API를 찾아 활용신청과 비슷한 문구의 버튼을 누르고
-        사용 목적을 간단히 적어 제출합니다.
+        검색 결과에서 <code class="val">기상청_단기예보 조회서비스</code>를 눌러
+        <b>오픈API 상세</b> 페이지로 들어갑니다. 제목 오른쪽에 있는 파란
+        <code class="val">활용신청</code> 버튼을 누르고 사용 목적을 간단히 적어
+        제출합니다.
         <span class="hint">승인까지 보통 몇 시간에서 하루 정도 걸릴 수 있습니다. 그래서 미리 신청해두는 것입니다.</span>
         <figure class="capture" id="fig-prep1-6">
-          <div class="capture-cap">[그림 준1-6] API 상세 페이지의 활용신청 버튼</div>
-          <!-- 캡처 위치: 기상청 단기예보 API 상세 페이지에서 활용신청 버튼이 보이는 화면 전체 -->
-          <img src="../assets/img/fig-prep1-6.png" alt="API 상세 페이지의 활용신청 버튼">
+          <div class="capture-cap">[그림 준1-6] 오픈API 상세 페이지 오른쪽 위의 <code class="val">활용신청</code> 버튼</div>
+          <img src="../assets/img/fig-prep1-6.png" alt="오픈API 상세 페이지의 활용신청 버튼">
         </figure>
       </li>
       <li><span class="step-title">승인 후 인증키 확인</span>
