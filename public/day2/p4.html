@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>P4 날씨 알리미 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/flow.css">
 </head>
 <body>
 <main class="wrap">
@@ -60,29 +59,16 @@
       어려울 수 있습니다.
     </div>
     <figure class="capture" id="fig-d2-p4-1">
-      <div class="capture-cap">[그림 P4-1] 완성된 모습</div>
-      <!-- 캡처 위치: 텔레그램으로 도착한 아침 날씨 알림 메시지(하늘·강수·기온·조언이 모두 보이도록) -->
+      <div class="capture-cap">[그림 P4-1] 완성된 모습 — 다섯 노드가 일직선입니다. <code class="val">{ }</code> 아이콘 두 개가 <code class="val">Code</code> 노드입니다</div>
       <img src="../assets/img/fig-d2-p4-1.png" alt="완성된 모습">
     </figure>
-  </section>
-
-  <section class="sec" id="flow">
-    <h2 class="sec-title">이번 프로젝트의 흐름</h2>
-    <div class="flow">
-      <div class="flow-node is-new"><span class="t">매일 아침 7시</span><span class="k">Schedule 트리거</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">발표시각 계산</span><span class="k">Code</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">기상청 API 호출</span><span class="k">HTTP Request</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">메시지 가공</span><span class="k">Code</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">텔레그램 발송</span><span class="k">Telegram</span></div>
-    </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
-    <p>가운데 <code class="val">Code</code> 노드 두 개가 이번 프로젝트의 특징입니다.
-       하나는 <b>요청을 보내기 전에 필요한 값을 계산</b>하고, 다른 하나는
-       <b>돌아온 데이터를 사람이 읽을 문장으로</b> 바꿉니다.</p>
+    <p class="hint">가운데 <code class="val">{ }</code> 표시가 붙은 노드 두 개가 이번
+       프로젝트의 특징입니다. 하나는 <b>요청을 보내기 전에 필요한 값을 계산</b>하고,
+       다른 하나는 <b>돌아온 데이터를 사람이 읽을 문장으로</b> 바꿉니다. 이번에는
+       AI 노드가 없어서 아래로 매달리는 노드도 없습니다.</p>
+    <p class="hint">가운데 <code class="val">기상청 API 호출</code> 아래에 회색으로
+       <code class="val">GET: https://apis.data.go.kr/1…</code>이 보입니다. 이 노드가
+       어디로 요청을 보내는지 캔버스에서 바로 보여주는 것입니다.</p>
   </section>
 
   <section class="sec" id="steps">
@@ -172,10 +158,19 @@ return [{ json: { base_date, base_time, nx: NX, ny: NY, region: REGION } }];</pr
              적으면 됩니다.</p>
         </div>
         <figure class="capture" id="fig-d2-p4-2">
-          <div class="capture-cap">[그림 P4-2] 코드를 붙여넣은 Code 노드</div>
-          <!-- 캡처 위치: Code 노드 패널에서 코드 칸 맨 위의 REGION·NX·NY 세 줄이 보이는 부분 -->
-          <img src="../assets/img/fig-d2-p4-2.png" alt="코드를 붙여넣은 Code 노드">
+          <div class="capture-cap">[그림 P4-2] 붙여넣은 코드의 맨 위 다섯 줄. 줄표(<code class="val">──</code>) 사이의 <b>2·3·4번 줄</b>만 바꾸면 됩니다</div>
+          <img src="../assets/img/fig-d2-p4-2.png" alt="붙여넣은 코드의 맨 위 다섯 줄">
         </figure>
+        <span class="hint">코드 칸 위에 <code class="val">Code</code>와
+        <code class="val">Ask AI</code> 두 개의 탭이 있습니다.
+        <code class="val">Code</code> 탭에 붙여넣는 것이 맞습니다.
+        <code class="val">Ask AI</code>는 AI에게 코드를 대신 짜달라고 시키는 기능이라
+        이번에는 쓰지 않습니다.</span>
+        <span class="hint">붙여넣은 뒤 왼쪽 <b>줄 번호</b>가 보이면 잘 들어간
+        것입니다. 1번 줄이 <code class="val">// ── 여기 세 줄만…</code>으로 시작하지
+        않는다면 원래 있던 예시 코드가 위에 남아 있는 것이니, 칸 안을 전부 지우고
+        (<code class="val">Ctrl</code>+<code class="val">A</code> →
+        <code class="val">Delete</code>) 다시 붙여넣으세요.</span>
       </li>
 
       <li><span class="step-title">기상청에 요청 보내기</span>
@@ -184,9 +179,16 @@ return [{ json: { base_date, base_time, nx: NX, ny: NY, region: REGION } }];</pr
         <p><code class="val">Method</code>는 기본값 <code class="val">GET</code> 그대로
            두고, <code class="val">URL</code> 칸에 아래 주소를 붙여넣습니다.</p>
 <pre class="code-block">https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst</pre>
+        <p>그 아래 <code class="val">Authentication</code>은
+           <code class="val">None</code> 그대로 둡니다. 인증키를 헤더가 아니라 주소
+           뒤에 붙여 보내기 때문입니다.</p>
         <p>그다음 <code class="val">Send Query Parameters</code> 스위치를 <b>켭니다.</b>
-           칸이 나타나면 <code class="val">Add Parameter</code>를 눌러가며 아래 <b>여덟
-           개</b>를 순서대로 채웁니다.</p>
+           <code class="val">Specify Query Parameters</code>가
+           <code class="val">Using Fields Below</code>로 나타나면 그대로 두고, 그 아래
+           <code class="val">Query Parameters</code>에서
+           <code class="val">Name</code>·<code class="val">Value</code> 한 쌍씩 아래
+           <b>여덟 개</b>를 순서대로 채웁니다. 쌍을 다 채울 때마다 맨 아래
+           <code class="val">Add Parameter</code>를 눌러 다음 칸을 만듭니다.</p>
         <p>
           <code class="val">serviceKey</code> → 1번에서 복사한 <b>Decoding 인증키</b>(글자 그대로)<br>
           <code class="val">pageNo</code> → <code class="val">1</code><br>
@@ -210,10 +212,13 @@ return [{ json: { base_date, base_time, nx: NX, ny: NY, region: REGION } }];</pr
           달라"는 뜻입니다.
         </div>
         <figure class="capture" id="fig-d2-p4-3">
-          <div class="capture-cap">[그림 P4-3] 쿼리 파라미터 여덟 개를 채운 HTTP Request 노드</div>
-          <!-- 캡처 위치: HTTP Request 노드 패널에서 URL과 Query Parameters 목록 여덟 줄이 보이는 화면(serviceKey 값은 가려서 촬영) -->
-          <img src="../assets/img/fig-d2-p4-3.png" alt="쿼리 파라미터 여덟 개를 채운 HTTP Request 노드">
+          <div class="capture-cap">[그림 P4-3] <code class="val">Send Query Parameters</code>를 켜고 첫 두 쌍(<code class="val">serviceKey</code>·<code class="val">pageNo</code>)을 채운 모습. 아래로 여섯 쌍이 더 이어집니다</div>
+          <img src="../assets/img/fig-d2-p4-3.png" alt="Send Query Parameters를 켜고 파라미터를 채우기 시작한 HTTP Request 노드">
         </figure>
+        <span class="hint">그림의 <code class="val">serviceKey</code> 값 자리에는
+        자리표시자가 들어 있습니다. 여기에 <b>본인 Decoding 인증키</b>를
+        붙여넣으세요. 맨 위 <code class="val">Import cURL</code> 버튼은 쓰지
+        않습니다.</span>
       </li>
 
       <li><span class="step-title">여기서 한 번 실행해보기</span>
@@ -342,20 +347,24 @@ return [{ json: { message } }];</pre>
        <code class="val">Execute workflow</code>를 누르면 지금 한 번 실행됩니다.</p>
     <p>텔레그램에 아래와 비슷한 메시지가 도착하면 성공입니다.</p>
 <pre class="code-block">🌤 오늘의 날씨 (인천 남동구 구월2동)
-예보 시각: 08시
+예보 시각: 15시
 
-하늘: ⛅ 구름많음
-강수: 없음 (확률 20%)
-기온: 26°C (최저 22°C / 최고 30°C)
-습도: 65%
-풍속: 2m/s
+하늘: ☀️ 맑음
+강수: 없음 (확률 0%)
+기온: 36°C (최저 26.0°C)
+습도: 50%
+풍속: 0.9m/s
 
-😊 활동하기 좋은 날씨예요.</pre>
+🥵 더워요. 수분 보충 잊지 마세요.</pre>
     <figure class="capture" id="fig-d2-p4-4">
-      <div class="capture-cap">[그림 P4-4] 텔레그램에 도착한 날씨 알림</div>
-      <!-- 캡처 위치: 텔레그램 대화창에 도착한 날씨 메시지 전체 -->
+      <div class="capture-cap">[그림 P4-4] 오후에 실행해 도착한 실제 메시지. 앞 코드가 만든 문장이 그대로 보입니다</div>
       <img src="../assets/img/fig-d2-p4-4.png" alt="텔레그램에 도착한 날씨 알림">
     </figure>
+    <p class="hint">숫자와 날씨는 실행한 시각·지역에 따라 당연히 다릅니다.
+       <b>예보 시각</b>은 지금 시각에 가장 가까운 발표 회차라 낮에 실행하면 15시처럼
+       나오고, 아침 7시에 저절로 돌면 5시로 나옵니다. 위 예에서 <b>최고 기온이 빠진
+       것도 정상</b>입니다 — 최고·최저 기온은 하루 중 특정 회차에만 들어 있어서, 그
+       회차를 지나면 값이 오지 않습니다.</p>
     <p>확인이 끝났으면 오른쪽 위 활성화 스위치(<code class="val">Active</code>)를
        켜둡니다. 이제 매일 아침 7시에 저절로 날씨가 옵니다.</p>
     <div class="note tip">

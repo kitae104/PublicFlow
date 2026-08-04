@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>P1 공문서 요약 서비스 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/flow.css">
 </head>
 <body>
 <main class="wrap">
@@ -48,27 +47,17 @@
       봇 토큰과 chat id 두 가지가 필요합니다.
     </div>
     <figure class="capture" id="fig-d2-p1-1">
-      <div class="capture-cap">[그림 P1-1] 완성된 모습</div>
-      <!-- 캡처 위치: 텔레그램으로 도착한 공문서 요약 메시지(다섯 줄 요약이 보이도록) -->
+      <div class="capture-cap">[그림 P1-1] 완성된 모습 — <code class="val">공문서 업로드 폼</code> → <code class="val">PDF 텍스트 추출</code> → <code class="val">AI 요약</code> → <code class="val">텔레그램 발송</code></div>
       <img src="../assets/img/fig-d2-p1-1.png" alt="완성된 모습">
     </figure>
-  </section>
-
-  <section class="sec" id="flow">
-    <h2 class="sec-title">이번 프로젝트의 흐름</h2>
-    <div class="flow">
-      <div class="flow-node is-new"><span class="t">공문서 업로드 폼</span><span class="k">Form 트리거</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">PDF 텍스트 추출</span><span class="k">Extract from File</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">AI 요약</span><span class="k">Basic LLM Chain</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">텔레그램 발송</span><span class="k">Telegram</span></div>
-    </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
-    <p>1일차와 달리 이번에는 <b>일직선으로 이어 붙입니다.</b> 각 노드가 앞 노드의
-       결과를 그대로 받아 다음 일을 하기 때문입니다. 폼은 파일을 주고, 추출 노드는
-       그 파일에서 글자를 뽑고, AI는 그 글자를 요약합니다.</p>
+    <p class="hint">갈라지는 곳 없이 <b>일직선으로 이어 붙입니다.</b> 각 노드가 앞
+       노드의 결과를 그대로 받아 다음 일을 하기 때문입니다. 폼은 파일을 주고, 추출
+       노드는 그 파일에서 글자를 뽑고, AI는 그 글자를 요약합니다.</p>
+    <p class="hint">노드는 넷인데 그림에는 다섯 개가 보입니다.
+       <code class="val">Google Gemini Chat Model</code>만 옆으로 이어지지 않고
+       <code class="val">AI 요약</code> <b>아래쪽</b>에 점선으로 매달려 있습니다.
+       1일차 06강에서 본 그 모양 그대로입니다 — 점선 옆
+       <code class="val">Model</code>이 "이 노드가 모델 자리에 꽂혀 있다"는 표시입니다.</p>
   </section>
 
   <section class="sec" id="steps">
@@ -93,40 +82,48 @@
       </li>
 
       <li><span class="step-title">파일 업로드 칸 만들기</span>
-        <code class="val">Form Fields</code> 아래에서 입력 칸을 하나 추가하고 아래처럼
-        설정합니다.
+        아래로 내려가 <code class="val">Form Fields</code>에서 입력 칸을 하나
+        추가합니다. 칸이 열리면 <code class="val">Form Elements</code>라는 제목 아래로
+        설정 항목이 줄줄이 나타납니다. <b>화면에 보이는 순서대로</b> 아래와 같이
+        맞춥니다.
         <p>
-          필드 이름(<code class="val">Field Label</code>) → <code class="val">PDF</code><br>
-          입력 형태(<code class="val">Element Type</code>) → 파일(<code class="val">File</code>)<br>
+          이름(<code class="val">Label</code>) → <code class="val">PDF</code><br>
+          입력 형태(<code class="val">Element Type</code>) → <code class="val">File</code><br>
+          여러 파일 허용(<code class="val">Multiple Files</code>) → <b>끕니다</b>(회색)<br>
           허용 확장자(<code class="val">Accepted File Types</code>) → <code class="val">.pdf</code><br>
-          여러 파일 허용(<code class="val">Multiple Files</code>) → <b>끕니다</b><br>
-          필수(<code class="val">Required Field</code>) → 켭니다
+          필수(<code class="val">Required Field</code>) → <b>켭니다</b>(초록색)
         </p>
+        <span class="hint"><code class="val">Element Type</code>을
+        <code class="val">File</code>로 바꾸기 전에는
+        <code class="val">Multiple Files</code>·<code class="val">Accepted File Types</code>
+        두 칸이 아예 보이지 않습니다. 안 보인다면 순서가 아직 안 온 것이니
+        <code class="val">File</code>부터 고르세요.</span>
         <div class="note warn">
-          <b>필드 이름은 반드시 <code class="val">PDF</code> 세 글자로</b>
+          <b>이름은 반드시 <code class="val">PDF</code> 세 글자로</b>
           한글로 <code class="val">공문서 업로드</code> 같은 이름을 지으면 안 되는
-          이유가 있습니다. n8n은 <b>파일이 담기는 자리의 이름을 이 필드 이름에서
-          그대로 가져다 쓰는데, 영문과 숫자가 아닌 글자는 전부 밑줄
-          (<code class="val">_</code>)로 바꿔버립니다.</b> 예를 들어 필드 이름을
-          <code class="val">공문서 PDF 업로드</code>로 지으면 파일이 담기는 자리의
-          이름은 <code class="val">____PDF____</code>가 됩니다. 다음 단계에서 이
+          이유가 있습니다. n8n은 <b>파일이 담기는 자리의 이름을 이
+          <code class="val">Label</code>에서 그대로 가져다 쓰는데, 영문과 숫자가 아닌
+          글자는 전부 밑줄(<code class="val">_</code>)로 바꿔버립니다.</b> 예를 들어
+          이름을 <code class="val">공문서 PDF 업로드</code>로 지으면 파일이 담기는
+          자리의 이름은 <code class="val">____PDF____</code>가 됩니다. 다음 단계에서 이
           이름을 손으로 적어 넣어야 하는데, 이런 이름은 알아낼 방법이 없습니다.
-          <p>필드 이름을 <code class="val">PDF</code>로 지으면 파일이 담기는 자리의
+          <p>이름을 <code class="val">PDF</code>로 지으면 파일이 담기는 자리의
              이름도 그냥 <code class="val">PDF</code>가 됩니다. 폼 위쪽 설명글에
-             한글로 안내가 나가므로 수강생이 헷갈릴 일은 없습니다.</p>
+             한글로 안내가 나가므로 민원인이 헷갈릴 일은 없습니다.</p>
         </div>
         <figure class="capture" id="fig-d2-p1-2">
-          <div class="capture-cap">[그림 P1-2] 파일 업로드 칸이 설정된 폼 트리거 패널</div>
-          <!-- 캡처 위치: 폼 트리거 노드 패널에서 Field Label이 PDF, Element Type이 File, Accepted File Types가 .pdf로 채워진 부분 -->
-          <img src="../assets/img/fig-d2-p1-2.png" alt="파일 업로드 칸이 설정된 폼 트리거 패널">
+          <div class="capture-cap">[그림 P1-2] <code class="val">Label</code>·<code class="val">Element Type</code>·<code class="val">Accepted File Types</code>를 채우고 스위치 두 개를 맞춘 모습</div>
+          <img src="../assets/img/fig-d2-p1-2.png" alt="Label과 Element Type, Accepted File Types를 채우고 스위치 두 개를 맞춘 모습">
         </figure>
       </li>
 
       <li><span class="step-title">PDF에서 글자 뽑아내기</span>
         폼 트리거 오른쪽 <code class="val">+</code>를 누르고
         <code class="val">Extract from File</code>을 고릅니다. 동작 목록에서
-        <code class="val">Extract From PDF</code>를 고릅니다.
-        <p>노드가 열리면 <code class="val">Input Binary Field</code> 칸에
+        <code class="val">Extract From PDF</code>를 고릅니다. 노드가 열리면 맨 위
+        <code class="val">Operation</code>이 <code class="val">Extract From PDF</code>로
+        되어 있는지 다시 한 번 확인합니다.
+        <p>그 아래 <code class="val">Input Binary Field</code> 칸에
            <code class="val">PDF</code>를 입력합니다. 이 칸은 기본값이
            <code class="val">data</code>로 채워져 있으니 <b>지우고 새로 입력</b>해야
            합니다.</p>
@@ -141,9 +138,8 @@
           <code class="val">{{ $json.text }}</code>로 가져다 씁니다.
         </div>
         <figure class="capture" id="fig-d2-p1-3">
-          <div class="capture-cap">[그림 P1-3] Input Binary Field에 PDF를 입력한 화면</div>
-          <!-- 캡처 위치: Extract from File 노드 패널에서 Operation이 Extract From PDF, Input Binary Field가 PDF로 채워진 부분 -->
-          <img src="../assets/img/fig-d2-p1-3.png" alt="Input Binary Field에 PDF를 입력한 화면">
+          <div class="capture-cap">[그림 P1-3] <code class="val">Operation</code>과 <code class="val">Input Binary Field</code>를 채운 화면. 칸 아래 안내문이 "여기 적힌 이름의 파일을 꺼내 쓴다"는 뜻입니다</div>
+          <img src="../assets/img/fig-d2-p1-3.png" alt="Operation과 Input Binary Field를 채운 화면">
         </figure>
       </li>
 
@@ -190,27 +186,28 @@
 
       <li><span class="step-title">텔레그램 자격증명 만들기</span>
         <code class="val">AI 요약</code> 오른쪽 <code class="val">+</code>를 누르고
-        <code class="val">Telegram</code>을 고릅니다. 동작은 기본값인
-        <code class="val">Send a text message</code>(메시지 보내기)로 둡니다.
-        <p>자격증명 칸에서 <code class="val">Create new credential</code>을 고르면
-           <code class="val">Access Token</code>을 넣으라는 칸 하나가 나옵니다.
+        <code class="val">Telegram</code>을 고릅니다. 노드가 열리면 맨 위
+        <code class="val">Credential</code> 칸이 아직
+        <code class="val">No credentials yet</code>으로 비어 있고, 그 오른쪽에
+        <code class="val">Set up credential</code> 버튼이 있습니다. 그 버튼을 누릅니다.
+        <p><code class="val">Access Token</code>을 넣으라는 칸 하나가 나옵니다.
            <b>준비물 ②에서 BotFather가 보내준 긴 토큰</b>을 여기에 붙여넣고
            저장합니다.</p>
         <span class="hint">구글 서비스처럼 로그인 창이 뜨지 않습니다. 텔레그램은
         토큰 문자열을 직접 붙여넣는 방식입니다. 창이 안 뜬다고 잘못된 것이
         아닙니다.</span>
-        <figure class="capture" id="fig-d2-p1-4">
-          <div class="capture-cap">[그림 P1-4] Access Token을 붙여넣는 텔레그램 자격증명 창</div>
-          <!-- 캡처 위치: 텔레그램 자격증명 만들기 창에서 Access Token 입력칸이 보이는 화면(토큰 값은 가려서 촬영) -->
-          <img src="../assets/img/fig-d2-p1-4.png" alt="Access Token을 붙여넣는 텔레그램 자격증명 창">
-        </figure>
+        <p>자격증명을 저장하고 노드로 돌아오면 <code class="val">Resource</code>는
+           <code class="val">Message</code>, <code class="val">Operation</code>은
+           <code class="val">Send Message</code>로 이미 맞춰져 있습니다.
+           <b>둘 다 그대로 둡니다.</b></p>
       </li>
 
       <li><span class="step-title">받는 사람과 보낼 내용 채우기</span>
         <code class="val">Chat ID</code> 칸에 준비물 ②에서 알아낸 <b>본인 chat id 숫자</b>를
         입력합니다.
         <p><code class="val">Text</code> 칸은 오른쪽의 표현식 전환 스위치를 눌러
-           <code class="val">Expression</code> 모드로 바꾼 뒤 아래를 붙여넣습니다.</p>
+           <code class="val">Expression</code> 모드로 바꾼 뒤 아래를 붙여넣습니다.
+           모드가 바뀌면 칸 왼쪽에 <code class="val">fx</code> 표시가 생깁니다.</p>
 <pre class="code-block">📄 공문서 요약
 
 {{ $json.text }}</pre>
@@ -218,6 +215,15 @@
         <code class="val">text</code>라는 이름으로 내보냅니다. 그래서 여기서도
         <code class="val">{{ $json.text }}</code>입니다 — 이름이 같을 뿐, PDF에서 뽑은
         글자가 아니라 AI가 쓴 요약문입니다.</span>
+        <p>아래쪽 <code class="val">Reply Markup</code>은
+           <code class="val">None</code> 그대로 두면 됩니다. 그 아래
+           <code class="val">Append n8n Attribution</code>을 끄면 메시지 끝에 붙는
+           "n8n으로 보냈다"는 홍보 문구가 사라집니다 — 켜두어도 실습에는 지장이
+           없습니다.</p>
+        <figure class="capture" id="fig-d2-p1-4">
+          <div class="capture-cap">[그림 P1-4] <code class="val">Chat ID</code>와 <code class="val">Text</code>를 채운 텔레그램 노드. <code class="val">Text</code> 왼쪽 <code class="val">fx</code>가 표현식 모드라는 표시입니다. 그림의 <code class="val">Chat ID</code>에는 자리표시자가 들어 있으니 <b>본인 숫자</b>로 바꾸세요</div>
+          <img src="../assets/img/fig-d2-p1-4.png" alt="Chat ID와 Text를 채운 텔레그램 노드">
+        </figure>
       </li>
 
       <li><span class="step-title">노드 이름 정리하기</span>
@@ -241,10 +247,13 @@
        <code class="val">📄 공문서 요약</code>으로 시작하는 메시지가 도착하면
        성공입니다.</p>
     <figure class="capture" id="fig-d2-p1-5">
-      <div class="capture-cap">[그림 P1-5] PDF를 올리는 폼 화면</div>
-      <!-- 캡처 위치: 브라우저에서 연 폼 주소 화면, 제목·설명과 파일 선택 버튼이 보이도록 -->
-      <img src="../assets/img/fig-d2-p1-5.png" alt="PDF를 올리는 폼 화면">
+      <div class="capture-cap">[그림 P1-5] 브라우저에서 연 폼 화면. 파일 칸 이름이 <code class="val">PDF</code>로 나오고 별표(<code class="val">*</code>)는 필수라는 뜻입니다</div>
+      <img src="../assets/img/fig-d2-p1-5.png" alt="브라우저에서 연 폼 화면">
     </figure>
+    <p class="hint">폼 위쪽에는 앞에서 적은 제목
+       <code class="val">공문서 요약 서비스</code>와 설명이 한글로 나오고, 파일 칸
+       이름만 <code class="val">PDF</code>로 보입니다. 필드 이름을 영문으로 지어도
+       민원인이 헷갈리지 않는 이유가 이것입니다.</p>
     <p>매번 <code class="val">Execute workflow</code>를 누르지 않고 상시로 쓰려면,
        오른쪽 위 활성화 스위치(<code class="val">Active</code>)를 켜고
        <code class="val">공문서 업로드 폼</code> 노드에 표시되는 상시 주소를 즐겨찾기에

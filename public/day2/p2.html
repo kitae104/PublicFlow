@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>P2 매일 아침 민원 브리핑 봇 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/flow.css">
 </head>
 <body>
 <main class="wrap">
@@ -52,32 +51,19 @@
       시트에 직접 몇 줄 적어 넣고 시작하세요.
     </div>
     <figure class="capture" id="fig-d2-p2-1">
-      <div class="capture-cap">[그림 P2-1] 완성된 모습</div>
-      <!-- 캡처 위치: 아침에 도착한 민원 브리핑 메일 화면, 제목의 날짜와 본문의 건수 정리가 함께 보이도록 -->
+      <div class="capture-cap">[그림 P2-1] 완성된 모습 — 시각 트리거로 시작해 마지막 <code class="val">AI 브리핑 작성</code>에서 두 갈래로 갈라집니다</div>
       <img src="../assets/img/fig-d2-p2-1.png" alt="완성된 모습">
     </figure>
-  </section>
-
-  <section class="sec" id="flow">
-    <h2 class="sec-title">이번 프로젝트의 흐름</h2>
-    <div class="flow">
-      <div class="flow-node is-new"><span class="t">매일 아침 9시</span><span class="k">Schedule 트리거</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">민원 현황 읽기</span><span class="k">Google Sheets</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">한 건으로 합치기</span><span class="k">Aggregate</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-node is-new"><span class="t">AI 브리핑 작성</span><span class="k">Basic LLM Chain</span></div>
-      <div class="flow-arrow">▶</div>
-      <div class="flow-split">
-        <div class="flow-node is-new"><span class="t">브리핑 메일</span><span class="k">Gmail</span></div>
-        <div class="flow-node is-new"><span class="t">텔레그램 알림</span><span class="k">Telegram</span></div>
-      </div>
-    </div>
-    <p class="flow-legend"><span class="sw"></span> 이번 시간에 새로 만드는 노드</p>
-    <p>마지막에만 두 갈래로 갈라집니다. 브리핑 글 하나를 <b>메일과 텔레그램 양쪽에
-       똑같이</b> 보내는 것이므로, 두 노드 모두 <code class="val">AI 브리핑 작성</code>에서
-       직접 선을 받습니다.</p>
+    <p class="hint">앞의 네 노드는 일직선이고 <b>마지막에만 두 갈래로 갈라집니다.</b>
+       브리핑 글 하나를 <b>메일과 텔레그램 양쪽에 똑같이</b> 보내는 것이므로, 두 노드
+       모두 <code class="val">AI 브리핑 작성</code>에서 <b>각각 직접</b> 선을 받습니다.
+       그림에서 <code class="val">브리핑 메일</code>과
+       <code class="val">텔레그램 알림</code>으로 가는 선 두 개가 같은 점에서 갈라져
+       나오는 것을 확인하세요.</p>
+    <p class="hint">노드 이름 아래 회색 글씨(<code class="val">read: sheet</code>,
+       <code class="val">send: message</code>)는 그 노드가 어떤 동작으로 설정되어
+       있는지 n8n이 알려주는 것입니다. 다 만든 뒤 이 글씨만 보고도 설정을 잘못하지
+       않았는지 훑어볼 수 있습니다.</p>
   </section>
 
   <section class="sec" id="steps">
@@ -91,11 +77,17 @@
       <li><span class="step-title">시각 트리거 추가하기</span>
         빈 캔버스 가운데 <code class="val">+</code>를 눌러
         <code class="val">Schedule Trigger</code>를 고릅니다.
-        <p>노드가 열리면 실행 주기를 <code class="val">Days</code>(하루에 한 번)로 두고,
-           <code class="val">Trigger at Hour</code> 칸에서
-           <code class="val">9am</code>을 고릅니다.
-           <code class="val">Trigger at Minute</code>는 <code class="val">0</code>으로
-           둡니다.</p>
+        <p>노드가 열리면 <code class="val">Trigger Rules</code> 아래에 칸 네 개가
+           있습니다. 아래처럼 맞춥니다.</p>
+        <p>
+          <code class="val">Trigger Interval</code> → <code class="val">Days</code>(기본값 그대로)<br>
+          <code class="val">Days Between Triggers</code> → <code class="val">1</code>(기본값 그대로 — 하루에 한 번)<br>
+          <code class="val">Trigger at Hour</code> → <code class="val">9am</code><b>으로 바꿉니다</b><br>
+          <code class="val">Trigger at Minute</code> → <code class="val">0</code>(기본값 그대로)
+        </p>
+        <span class="hint">실제로 손대는 칸은 <code class="val">Trigger at Hour</code>
+        하나뿐입니다. 맨 아래 <code class="val">Add Rule</code>은 "하루에 두 번" 처럼
+        시각을 더 넣고 싶을 때 쓰는 버튼이니 지금은 누르지 않습니다.</span>
         <div class="note">
           <b>이 노드가 하는 일</b>
           지금까지 쓴 트리거는 사람이 눌러야(수동 실행) 또는 사람이 제출해야(폼)
@@ -103,9 +95,8 @@
           정각이 되면 워크플로우가 저절로 시작됩니다.
         </div>
         <figure class="capture" id="fig-d2-p2-2">
-          <div class="capture-cap">[그림 P2-2] 매일 9시로 설정한 Schedule Trigger</div>
-          <!-- 캡처 위치: Schedule Trigger 노드 패널에서 Days와 Trigger at Hour 9am이 선택된 부분 -->
-          <img src="../assets/img/fig-d2-p2-2.png" alt="매일 9시로 설정한 Schedule Trigger">
+          <div class="capture-cap">[그림 P2-2] 매일 오전 9시 정각으로 맞춘 <code class="val">Trigger Rules</code></div>
+          <img src="../assets/img/fig-d2-p2-2.png" alt="매일 오전 9시 정각으로 맞춘 Trigger Rules">
         </figure>
       </li>
 
@@ -126,8 +117,14 @@
         누르고 <code class="val">Aggregate</code>를 고릅니다.
         <p>노드가 열리면 <code class="val">Aggregate</code> 칸을
            <code class="val">All Item Data (Into a Single List)</code>로 바꿉니다.
-           <code class="val">Put Output in Field</code>는 기본값
-           <code class="val">data</code> 그대로 둡니다.</p>
+           그러면 아래에 <code class="val">Put Output in Field</code>와
+           <code class="val">Include</code> 두 칸이 나타나는데, 각각 기본값
+           <code class="val">data</code>·<code class="val">All Fields</code> 그대로
+           둡니다.</p>
+        <span class="hint"><code class="val">Include</code>가
+        <code class="val">All Fields</code>라는 것은 "시트에서 읽어온 칸을 하나도 빼지
+        말고 다 넘겨라"는 뜻입니다. AI가 종류·상세설명·등록일을 모두 봐야 브리핑을
+        쓸 수 있으므로 그대로 두어야 합니다.</span>
         <div class="note warn">
           <b>이 노드를 빼면 브리핑 메일이 수십 통 날아옵니다</b>
           <p>n8n에서 구글 시트 읽기는 <b>한 줄을 한 건씩 따로</b> 내보냅니다. 민원이
@@ -138,10 +135,15 @@
              만듭니다. 그래야 AI가 한 번만 실행되고, 전체를 보고 쓸 수 있습니다.</p>
         </div>
         <figure class="capture" id="fig-d2-p2-3">
-          <div class="capture-cap">[그림 P2-3] 합치기 전과 후의 항목 수 비교</div>
-          <!-- 캡처 위치: Aggregate 노드를 실행한 뒤 왼쪽 INPUT에 여러 항목, 오른쪽 OUTPUT에 항목 1개가 보이는 화면(항목 수 표시가 함께 보이도록) -->
-          <img src="../assets/img/fig-d2-p2-3.png" alt="합치기 전과 후의 항목 수 비교">
+          <div class="capture-cap">[그림 P2-3] 합치기 전과 후 — 왼쪽 INPUT은 <code class="val">7 items</code>, 오른쪽 OUTPUT은 <code class="val">1 item</code></div>
+          <img src="../assets/img/fig-d2-p2-3.png" alt="합치기 전 7 items, 합친 후 1 item">
         </figure>
+        <p class="hint">이 노드를 실행해보면 화면 <b>왼쪽 위와 오른쪽 위의 숫자</b>가
+           달라진 것이 보입니다. 왼쪽은 시트에서 읽어온 민원이 일곱 건
+           (<code class="val">7 items</code>), 오른쪽은 그 일곱 건이 통째로 들어간 한 건
+           (<code class="val">1 item</code>)입니다. 오른쪽 내용을 보면
+           <code class="val">"data": [</code> 아래에 민원들이 줄줄이 들어가 있습니다 —
+           이 <code class="val">data</code>가 다음 단계 프롬프트에서 부를 이름입니다.</p>
       </li>
 
       <li><span class="step-title">AI 브리핑 노드 추가하기</span>
@@ -242,10 +244,12 @@
        붙은 메일이 <b>한 통</b> 도착하고, 텔레그램에도 같은 내용이 <b>하나</b> 오면
        성공입니다. 본문에 전체 건수와 종류별 건수가 들어 있는지 확인하세요.</p>
     <figure class="capture" id="fig-d2-p2-4">
-      <div class="capture-cap">[그림 P2-4] 도착한 브리핑 메일</div>
-      <!-- 캡처 위치: 받은편지함에서 연 일일 민원 브리핑 메일, 제목의 날짜와 본문 요약이 함께 보이도록 -->
-      <img src="../assets/img/fig-d2-p2-4.png" alt="도착한 브리핑 메일">
+      <div class="capture-cap">[그림 P2-4] 받은편지함 맨 위에 <b>한 통만</b> 도착한 <code class="val">[일일 민원 브리핑]</code> 메일</div>
+      <img src="../assets/img/fig-d2-p2-4.png" alt="받은편지함에 한 통 도착한 일일 민원 브리핑 메일">
     </figure>
+    <p class="hint">받은편지함 목록에서 제목 뒤에 오늘 날짜가 붙어 있고, 그 뒤로 본문
+       첫 줄이 미리보기로 이어집니다. <b>같은 제목이 여러 줄 쌓여 있다면</b> 합치기
+       노드가 빠진 것이니 아래 <b>안 될 때</b>를 보세요.</p>
     <p>확인이 끝났으면 오른쪽 위 활성화 스위치(<code class="val">Active</code>)를
        켜둡니다. <b>이 스위치를 켜야 내일 아침 9시에 저절로 실행됩니다.</b> 꺼두면
        시각이 되어도 아무 일도 일어나지 않습니다.</p>
