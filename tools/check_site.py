@@ -23,7 +23,8 @@ ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "public"
 DOWNLOADS = PUBLIC / "downloads"
 
-REQUIRED_SECTIONS = ["goal", "flow", "why", "steps", "verify", "trouble", "download"]
+# flow(흐름도) 섹션은 완성된 캔버스 캡처로 대체되어 폐지됨 — 필수에서 제외.
+REQUIRED_SECTIONS = ["goal", "why", "steps", "verify", "trouble", "download"]
 FORBIDDEN_TOKENS = ["TBD", "TODO", "FIXME", "lorem ipsum", "XXX"]
 
 ATTR_RE = re.compile(r'(?:href|src)\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)
