@@ -25,11 +25,8 @@ body.home { padding: 0 1.15rem 0; }
   color: var(--muted);
 }
 .masthead .mark {
-  width: .62rem;
-  height: .62rem;
-  border-radius: 50%;
-  background: var(--brand);
-  box-shadow: 0 0 0 4px var(--brand-soft);
+  width: 1.15rem;
+  height: 1.15rem;
   flex: none;
 }
 .masthead-name { font-weight: 700; color: var(--ink-2); letter-spacing: -0.015em; }
