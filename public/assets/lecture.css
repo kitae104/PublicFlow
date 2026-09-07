@@ -1,0 +1,129 @@
+/* ══════════════════════════════════════════════════════════
+   수업용 와이드 레이아웃 (프로토타입)
+
+   기존 읽기용 좁은 칼럼(--maxw: 47rem 고정) 대신, 화면 크기에 맞춰
+   본문 폭과 글자 크기가 함께 늘어나는 프레젠테이션 레이아웃.
+   body에 class="lecture-mode"를 추가한 페이지에만 적용됩니다.
+   ══════════════════════════════════════════════════════════ */
+
+body.lecture-mode {
+  --maxw: clamp(48rem, 82vw, 92rem);
+  --pad: clamp(2rem, 3vw, 4.5rem);
+  font-size: clamp(17px, 0.95vw + 13px, 23px);
+}
+
+body.lecture-mode .page-head h1 { font-size: clamp(1.8rem, 2.3vw, 2.7rem); }
+body.lecture-mode h2 { font-size: clamp(1.22rem, 1.5vw, 1.65rem); }
+body.lecture-mode h3 { font-size: clamp(1.02rem, 1.1vw, 1.3rem); }
+
+body.lecture-mode figure.capture img { max-width: min(100%, 64rem); }
+
+/* 축약형 요점 목록 — 서술형 문단 대신 PPT식 짧은 항목 나열 */
+body.lecture-mode ul.bullets {
+  list-style: none;
+  margin: .6rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: .55rem;
+}
+body.lecture-mode ul.bullets > li {
+  position: relative;
+  padding-left: 1.3rem;
+  line-height: 1.55;
+}
+body.lecture-mode ul.bullets > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: .5rem;
+  height: .5rem;
+  border-radius: 2px;
+  background: var(--brand);
+}
+
+/* 확인 문제 — 참여도를 높이기 위한 객관식·단답식 퀴즈 */
+.quiz-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper-2);
+  padding: 1.1rem 1.25rem;
+  margin: 0 0 1rem;
+}
+.quiz-item:last-child { margin-bottom: 0; }
+.quiz-q {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0 0 .7rem;
+}
+.quiz-q .qtype {
+  display: inline-block;
+  margin-right: .5rem;
+  padding: .1rem .5rem;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand-ink);
+  font-size: .78rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+ol.quiz-choices {
+  list-style: none;
+  counter-reset: qc;
+  padding: 0;
+  margin: 0 0 .8rem;
+  display: grid;
+  gap: .45rem;
+}
+ol.quiz-choices > li {
+  counter-increment: qc;
+  position: relative;
+  padding: .55rem .8rem .55rem 2.3rem;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--panel);
+  font-size: .95em;
+}
+ol.quiz-choices > li::before {
+  content: counter(qc, decimal-leading-zero);
+  position: absolute;
+  left: .75rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: .82em;
+}
+details.quiz-answer summary {
+  cursor: pointer;
+  display: inline-block;
+  color: var(--brand-ink);
+  font-weight: 700;
+  font-size: .88rem;
+  list-style: none;
+}
+details.quiz-answer summary::-webkit-details-marker { display: none; }
+details.quiz-answer summary::before {
+  content: "▸ ";
+}
+details.quiz-answer[open] summary::before {
+  content: "▾ ";
+}
+details.quiz-answer[open] summary { margin-bottom: .5rem; }
+details.quiz-answer .quiz-a {
+  padding: .7rem .9rem;
+  border-left: 3px solid var(--brand);
+  background: var(--brand-soft);
+  border-radius: 0 7px 7px 0;
+  font-size: .92rem;
+  line-height: 1.6;
+}
+details.quiz-answer .quiz-a b { color: var(--ink); }
+
+
+/* 좁은 화면(모바일)에서는 원래 읽기용 레이아웃으로 되돌림 */
+@media (max-width: 46rem) {
+  body.lecture-mode {
+    --pad: 1.15rem;
+    --maxw: none;
+    font-size: 17px;
+  }
+}

@@ -6,8 +6,9 @@
 <link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
 <title>04 이메일 자동 발송 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/lecture.css">
 </head>
-<body>
+<body class="lecture-mode">
 <main class="wrap">
 
   <nav class="crumb"><a href="../index.html">목차</a> › 1일차 › 04</nav>
@@ -19,89 +20,51 @@
 
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
-    <p>민원인 입장에서 가장 답답한 순간은 처리가 늦어질 때가 아니라
-       <b>접수가 됐는지조차 알 수 없을 때</b>입니다. 홈페이지에 글을 남기거나 전화로
-       말은 했는데, 그게 어딘가에 들어갔다는 증거가 없습니다. 그래서 다음 날 전화를
-       겁니다. "어제 접수한 거 들어갔나요?"</p>
-    <p>그 확인 전화를 받는 데 드는 시간이, 정작 민원을 처리하는 시간보다 길 때도
-       있습니다. 민원인도 답답하고 담당자도 일이 늘어납니다. <b>양쪽 다 손해인
-       전화</b>입니다.</p>
-    <p>접수되는 순간 확인 메일이 <b>자동으로</b> 나가면 이 전화가 줄어듭니다. 사람이
-       답장을 쓰는 게 아니라, 민원이 들어온 그 순간에 이미 발송되어 있습니다. 담당자가
-       아직 그 민원을 열어보지도 않았을 때 말입니다.</p>
+    <ul class="bullets">
+      <li>민원인은 처리가 늦어져서가 아니라 <b>접수됐는지조차 모를 때</b> 가장 답답함 → 다음날 확인 전화를 겁니다</li>
+      <li>확인 전화 응대 시간이 되려 민원 처리 시간보다 길기도 함 — 민원인도 담당자도 양쪽 다 손해</li>
+      <li>해결: 접수되는 순간 확인 메일이 <b>자동</b>으로 발송되어, 담당자가 열어보기 전에 이미 발송되어 있음</li>
+    </ul>
     <div class="note tip">
       <b>이번 시간부터 워크플로우가 갈라집니다</b>
-      지금까지는 노드가 일렬로 이어졌습니다. 이번에 붙이는 메일 노드는
-      <code class="val">시트에 기록</code> 뒤가 아니라
-      <code class="val">샘플 민원</code>에서 <b>따로 갈라져 나옵니다.</b>
-      왜 그래야 하는지는 아래 따라하기 첫머리에서 설명합니다 — 이 강좌 전체에서
-      가장 자주 실수하는 지점이니 그 부분은 꼭 읽어주세요.
+      지금까지는 노드가 일렬로 이어졌지만, 메일 노드는 <code class="val">시트에 기록</code> 뒤가 아니라 <code class="val">샘플 민원</code>에서 <b>따로 갈라져 나옵니다</b>. 왜 그래야 하는지는 따라하기 첫머리 노트를 보세요 — 이 강좌 이후로 새 노드를 붙일 때마다 같은 거리김이 나옵니다.
     </div>
   </section>
 
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
-    <p>접수된 민원 내용을 바탕으로 접수자(민원인) 본인에게 접수 확인 메일을 자동으로 보내는
-       단계를 추가합니다. 실제 담당자에게 가는 메일은 07강에서 따로 만듭니다.</p>
+    <p>접수된 민원 내용을 바탕으로 접수자(민원인) 본인에게 접수 확인 메일을 자동으로 보내는 단계를 추가합니다. 실제 담당자에게 가는 메일은 07강에서 따로 만듭니다.</p>
     <figure class="capture" id="fig-d1-04-1">
-      <div class="capture-cap">[그림 4-1] 완성된 모습 — <code class="val">샘플 민원</code>에서 두 갈래로 갈라진 캔버스</div>
+      <div class="capture-cap">[그림 4-1] 완성 — <code class="val">샘플 민원</code>에서 두 갈래로 갈라진 캔버스</div>
       <img src="../assets/img/fig-d1-04-1.png" alt="완성된 모습">
     </figure>
-    <p class="hint">한 번 실행하고 난 뒤의 모습입니다. 실행된 노드에는 초록 체크가 붙고,
-      노드를 잇는 선이 초록색으로 바뀌며 그 위에 <code class="val">1 item</code>(민원 한
-      건이 지나갔다는 뜻)이 표시됩니다. 새로 붙인 Gmail 노드 이름 아래의
-      <code class="val">send: message</code>는 "메일 보내기" 설정이 잡혔다는 표시입니다.</p>
   </section>
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
     <div class="note">
-      <b>어디에서 갈라져야 할까요</b>
-      새 노드는 <code class="val">시트에 기록</code> 뒤가 아니라 <code class="val">샘플 민원</code>
-      노드에서 바로 갈라져야 합니다. <code class="val">시트에 기록</code> 노드를 지나면
-      그 노드의 출력은 "시트에 몇 번째 줄을 썼다"는 기록 결과로 바뀌어, 이름·연락처 같은
-      민원 내용 자체는 사라져 버립니다. 그래서 이번 강의도, 앞으로 나오는 새 노드도 전부
-      <code class="val">샘플 민원</code> 하나에서 각각 직접 연결됩니다.
+      <b>어디서 갈라져야 할까요</b>
+      <code class="val">시트에 기록</code>을 지나면 값이 "기록 결과"로 바뀌어 민원 내용이 사라집니다. 새 노드는 항상 <code class="val">샘플 민원</code>에서 직접 갈라집니다.
     </div>
     <ol class="steps">
       <li><span class="step-title">Gmail 노드 추가하기</span>
-        <code class="val">샘플 민원</code> 노드 오른쪽 <code class="val">+</code>를 누르고
-        <code class="val">Gmail</code>을 고릅니다.
-        <span class="hint"><code class="val">시트에 기록</code> 노드가 아니라 반드시
-        <code class="val">샘플 민원</code> 노드 오른쪽에서 눌러야 합니다.</span>
+        <code class="val">샘플 민원</code> 오른쪽 <code class="val">+</code> → <code class="val">Gmail</code>
       </li>
       <li><span class="step-title">자격증명 연결하기</span>
-        03강에서 구글 시트 자격증명을 연결했던 것과 같은 방식입니다. 노드 맨 위
-        <code class="val">Credential</code> 항목의
-        <code class="val">Sign in with Google</code> 버튼을 누르고, 뜨는 화면에서 같은 개인
-        구글 계정을 고른 뒤 권한 허용과 비슷한 문구의 버튼을 눌러 동의합니다.
-        <span class="hint">이번에는 메일을 대신 보내도 되는지 묻기 때문에 03강에서 본
-        동의 화면과 문구가 다릅니다. 다른 화면이 나와도 잘못된 것이 아닙니다.</span>
-        <p>창이 닫히고 n8n 화면으로 돌아와 <code class="val">Credential</code> 칸에
-        <code class="val">Gmail account</code>가 채워져 있으면 연결이 끝난 것입니다.
-        03강의 <code class="val">Google Sheets account</code>와는 <b>별개의 자격증명</b>이라
-        새로 만드는 것이 맞습니다.</p>
+        <code class="val">Sign in with Google</code> → 같은 계정 선택 → 허용 → <code class="val">Gmail account</code> 생성(03강과 별개)
       </li>
       <li><span class="step-title">받는 사람 입력하기</span>
-        <code class="val">To</code> 칸 오른쪽의 표현식 전환 스위치를 눌러
-        <code class="val">Expression</code> 모드로 바꾼 뒤
-        <code class="val">{{ $json.이메일 }}</code>을 입력합니다.
-        <span class="hint"><code class="val">Resource</code>와 <code class="val">Operation</code>은
-        기본값인 <code class="val">Message</code>·<code class="val">Send</code> 그대로 두면 됩니다.
-        따로 바꿀 필요가 없습니다.</span>
+        <code class="val">To</code> 표현식 전환 → <code class="val">{{ $json.이메일 }}</code>
+        <span class="hint"><code class="val">Resource</code>·<code class="val">Operation</code>은 기본값(<code class="val">Message</code>·<code class="val">Send</code>) 유지</span>
       </li>
       <li><span class="step-title">제목 입력하기</span>
-        <code class="val">Subject</code> 칸에 <code class="val">민원 접수</code>를 입력합니다.
-        이 칸은 표현식으로 바꾸지 않고 그대로 글자로 입력합니다.
+        <code class="val">Subject</code> = <code class="val">민원 접수</code>(글자 그대로)
       </li>
       <li><span class="step-title">이메일 형식 바꾸기</span>
-        <code class="val">Email Type</code> 칸은 기본값이 <code class="val">HTML</code>로
-        되어 있습니다. 이번 강의에서는 서식 없는 글로만 보낼 것이므로
-        <code class="val">Text</code>로 바꿉니다.
+        <code class="val">Email Type</code> → <code class="val">Text</code>
       </li>
       <li><span class="step-title">본문 입력하기</span>
-        <code class="val">Message</code> 칸 오른쪽의 표현식 전환 스위치를 눌러
-        <code class="val">Expression</code> 모드로 바꾼 뒤 아래 내용을 그대로 붙여넣습니다.
+        <code class="val">Message</code> 표현식 전환 후 아래 붙여넣기
         <p>
           <code class="val">담당팀께,</code><br><br>
           <code class="val">아래와 같이 민원이 접수되었습니다.</code><br><br>
@@ -114,54 +77,67 @@
           <code class="val">내용 확인 후 신속한 처리 바랍니다.</code><br><br>
           <code class="val">감사합니다.</code>
         </p>
-        <span class="hint">본문이 <code class="val">담당팀께,</code>로 시작하지만 실제로는
-        접수자(민원인) 본인에게 가는 메일입니다 — 원본 워크플로우의 문구를 그대로 옮겼기
-        때문이며, 내용은 바꾸지 않고 그대로 둡니다. 그리고 본문 전체가 표현식 모드라고 해서
-        전부 계산식이어야 하는 것은 아닙니다. "담당팀께," 같은 보통 글자와
-        <code class="val">{{ $json.이름 }}</code> 같은 계산식이 한 칸 안에 섞여 있어도
-        됩니다. n8n은 이중 중괄호로 감싼 부분만 계산하고 나머지는 글자 그대로 둡니다.</span>
         <figure class="capture" id="fig-d1-04-2">
-          <div class="capture-cap">[그림 4-2] 여기까지 설정을 마친 Gmail 노드</div>
+          <div class="capture-cap">[그림 4-2] 설정을 마친 Gmail 노드</div>
           <img src="../assets/img/fig-d1-04-2.png" alt="여기까지 설정을 마친 Gmail 노드">
         </figure>
-        <span class="hint">[그림 4-2]에서 확인할 것 — 위에서부터
-        <code class="val">Credential</code>에 <code class="val">Gmail account</code>,
-        <code class="val">Resource</code>는 <code class="val">Message</code>,
-        <code class="val">Operation</code>은 <code class="val">Send</code>,
-        <code class="val">To</code>와 <code class="val">Message</code>에는 왼쪽에
-        <code class="val">fx</code> 표시(표현식 모드),
-        <code class="val">Subject</code>는 <code class="val">민원 접수</code>,
-        <code class="val">Email Type</code>은 <code class="val">Text</code>입니다.
-        <code class="val">To</code> 칸 아래에 실제 이메일 주소가 회색으로 미리 보이면
-        표현식이 제대로 값을 찾은 것입니다.</span>
+        <span class="hint"><code class="val">To</code>·<code class="val">Message</code>는 <code class="val">fx</code> 표시, <code class="val">Subject</code>는 민원 접수, <code class="val">Email Type</code>은 Text</span>
       </li>
       <li><span class="step-title">노드 이름 바꾸기</span>
-        노드 제목을 더블클릭해 <code class="val">접수 메일 보내기</code>로 바꿉니다.
+        <code class="val">접수 메일 보내기</code>로 변경
       </li>
     </ol>
   </section>
 
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
-    <p>아래쪽 <code class="val">Execute workflow</code>를 누른 뒤 본인 받은편지함을
-       확인합니다. 제목이 <code class="val">민원 접수</code>인 메일이 도착해 있고,
-       본문의 접수자명·연락처·민원 종류가 채워져 있으며 등록일이 오늘 날짜로
-       나오면 성공입니다.</p>
+    <ul class="bullets">
+      <li><code class="val">Execute workflow</code> → 받은편지함 확인</li>
+      <li>제목 <code class="val">민원 접수</code>, 접수자명·연락처·종류 채워짐, 등록일 오늘 날짜 = 성공</li>
+    </ul>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
-    <p><b>메일이 안 옵니다</b> — 먼저 스팸함을 확인하세요. 그다음
-       <code class="val">To</code> 칸이 <code class="val">Expression</code> 모드로
-       바뀌어 있는지 확인하세요. 모드를 바꾸지 않으면 n8n이 이메일 주소가 아니라
-       글자 <code class="val">{{ $json.이메일 }}</code> 그대로를 받는 사람으로
-       해석해 발송에 실패합니다.</p>
-    <p><b>본문에 <code class="val">{{ $json.이름 }}</code>이 글자 그대로 나옵니다</b> —
-       <code class="val">Message</code> 칸이 <code class="val">Expression</code> 모드가
-       아닙니다. 전환 스위치를 다시 확인하세요.</p>
-    <p><b><code class="val">시트에 기록</code> 뒤에 붙였더니 값이 비어 옵니다</b> —
-       연결선이 <code class="val">시트에 기록</code>에서 나와 있을 것입니다. 그 선을
-       지우고 <code class="val">샘플 민원</code> 노드에서 새로 선을 이어 붙이세요.</p>
+    <ul class="bullets">
+      <li><b>메일이 안 옴</b> — 스팸함 확인, <code class="val">To</code> Expression 모드 확인</li>
+      <li><b>본문에 <code class="val">{{ $json.이름 }}</code> 그대로 나옴</b> — <code class="val">Message</code> 표현식 전환 확인</li>
+      <li><b>시트에 기록 뒤에 붙였더니 값이 빔</b> — 선을 <code class="val">샘플 민원</code>에서 새로 연결</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="quiz">
+    <h2 class="sec-title">확인 문제</h2>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q1. Gmail 노드를 붙일 때 반드시 <code class="val">샘플 민원</code> 노드 오른쪽에서 갈라져야 하는 이유는?</p>
+      <ol class="quiz-choices">
+        <li>Gmail 노드는 다른 노드 뒤에 붙을 수 없어서</li>
+        <li><code class="val">시트에 기록</code>을 지나면 값이 기록 결과로 바뀌어 민원 내용이 사라지기 때문에</li>
+        <li>자격증명이 노드 위치에 따라 달라지기 때문에</li>
+        <li>화면 정렬이 흐트러지기 때문에</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> 이미 지나간 노드의 결과로 값이 바뀌어 버리므로, 원본 민원 데이터가 필요한 노드는 항상 <code class="val">샘플 민원</code>에서 직접 연결해야 합니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q2. <code class="val">To</code> 칸이 표현식(Expression) 모드로 바뀌지 않았을 때 생기는 문제는?</p>
+      <ol class="quiz-choices">
+        <li>메일이 두 번 발송된다</li>
+        <li>n8n이 <code class="val">{{ $json.이메일 }}</code>이라는 글자 그대로를 주소로 해석해 발송에 실패한다</li>
+        <li>제목이 비어서 나간다</li>
+        <li>자격증명이 초기화된다</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> 표현식 모드가 아니면 계산되지 않고 글자 그대로 처리되어 올바른 이메일 주소를 찾지 못합니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">단답형</span>Q3. 이번 강의에서 Gmail 노드의 <code class="val">Email Type</code>은 기본값 HTML 대신 무엇으로 바꿔야 하나요?</p>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답:</b> Text — 서식 없는 글로만 보내기 위해서입니다.</p>
+      </details>
+    </div>
   </section>
 
   <section class="sec" id="download">

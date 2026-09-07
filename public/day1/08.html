@@ -6,8 +6,9 @@
 <link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
 <title>08 입력 폼으로 실제 접수받기 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/lecture.css">
 </head>
-<body>
+<body class="lecture-mode">
 <main class="wrap">
 
   <nav class="crumb"><a href="../index.html">목차</a> › 1일차 › 08</nav>
@@ -19,75 +20,38 @@
 
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
-    <p>지금까지 만든 것에는 결정적인 한계가 하나 있습니다.
-       <b>민원 내용이 워크플로우 안에 박혀 있다</b>는 점입니다.
-       <code class="val">샘플 민원</code> 노드에 김기태·010-1111-2222가 적혀 있고,
-       몇 번을 실행하든 언제나 <b>그 사람의 그 민원</b>이 처리됩니다.</p>
-    <p>진짜로 쓰려면 <b>민원인이 직접 입력할 창구</b>가 있어야 합니다. 그리고 그
-       창구는 n8n에 로그인하지 않은 사람도 열 수 있어야 합니다. 민원인에게 n8n
-       계정을 만들라고 할 수는 없으니까요.</p>
-    <p>이번 시간에는 트리거를 <b>입력 폼</b>으로 바꿉니다. 그러면 링크가 하나
-       생기고, 그 링크를 받은 사람은 누구나 민원을 넣을 수 있습니다. 폼이 제출되는
-       순간 지금까지 만든 것이 한꺼번에 돕니다. <b>그 순간 이것은 연습이
-       아니라 서비스가 됩니다.</b></p>
+    <ul class="bullets">
+      <li>지금까지는 <b>민원 내용이 워크플로우 안에 박혀 있음</b> — 몇 번을 실행하든 항상 같은 사람의 같은 민원이 처리됨</li>
+      <li>진짜로 쓰려면 <b>민원인이 직접 입력할 창구</b>가 있어야 하고, 그 창구는 n8n에 로그인하지 않은 사람도 열 수 있어야 함</li>
+      <li>해결: 트리거를 <b>입력 폼</b>으로 교체 → 링크 하나만 있으면 누구나 제출 가능, 이 순간부터 연습이 아니라 서비스가 됨</li>
+    </ul>
     <div class="note tip">
       <b>이번 시간의 놀라운 점</b>
-      트리거를 통째로 갈아끼우는데도 <b>뒤에 붙은 노드는 하나도 고치지 않습니다.</b>
-      시트 매핑도, 메일 본문도, 날짜 계산도, AI 프롬프트도, 조건 분기도 3강에서 쓴
-      그대로 동작합니다. 왜 그런지는 따라하기에서 짚습니다 — 자동화를 오래 쓰는
-      요령이 여기에 들어 있습니다.
+      트리거를 통째로 갈아끼우는데도 <b>뒤에 붙은 노드는 하나도 고치지 않습니다</b> — 시트 매핑도, 메일 본문도, AI 프롬프트도, 조건 분기도 그대로 동작합니다. 필드 이름만 맞추면 됩니다.
     </div>
   </section>
 
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
-    <p>지금까지 직접 실행 버튼으로 테스트하던 워크플로우를, 누구나 웹 폼으로
-       민원을 입력하면 자동으로 시작되도록 바꿉니다.</p>
+    <p>지금까지 직접 실행 버튼으로 테스트하던 워크플로우를, 누구나 웹 폼으로 민원을 입력하면 자동으로 시작되도록 바꿉니다.</p>
     <figure class="capture" id="fig-d1-08-1">
-      <div class="capture-cap">[그림 8-1] 완성된 모습 — 맨 앞이 <code class="val">민원 입력 폼</code> 하나로 바뀌었습니다</div>
+      <div class="capture-cap">[그림 8-1] 완성 — 맨 앞이 <code class="val">민원 입력 폼</code> 하나로 교체</div>
       <img src="../assets/img/fig-d1-08-1.png" alt="완성된 모습">
     </figure>
-    <p class="hint">앞의 <code class="val">수동 실행</code>·<code class="val">샘플 민원</code>
-      두 노드가 사라지고 클립보드 모양의 <code class="val">민원 입력 폼</code> 노드 하나가
-      그 자리에 들어갔습니다. <b>그 뒤로는 07강까지 만든 그대로입니다.</b>
-      [그림 8-1]에서 폼 노드에서 나가는 선은 <b>세 개</b>입니다 —
-      <code class="val">시트에 기록</code>, <code class="val">AI 안내문 작성</code>,
-      <code class="val">생활인가?</code>. <code class="val">접수 메일 보내기</code>와
-      <code class="val">처리 마감 일정</code>은 <code class="val">시트에 기록</code> 뒤로
-      이어져 있어 폼에서 따로 선이 나가지 않습니다.</p>
+    <p class="hint"><code class="val">수동 실행</code>·<code class="val">샘플 민원</code> 삭제 → <code class="val">민원 입력 폼</code> 하나로. 폼에서 나가는 선은 <b>세 개</b> — <code class="val">시트에 기록</code>, <code class="val">AI 안내문 작성</code>, <code class="val">생활인가?</code></p>
   </section>
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
     <ol class="steps">
       <li><span class="step-title">기존 트리거·데이터 노드 지우기</span>
-        폼 트리거 하나가 <code class="val">수동 실행</code>(워크플로우를 시작시키는 일)과
-        <code class="val">샘플 민원</code>(민원 데이터를 만드는 일)이 나눠 맡던 두 가지 일을
-        혼자 다 합니다. 그래서 두 노드는 더 이상 필요 없습니다.
-        <code class="val">수동 실행</code> 노드를 클릭해 선택한 뒤 키보드의
-        <code class="val">Delete</code> 키를 누릅니다. 같은 방법으로
-        <code class="val">샘플 민원</code> 노드도 지웁니다.
-        <span class="hint">두 노드를 지우면 거기서 뻗어 나가던 선도 함께 사라집니다.
-        <b>노드 자체는 지워지지 않고 연결만 끊어진 채 남아 있으니</b> 걱정하지 마세요 —
-        곧 다시 이어줍니다. 지금 왼쪽 입력점이 비어 버린 노드가 어느 것인지
-        눈으로 확인해두면 7단계가 쉬워집니다.</span>
+        <code class="val">수동 실행</code>·<code class="val">샘플 민원</code> 선택 후 <code class="val">Delete</code>
+        <span class="hint">뒤 노드 왼쪽 입력점이 비게 됨 — 7단계에서 다시 연결</span>
       </li>
       <li><span class="step-title">Form Trigger 노드 추가하기</span>
-        지금까지는 기존 노드 오른쪽의 <code class="val">+</code>를 눌러 다음 노드를
-        추가했지만, 이번에는 기준이 될 노드가 없습니다. 빈 캔버스 가운데의 안내(첫 단계
-        추가와 비슷한 문구입니다)를 눌러 노드 검색창을 엽니다. 검색창에
-        <code class="val">Form</code>을 입력하면 <code class="val">n8n Form</code>이라는
-        묶음이 나오는데, 그 안은 다시
-        <code class="val">Actions</code>와 <code class="val">Triggers</code>로 나뉩니다.
-        <b><code class="val">Triggers</code> 아래의
-        <code class="val">On new n8n Form event</code></b>를 고릅니다.
+        빈 캔버스 → <code class="val">Form</code> 검색 → <code class="val">Triggers</code> 아래 <code class="val">On new n8n Form event</code>
         <div class="note warn">
-          <b><code class="val">Actions</code> 쪽 항목을 고르면 안 됩니다</b>
-          같은 화면 위쪽 <code class="val">Actions</code>에 있는
-          <code class="val">Form Ending</code>·<code class="val">Next Form Page</code>는
-          폼을 <b>여러 장으로 만들 때</b> 쓰는 노드라 워크플로우를 시작시키지 못합니다.
-          번개 표시(<span aria-hidden="true">⚡</span>)가 붙은
-          <code class="val">Triggers</code> 쪽을 고르세요.
+          <b><code class="val">Actions</code> 쪽 항목은 안 됨</b> — 번개 표시 붙은 <code class="val">Triggers</code> 선택
         </div>
         <figure class="capture" id="fig-d1-08-2">
           <div class="capture-cap">[그림 8-2] 검색 결과에서 <code class="val">On new n8n Form event</code> 고르기</div>
@@ -95,146 +59,95 @@
         </figure>
       </li>
       <li><span class="step-title">폼 제목·설명 입력하기</span>
-        <code class="val">Form Title</code> 칸에 <code class="val">민원 접수</code>를,
-        <code class="val">Form Description</code> 칸에
-        <code class="val">민원이 있는 경우 이곳에서 신고하세요.</code>를 입력합니다.
+        <code class="val">Form Title</code> = <code class="val">민원 접수</code>,
+        <code class="val">Form Description</code> = <code class="val">민원이 있는 경우 이곳에서 신고하세요.</code>
       </li>
       <li><span class="step-title">필드 다섯 개 추가하기</span>
-        <code class="val">Form Description</code> 아래에
-        <code class="val">Form Elements</code>라는 영역이 있고, 그 맨 아래에
-        <code class="val">+ Add Form Element</code> 버튼이 있습니다. 요소가 하나 이미
-        들어 있으면 그것을 첫 번째로 쓰고 버튼을 <b>네 번</b> 더, 하나도 없으면
-        <b>다섯 번</b> 눌러 모두 다섯 개를 만듭니다.
-        <p>요소 하나를 펼치면 이름을 적는 <code class="val">Label</code> 칸과 종류를 고르는
-        <code class="val">Element Type</code> 드롭다운이 있습니다. <b>필수 입력으로
-        만들려면</b> 그 아래 <code class="val">+ Add Attributes</code>를 눌러
-        <code class="val">Required Field</code>를 추가한 뒤 켜면 됩니다.</p>
-        <span class="hint">n8n 버전에 따라 <code class="val">Required Field</code> 스위치가
-        요소 안에 처음부터 보이기도 합니다. 그럴 때는 그 스위치를 바로 켜면 됩니다.
-        드롭다운 항목의 정확한 문구도 버전마다 다를 수 있으니, 아래 괄호 안 설명에 맞는
-        뜻의 항목을 고르세요.</span>
-        <span class="hint"><code class="val">Label</code>을 비워두면 칸 오른쪽에 빨간 경고
-        표시가 뜹니다 — 아직 안 적었다는 뜻이니 이름을 적으면 사라집니다.</span>
+        <code class="val">+ Add Form Element</code>로 5개 생성, 각각 <code class="val">Required Field</code> 켜기
         <figure class="capture" id="fig-d1-08-3">
           <div class="capture-cap">[그림 8-3] <code class="val">Form Elements</code> 영역과 요소 한 개의 구성</div>
           <img src="../assets/img/fig-d1-08-3.png" alt="Form Elements 영역과 요소 한 개의 구성">
         </figure>
         <p>
-          <code class="val">이름</code> — <code class="val">Label</code>에
-          <code class="val">이름</code> 입력, <code class="val">Element Type</code>은
-          짧은 한 줄 글자(<code class="val">Text Input</code>), 필수 켜기<br>
-          <code class="val">연락처</code> — <code class="val">Label</code>에
-          <code class="val">연락처</code> 입력, 종류는 <code class="val">Text Input</code>, 필수 켜기<br>
-          <code class="val">이메일</code> — <code class="val">Label</code>에
-          <code class="val">이메일</code> 입력, 종류는 이메일 뜻의 항목, 필수 켜기<br>
-          <code class="val">종류</code> — <code class="val">Label</code>에
-          <code class="val">종류</code> 입력, 종류는
-          <code class="val">Dropdown</code>(선택 목록), 필수 켜기<br>
-          <code class="val">상세설명</code> — <code class="val">Label</code>에
-          <code class="val">상세설명</code> 입력, 종류는 여러 줄 글자(텍스트 영역) 뜻의
-          항목, 필수 켜기
+          <code class="val">이름</code> — Text Input<br>
+          <code class="val">연락처</code> — Text Input<br>
+          <code class="val">이메일</code> — Email 종류<br>
+          <code class="val">종류</code> — Dropdown<br>
+          <code class="val">상세설명</code> — Textarea
         </p>
       </li>
       <li><span class="step-title"><code class="val">종류</code> 필드에 드롭다운 옵션 넣기</span>
-        <code class="val">종류</code> 요소의 <code class="val">Element Type</code>을
-        <code class="val">Dropdown</code>으로 고르면 그 아래
-        <code class="val">Field Options</code>라는 영역이 새로 나타납니다. 그 안에
-        <code class="val">Values 1</code>·<code class="val">Values 2</code>…처럼 번호가
-        붙은 칸이 생기고, 각 칸 안의 <code class="val">Option</code>에 값을 적습니다.
-        칸이 모자라면 맨 아래 <code class="val">+ Add Field Option</code>을 눌러 늘립니다.
-        모두 <b>세 칸</b>을 만들고 순서대로 <code class="val">생활</code>,
-        <code class="val">음식물</code>, <code class="val">대형</code>을 입력합니다.
-        <span class="hint">여기 적는 세 값이 폼 화면의 선택지가 되고, 07강
-        <code class="val">생활인가?</code> 조건이 <code class="val">생활</code>과 비교하는
-        값이 됩니다. <b>철자를 정확히 맞추세요.</b></span>
+        <code class="val">Field Options</code>에 세 칸: <code class="val">생활</code>, <code class="val">음식물</code>, <code class="val">대형</code>
         <figure class="capture" id="fig-d1-08-4">
           <div class="capture-cap">[그림 8-4] <code class="val">종류</code> 요소의 드롭다운 옵션 세 개</div>
           <img src="../assets/img/fig-d1-08-4.png" alt="종류 요소의 드롭다운 옵션 세 개">
         </figure>
       </li>
       <li><span class="step-title">노드 이름 바꾸기</span>
-        노드 제목을 더블클릭해 <code class="val">민원 입력 폼</code>으로 바꿉니다.
+        <code class="val">민원 입력 폼</code>으로 변경
       </li>
       <li><span class="step-title">끊어진 노드에 다시 연결하기</span>
-        <code class="val">민원 입력 폼</code> 노드 오른쪽 출력점에서 선을 끌어다
-        놓는 방식으로, 1단계에서 <b>왼쪽 입력점이 비어 버린 노드</b>에 선을 다시
-        이어줍니다. [그림 8-1] 기준으로는 <code class="val">시트에 기록</code>,
-        <code class="val">AI 안내문 작성</code>, <code class="val">생활인가?</code>
-        <b>세 곳</b>입니다.
-        <span class="hint"><code class="val">접수 메일 보내기</code>와
-        <code class="val">처리 마감 일정</code>에는 선을 잇지 않습니다 —
-        <code class="val">시트에 기록</code> 뒤로 이미 이어져 있어서, 앞 노드가 연결되면
-        따라서 함께 실행됩니다.</span>
-        <span class="hint">다 이었는지 확인하는 기준은 하나입니다 — <b>왼쪽 입력점에 선이
-        하나도 붙어 있지 않은 노드가 남아 있으면 안 됩니다.</b></span>
-        <span class="hint">방금 지운 <code class="val">수동 실행</code>·
-        <code class="val">샘플 민원</code> 자리를 <code class="val">민원 입력
-        폼</code> 하나가 대신하는 것뿐이고, 뒤쪽 노드는 그대로 남아 있었습니다.
-        선만 다시 이어주면 됩니다.</span>
+        <code class="val">민원 입력 폼</code> 출력점에서 <code class="val">시트에 기록</code>·<code class="val">AI 안내문 작성</code>·<code class="val">생활인가?</code> 세 곳에 다시 연결
       </li>
     </ol>
     <div class="note tip">
-      <b>하류 노드는 하나도 손대지 않았습니다</b>
-      <code class="val">시트에 기록</code>부터 <code class="val">일반 담당자</code>까지
-      뒤에 남은 노드들의 설정은 전혀 바꾸지 않았습니다. 폼의 필드 레이블이
-      <code class="val">샘플 민원</code>에서 쓰던 이름과 완전히 같기 때문에
-      <code class="val">{{ $json.이름 }}</code> 같은 표현식이 그대로 동작합니다.
-      데이터를 넘겨주는 이름을 앞뒤로 맞춰두면, 나중에 데이터가 폼에서 오든
-      다른 곳에서 오든 트리거만 바꿔 끼우면 됩니다 — 자동화를 오래 쓰는
-      요령입니다.
+      <b>하류 노드는 하나도 손대지 않음</b>
+      폼 필드 레이블이 <code class="val">샘플 민원</code>과 같은 이름이라 <code class="val">{{ $json.이름 }}</code> 표현식이 그대로 동작.
     </div>
   </section>
 
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
-    <p><code class="val">민원 입력 폼</code> 노드를 열면 패널 <b>맨 위</b>에
-       <code class="val">Form URLs</code>라는 항목이 있고, 그 안에
-       <code class="val">Test URL</code>·<code class="val">Production URL</code> 두 개의
-       탭이 있습니다. 워크플로우 오른쪽 위의 활성화 스위치를 켠 뒤
-       <code class="val">Production URL</code> 탭을 고르면
-       <code class="val">https://내주소.app.n8n.cloud/form/…</code> 형태의 실제 폼 주소가
-       나옵니다. 그 주소를 복사해 새 브라우저 탭에서 열어 실제로 민원을 입력하고 제출해
-       봅니다.</p>
-    <figure class="capture" id="fig-d1-08-5">
-      <div class="capture-cap">[그림 8-5] 노드 패널 맨 위의 <code class="val">Form URLs</code> 항목</div>
-      <img src="../assets/img/fig-d1-08-5.png" alt="노드 패널 맨 위의 Form URLs 항목">
-    </figure>
-    <p class="hint">그 아래 <code class="val">Authentication</code>은
-      <code class="val">None</code> 그대로 둡니다. 링크를 가진 사람은 누구나 폼을 열 수
-      있다는 뜻이고, 이번 실습에서는 이게 맞습니다.</p>
-    <p>제출하면 시트에 새 줄이 추가되고, 접수 메일이 오고, 3일 뒤 캘린더
-       일정이 잡히고, 입력한 <code class="val">종류</code>에 따라
-       <code class="val">[생활 관련] 민원</code> 또는 <code class="val">[일반]
-       민원</code> 메일까지 도착합니다 — <b>1일차에 만든 모든 것이 한 번에
-       동작합니다.</b></p>
-    <p>아직 활성화하지 않고 테스트만 하고 싶다면, 아래쪽
-       <code class="val">Execute workflow</code>를 누른 뒤 같은
-       <code class="val">Form URLs</code>에서 <code class="val">Test URL</code> 탭을
-       고릅니다. 한 번만 쓸 수 있는 임시 폼 주소가 나오는데, 그 주소로 제출해도 같은
-       결과를 확인할 수 있습니다.</p>
+    <ul class="bullets">
+      <li>활성화 스위치 켜기 → <code class="val">Form URLs</code>의 <code class="val">Production URL</code> 열어 제출</li>
+      <li>시트 적재 + 접수 메일 + 3일 뒤 캘린더 일정 + 종류별 담당자 메일 = 성공</li>
+      <li>테스트만 하려면 <code class="val">Execute workflow</code> 후 <code class="val">Test URL</code> 사용</li>
+    </ul>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
-    <p><b>폼 주소를 열어도 화면이 안 뜹니다</b> — 워크플로우가
-       활성화(<code class="val">Active</code>)되어 있는지 확인하세요. 활성화하지 않았다면
-       <code class="val">Execute workflow</code>로 받은 임시 주소를 대신
-       쓰세요.</p>
-    <p><b>제출했는데 아무 일도 일어나지 않습니다</b> — 캔버스를 훑어보며
-       <b>왼쪽 입력점에 선이 하나도 붙어 있지 않은 노드</b>가 있는지 확인하세요.
-       선이 빠진 노드만 실행되지 않습니다.</p>
-    <p><b>일부만 되고 나머지는 안 됩니다</b> — 예를 들어 시트에는 줄이 쌓이는데
-       메일이 안 온다면, <code class="val">시트에 기록</code> 뒤에 이어진
-       <code class="val">접수 메일 보내기</code>와의 선이 끊어졌을 수 있습니다.
-       실행 후 초록색으로 바뀌지 않은 선을 따라가 보세요.</p>
-    <p><b>시트나 메일에 값이 비어 들어갑니다</b> — 폼 필드의 레이블 철자가
-       <code class="val">샘플 민원</code>에서 쓰던 이름(이름·연락처·이메일·종류·상세설명)과
-       정확히 같은지 확인하세요. 철자가 다르면 하류 노드의 표현식이 그
-       이름을 찾지 못합니다.</p>
-    <p><b>활성화 스위치가 눌리지 않습니다</b> — 트리거가
-       <code class="val">Form Trigger</code>인지 확인하세요.
-       <code class="val">수동 실행</code> 같은 수동 트리거는 활성화할 수
-       없습니다.</p>
+    <ul class="bullets">
+      <li><b>폼 화면 안 뜸</b> — 워크플로우 활성화 확인, 아니면 Test URL 사용</li>
+      <li><b>제출해도 아무 일 없음</b> — 왼쪽 입력점에 선 없는 노드 확인</li>
+      <li><b>일부만 동작</b> — <code class="val">시트에 기록</code> 뒤 선 확인</li>
+      <li><b>값이 비어 들어감</b> — 폼 필드 레이블 철자가 샘플 민원과 같은지 확인</li>
+      <li><b>활성화 안 됨</b> — 트리거가 Form Trigger인지 확인</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="quiz">
+    <h2 class="sec-title">확인 문제</h2>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q1. 폼 트리거로 바꾼 뒤에도 뒤에 붙은 노드들을 하나도 고치지 않아도 되는 이유는?</p>
+      <ol class="quiz-choices">
+        <li>n8n이 자동으로 값을 맞춰주기 때문에</li>
+        <li>폼 필드의 레이블을 샘플 민원과 같은 이름으로 맞췄기 때문에</li>
+        <li>표현식을 전혀 쓰지 않았기 때문에</li>
+        <li>Form Trigger는 항상 값이 비어 있기 때문에</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> 폼 필드 이름과 하류 노드의 표현식이 가리키는 이름이 같기 때문에, 데이터가 어디서 오든 이름만 맞으면 표현식이 그대로 동작합니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q2. 폼 트리거를 활성화(Active)하지 않고 테스트만 하고 싶을 때 쓰는 주소는?</p>
+      <ol class="quiz-choices">
+        <li>Production URL</li>
+        <li>Test URL</li>
+        <li>Webhook URL</li>
+        <li>Admin URL</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> <code class="val">Execute workflow</code> 후 <code class="val">Test URL</code>로 한 번만 쓸 수 있는 임시 폼 주소를 받을 수 있습니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">단답형</span>Q3. 폼에서 사라진 두 노드(<code class="val">수동 실행</code>, <code class="val">샘플 민원</code>)의 역할을 이번 강의에서 대신하는 노드 하나의 이름은?</p>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답:</b> 민원 입력 폼 — 워크플로우 시작과 민원 데이터 생성을 동시에 담당합니다.</p>
+      </details>
+    </div>
   </section>
 
   <section class="sec" id="download">

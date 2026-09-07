@@ -6,8 +6,9 @@
 <link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
 <title>02 데이터 흐름과 표현식 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/lecture.css">
 </head>
-<body>
+<body class="lecture-mode">
 <main class="wrap">
 
   <nav class="crumb"><a href="../index.html">목차</a> › 1일차 › 02</nav>
@@ -54,107 +55,103 @@
     <h2 class="sec-title">따라하기</h2>
     <ol class="steps">
       <li><span class="step-title">01강 워크플로우 이어서 열기</span>
-        01강에서 만든 <code class="val">수동 실행</code> → <code class="val">값 만들기</code> 워크플로우를 그대로 엽니다.
-        <span class="hint">화면을 이미 닫았거나 파일이 없다면 <a href="01.html#download">01강 하단</a>에서
-        day1-01.json을 내려받아 불러오면 됩니다.</span>
+        <code class="val">수동 실행</code> → <code class="val">값 만들기</code> 워크플로우 그대로 열기
+        <span class="hint">없으면 <a href="01.html#download">01강 하단</a>에서 day1-01.json 내려받기</span>
       </li>
       <li><span class="step-title">새 노드 추가하기</span>
-        <code class="val">값 만들기</code> 노드 오른쪽의 <code class="val">+</code>를 눌러
-        <code class="val">Edit Fields (Set)</code>를 고릅니다.
+        <code class="val">값 만들기</code> 오른쪽 <code class="val">+</code> → <code class="val">Edit Fields (Set)</code>
       </li>
       <li><span class="step-title">필드 추가하기</span>
-        노드를 열었을 때 이름과 값을 입력할 빈 줄이 보이지 않는다면,
-        <code class="val">Add Field</code>를 눌러 줄을 하나 만듭니다.
-        이미 빈 줄이 하나 보인다면 그 줄을 그대로 씁니다.
-        <span class="hint">빈 줄은 위부터 이름 칸(<code class="val">name</code>), 자료형(<code class="val">String</code>),
-        값 칸(<code class="val">value</code>) 순서입니다. 아래 그림에 빨갛게 표시된
-        <code class="val">Expression</code>은 5단계에서 누를 스위치입니다. 지금은 그냥 위치만 봐두세요.</span>
+        빈 줄 없으면 <code class="val">Add Field</code> 클릭
         <figure class="capture" id="fig-d1-02-2">
           <div class="capture-cap">[그림 2-2] 빈 필드 줄과 <code class="val">Fixed</code> / <code class="val">Expression</code> 전환 스위치</div>
           <img src="../assets/img/fig-d1-02-2.png" alt="빈 필드 줄과 Fixed / Expression 전환 스위치">
         </figure>
       </li>
       <li><span class="step-title">필드 이름 정하기</span>
-        <code class="val">name</code>이라고 흐리게 적힌 맨 윗칸에 <code class="val">최종문구</code>를 입력합니다.
-        <span class="hint">노드 이름이 아니라 필드 이름입니다. 노드 이름은 마지막 단계에서 바꿉니다.</span>
+        <code class="val">name</code> 칸에 <code class="val">최종문구</code> 입력
       </li>
       <li><span class="step-title">표현식 모드로 전환하기</span>
-        값 칸을 한 번 클릭하면 그 줄 오른쪽 아래에 <code class="val">Fixed</code> / <code class="val">Expression</code>이라고
-        적힌 작은 전환 스위치가 나타납니다([그림 2-2]의 빨간 표시). 이걸 눌러
-        <code class="val">Expression</code> 쪽으로 바꿔야 다음 단계에서 입력하는 내용이 그냥 글자가 아니라
-        계산식으로 처리됩니다.
-        <span class="hint">이 스위치를 누르지 않고 다음 단계 내용을 그대로 입력해도 n8n은 오류를 내지 않습니다.
-        그냥 화면에 글자가 그대로 나올 뿐입니다. 이 강의에서 가장 놓치기 쉬운 지점이니 값 칸 오른쪽 아래를 잘 살펴보고
-        누르세요.</span>
-        <span class="hint">제대로 바뀌었다면 값 칸 왼쪽에 <code class="val">=</code> 표시가 붙고, 칸 아래에
-        <code class="val">Result</code> 미리보기 상자가 새로 생깁니다. 아직 아무것도 입력하지 않았으니
-        <code class="val">[empty]</code>라고 나오고, 그 아래에
-        <code class="val">Tip: Execute previous nodes to use input data</code>라는 안내가
-        함께 뜨는 것이 정상입니다.</span>
+        값 칸 클릭 → <code class="val">Fixed</code> / <code class="val">Expression</code> 스위치 → <code class="val">Expression</code>으로
+        <span class="hint">가장 놓치기 쉬운 지점 — 값 칸 오른쪽 아래 스위치 꼭 확인</span>
+        <span class="hint">전환되면 왼쪽에 <code class="val">=</code> 표시 + <code class="val">Result</code> 미리보기 상자 생성</span>
         <figure class="capture" id="fig-d1-02-3">
           <div class="capture-cap">[그림 2-3] 표현식 모드로 바뀐 값 칸 — 왼쪽 <code class="val">=</code> 표시와 <code class="val">Result</code> 미리보기</div>
           <img src="../assets/img/fig-d1-02-3.png" alt="표현식 모드로 바뀐 값 칸">
         </figure>
-        <span class="hint">그림 2-3은 <b>스위치를 누른 직후</b>라 맨 윗칸이 아직
-        <code class="val">name</code>으로 비어 보입니다. 4단계에서
-        <code class="val">최종문구</code>를 이미 넣었다면 그 자리에 글자가 보이는 것이
-        맞습니다.</span>
       </li>
       <li><span class="step-title">표현식 입력하기</span>
-        표현식 모드로 바뀐 값 칸에 <code class="val">{{ $json.인사말 }} 반갑습니다.</code>를 입력합니다.
-        <span class="hint">값 칸 오른쪽 끝의 확대 아이콘을 누르면 [그림 2-4]처럼 큰 편집창이
-        <b>세 칸</b>으로 열립니다. 왼쪽은 앞 노드들이 넘겨준 값 목록
-        (<code class="val">값 만들기</code> 아래 <code class="val">인사말 ·
-        안녕하세요, 홍길동님</code>), 가운데 <code class="val">Expression</code>은 표현식을
-        입력하는 곳, 오른쪽 <code class="val">Result</code>는 그 표현식이 실제로 어떤 문장이
-        되는지 바로 보여주는 곳입니다.</span>
+        값 칸에 <code class="val">{{ $json.인사말 }} 반갑습니다.</code> 입력
+        <span class="hint">확대 아이콘 → 왼쪽 값 목록 · 가운데 Expression · 오른쪽 Result 3단 편집창</span>
         <figure class="capture" id="fig-d1-02-4">
           <div class="capture-cap">[그림 2-4] 표현식 입력 후 미리보기 — 왼쪽 값 목록 · 가운데 <code class="val">Expression</code> · 오른쪽 <code class="val">Result</code></div>
           <img src="../assets/img/fig-d1-02-4.png" alt="표현식 입력 후 미리보기">
         </figure>
-        <span class="hint"><code class="val">Result</code>에 <code class="val">안녕하세요, 홍길동님 반갑습니다.</code>가
-        나오면 제대로 된 것입니다. 앞에서 가져온 부분은 초록색으로 표시됩니다.</span>
+        <span class="hint">Result에 <code class="val">안녕하세요, 홍길동님 반갑습니다.</code> 확인</span>
       </li>
       <li><span class="step-title">노드 이름 바꾸기</span>
-        노드 제목을 더블클릭해 <code class="val">값 가져오기</code>로 바꿉니다.
+        제목 더블클릭 → <code class="val">값 가져오기</code>로 변경
       </li>
     </ol>
     <div class="note">
-      <b><code class="val">{{ $json.인사말 }}</code>은 무슨 뜻인가요</b>
-      <code class="val">$json</code>은 바로 앞 노드가 넘겨준 데이터 전체를 가리킵니다. 값 가져오기 앞에는
-      값 만들기 노드가 있고, 그 노드는 <code class="val">인사말</code>이라는 이름의 값을 만들었습니다.
-      그래서 <code class="val">$json.인사말</code>은 값 만들기가 만든 인사말 값,
-      즉 <code class="val">안녕하세요, 홍길동님</code>을 그대로 가리킵니다. 앞 노드에서 정한 이름을
-      한 글자도 다르지 않게 그대로 써야 값을 찾을 수 있습니다.
-      [그림 2-4] 왼쪽 목록이 바로 <code class="val">$json</code>의 내용물입니다 —
-      <code class="val">값 만들기</code> 아래에 <code class="val">인사말</code> 하나가 들어 있고,
-      그 옆에 실제 값이 적혀 있습니다. 이름이 헷갈리면 직접 입력하는 대신 이 목록에서 끌어다 놓아도 됩니다.
+      <b><code class="val">{{ $json.인사말 }}</code>은 무슨 뜻인가</b>
+      <code class="val">$json</code> = 바로 앞 노드가 넘겨준 데이터 전체.
+      <code class="val">$json.인사말</code> = 값 만들기가 만든 <code class="val">인사말</code> 값을 그대로 가리킴.
+      필드 이름은 한 글자도 다르지 않게 써야 함.
     </div>
   </section>
 
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
-    <p>아래쪽 <code class="val">Execute workflow</code>를 누릅니다. 노드마다 초록 체크가 뜨고,
-       <code class="val">값 가져오기</code>를 누르면 오른쪽에
-       <code class="val">최종문구: 안녕하세요, 홍길동님 반갑습니다.</code>가 보이면 성공입니다.</p>
+    <ul class="bullets">
+      <li><code class="val">Execute workflow</code> 클릭</li>
+      <li><code class="val">값 가져오기</code> 클릭 → <code class="val">최종문구: 안녕하세요, 홍길동님 반갑습니다.</code> 확인 = 성공</li>
+    </ul>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
-    <p><b>값 칸에 <code class="val">{{ $json.인사말 }} 반갑습니다.</code>가 글자 그대로 보입니다</b> —
-       표현식 전환 스위치를 누르지 않았을 때 나타나는 증상입니다. 값 칸 왼쪽에
-       <code class="val">=</code> 표시가 붙어 있는지 보면 바로 알 수 있습니다([그림 2-3]).
-       표시가 없으면 아직 <code class="val">Fixed</code> 모드입니다.</p>
-    <p><b>필드 이름을 입력할 칸이 없습니다</b> — 아직 필드 줄이 만들어지지 않았습니다.
-       <code class="val">Add Field</code>를 눌러 빈 줄을 먼저 만드세요.</p>
-    <p><b>undefined 반갑습니다.가 나옵니다</b> — 앞 노드가 만든 필드 이름과 철자가 다릅니다.
-       값 만들기 노드의 필드 이름이 정확히 <code class="val">인사말</code>인지 확인하세요.</p>
-    <p><b><code class="val">Result</code>에 값 대신 <code class="val">[empty]</code>만 나옵니다</b> —
-       표현식은 맞는데 앞 노드를 아직 한 번도 실행하지 않아 미리 보여줄 데이터가 없는 경우입니다.
-       미리보기 아래에 <code class="val">Tip: Execute previous nodes to use input data</code>라고 안내가 뜹니다.
-       워크플로우를 한 번 실행하면 그때부터 실제 값이 보입니다.</p>
-    <p><b>값 만들기 노드와 연결되어 있지 않습니다</b> — 두 노드 사이에 선이 이어져 있는지 확인하세요.
-       끊어져 있으면 값 만들기 노드 오른쪽 동그라미를 끌어다 값 가져오기 왼쪽에 놓으면 연결됩니다.</p>
+    <ul class="bullets">
+      <li><b>값 칸에 <code class="val">{{ $json.인사말 }} 반갑습니다.</code>가 글자 그대로 보임</b> — 표현식 전환 안 됨, 왼쪽 <code class="val">=</code> 표시 확인</li>
+      <li><b>필드 이름 입력 칸 없음</b> — <code class="val">Add Field</code>로 빈 줄 생성</li>
+      <li><b>undefined 반갑습니다.가 나옴</b> — 값 만들기 필드 이름 철자(<code class="val">인사말</code>) 확인</li>
+      <li><b>Result에 [empty]만 나옴</b> — 앞 노드 미실행 상태, 한 번 실행 후 재확인</li>
+      <li><b>값 만들기 노드와 연결 안 됨</b> — 두 노드 사이 선 확인, 없으면 다시 연결</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="quiz">
+    <h2 class="sec-title">확인 문제</h2>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q1. 값 칸을 표현식(Expression) 모드로 바꾸면 칸 왼쪽에 어떤 표시가 붙나요?</p>
+      <ol class="quiz-choices">
+        <li>#</li>
+        <li>=</li>
+        <li>*</li>
+        <li>%</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> <code class="val">=</code> 표시가 붙고, 칸 아래에 <code class="val">Result</code> 미리보기 상자가 생깁니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q2. <code class="val">$json.인사말</code>이 가리키는 것은?</p>
+      <ol class="quiz-choices">
+        <li>지금 노드가 스스로 만든 값</li>
+        <li>바로 앞 노드가 넘겨준 데이터 중 <code class="val">인사말</code>이라는 이름의 값</li>
+        <li>워크플로우 전체의 이름</li>
+        <li>n8n 계정 정보</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> <code class="val">$json</code>은 바로 앞 노드가 넘겨준 데이터 전체를 가리키고, <code class="val">.인사말</code>이 그중 그 이름의 값을 짚어냅니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">단답형</span>Q3. 이번 강의에서 만든 표현식 <code class="val">{{ $json.인사말 }} 반갑습니다.</code>의 결과 값은 무엇인가요?</p>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답:</b> 안녕하세요, 홍길동님 반갑습니다.</p>
+      </details>
+    </div>
   </section>
 
   <section class="sec" id="download">

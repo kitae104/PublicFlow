@@ -6,8 +6,9 @@
 <link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
 <title>P4 날씨 알리미 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/lecture.css">
 </head>
-<body>
+<body class="lecture-mode">
 <main class="wrap">
 
   <nav class="crumb"><a href="../index.html">목차</a> › 2일차 › P4</nav>
@@ -19,57 +20,32 @@
 
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
-    <p>야외 행사, 도로 순찰, 제설·제초 작업, 어린이집 소풍 인솔. 날씨 하나에 하루
-       일정이 통째로 바뀌는 업무가 생각보다 많습니다. 그래서 아침마다 날씨 앱을
-       켜고, 오늘 비가 오는지 몇 도인지 확인하고, 팀 단톡방에 "오늘 비 온답니다"라고
-       옮겨 적습니다.</p>
-    <p>여기까지는 그냥 조금 귀찮은 일입니다. 진짜 문제는 <b>깜빡했을 때</b>입니다.
-       우산 준비를 안 하고 현장에 나가거나, 행사 천막 설치를 미루지 못하는 일이
-       그때 생깁니다.</p>
-    <p>이번에는 <b>기상청이 직접 제공하는 공공데이터</b>를 받아와, 매일 아침 7시에
-       우리 동네 날씨와 "우산 챙기세요" 같은 한 줄 조언까지 텔레그램으로 보내주는
-       봇을 만듭니다. 날씨 앱을 켤 필요가 없어지는 게 아니라, <b>켜지 않아도
-       알게 되는 것</b>이 핵심입니다.</p>
+    <ul class="bullets">
+      <li>야외 행사·도로 순찰·제설·제초 작업처럼 날씨 하나에 하루 일정이 통째로 바뀌는 업무가 생각보다 많아 매일 앱을 켜고 단톡방에 옮겨 적음</li>
+      <li>진짜 문제는 <b>깜빡했을 때</b> — 우산을 안 챙기거나 행사 천막 설치를 못 미루는 일이 그때 생김</li>
+      <li>해결: 매일 아침 7시 기상청 공공데이터를 받아와 우리 동네 날씨와 한 줄 조언까지 텔레그램으로 자동 발송</li>
+    </ul>
     <div class="note tip">
-      <b>이번에 새로 배우는 것</b>
-      <b>공공데이터포털 API 연동</b>입니다. 지금까지는 구글·텔레그램처럼 n8n이 전용
-      노드를 이미 갖고 있는 서비스만 썼습니다. 이번에는 전용 노드가 없는 곳에
-      <b>직접 요청을 보내</b> 데이터를 받아옵니다. 정부 기관이 공개한 수천 가지
-      데이터를 같은 방법으로 쓸 수 있게 되는 셈입니다.
+      <b>새로 배우는 것</b> — 전용 노드가 없는 <b>공공데이터포털 API 연동</b>입니다. 지금까지는 구글·텔레그램처럼 n8n이 전용 노드를 갖춘 서비스만 썼지만, 이번에는 HTTP Request로 직접 요청을 보내 데이터를 받아옵니다.
     </div>
     <div class="note warn">
-      <b>이 프로젝트에는 붙여넣을 코드가 나옵니다</b>
-      기상청 데이터는 사람이 읽으라고 만든 형태가 아니라 <b>기계가 읽으라고 만든
-      형태</b>로 옵니다. 이걸 사람이 읽을 수 있는 문장으로 바꾸는 부분은 클릭만으로는
-      되지 않아서, <b>준비된 코드를 그대로 복사해 붙여넣습니다.</b>
-      <p><b>코드를 이해할 필요는 전혀 없습니다.</b> 무엇을 하는 코드인지는 각
-         단계에서 한국어로 설명합니다. 바꿔야 할 곳은 <b>딱 세 줄</b>이고, 그
-         세 줄이 어디인지도 표시해두었습니다.</p>
+      <b>코드 붙여넣기가 나옵니다</b>
+      기상청 데이터는 기계용 형태로 오기 때문에, 사람이 읽을 문장으로 바꾸는 부분은 준비된 코드를 그대로 복사합니다. <b>코드를 이해할 필요는 없습니다</b> — 바꿀 곳은 세 줄뿐이며 표시해두었습니다.
     </div>
   </section>
 
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
-    <p>매일 아침 7시에 기상청 공공데이터 API에서 우리 동네 날씨를 받아와, 사람이 읽을
-       수 있는 메시지로 가공한 뒤 텔레그램으로 보내는 워크플로우를 만듭니다.</p>
+    <p>매일 아침 7시에 기상청 공공데이터 API에서 우리 동네 날씨를 받아와, 사람이 읽을 수 있는 메시지로 가공한 뒤 텔레그램으로 보내는 워크플로우를 만듭니다.</p>
     <div class="note warn">
-      <b>기상청 API 키가 필요합니다</b>
-      이 프로젝트는 기상청 공공데이터 API를 호출합니다. 아직 발급받지 못했다면
-      <a href="../prep/day1.html#weather-api">준비물 ① 기상청 단기예보 API 키 신청</a>을
-      먼저 보고 오세요. 신청 후 승인까지 시간이 걸리므로 오늘 신청해서 오늘 쓰기는
-      어려울 수 있습니다.
+      <b>기상청 API 키 필요</b>
+      <a href="../prep/day1.html#weather-api">준비물 ① 기상청 단기예보 API 키 신청</a>을 먼저 확인(승인까지 시간 소요).
     </div>
     <figure class="capture" id="fig-d2-p4-1">
-      <div class="capture-cap">[그림 P4-1] 완성된 모습 — 다섯 노드가 일직선입니다. <code class="val">{ }</code> 아이콘 두 개가 <code class="val">Code</code> 노드입니다</div>
+      <div class="capture-cap">[그림 P4-1] 완성 — 다섯 노드가 일직선. <code class="val">{ }</code> 아이콘 두 개가 <code class="val">Code</code> 노드</div>
       <img src="../assets/img/fig-d2-p4-1.png" alt="완성된 모습">
     </figure>
-    <p class="hint">가운데 <code class="val">{ }</code> 표시가 붙은 노드 두 개가 이번
-       프로젝트의 특징입니다. 하나는 <b>요청을 보내기 전에 필요한 값을 계산</b>하고,
-       다른 하나는 <b>돌아온 데이터를 사람이 읽을 문장으로</b> 바꿉니다. 이번에는
-       AI 노드가 없어서 아래로 매달리는 노드도 없습니다.</p>
-    <p class="hint">가운데 <code class="val">기상청 API 호출</code> 아래에 회색으로
-       <code class="val">GET: https://apis.data.go.kr/1…</code>이 보입니다. 이 노드가
-       어디로 요청을 보내는지 캔버스에서 바로 보여주는 것입니다.</p>
+    <p class="hint">Code 노드 하나는 요청 전 값 계산, 다른 하나는 응답을 문장으로 가공. AI 노드는 없음.</p>
   </section>
 
   <section class="sec" id="steps">
@@ -344,9 +320,9 @@ return [{ json: { message } }];</pre>
 
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
-    <p>아침 7시까지 기다릴 필요는 없습니다. 아래쪽
-       <code class="val">Execute workflow</code>를 누르면 지금 한 번 실행됩니다.</p>
-    <p>텔레그램에 아래와 비슷한 메시지가 도착하면 성공입니다.</p>
+    <ul class="bullets">
+      <li><code class="val">Execute workflow</code> → 텔레그램 도착 확인</li>
+    </ul>
 <pre class="code-block">🌤 오늘의 날씨 (인천 남동구 구월2동)
 예보 시각: 15시
 
@@ -358,52 +334,61 @@ return [{ json: { message } }];</pre>
 
 🥵 더워요. 수분 보충 잊지 마세요.</pre>
     <figure class="capture" id="fig-d2-p4-4">
-      <div class="capture-cap">[그림 P4-4] 오후에 실행해 도착한 실제 메시지. 앞 코드가 만든 문장이 그대로 보입니다</div>
+      <div class="capture-cap">[그림 P4-4] 오후에 실행해 도착한 실제 메시지</div>
       <img src="../assets/img/fig-d2-p4-4.png" alt="텔레그램에 도착한 날씨 알림">
     </figure>
-    <p class="hint">숫자와 날씨는 실행한 시각·지역에 따라 당연히 다릅니다.
-       <b>예보 시각</b>은 지금 시각에 가장 가까운 발표 회차라 낮에 실행하면 15시처럼
-       나오고, 아침 7시에 저절로 돌면 5시로 나옵니다. 위 예에서 <b>최고 기온이 빠진
-       것도 정상</b>입니다 — 최고·최저 기온은 하루 중 특정 회차에만 들어 있어서, 그
-       회차를 지나면 값이 오지 않습니다.</p>
-    <p>확인이 끝났으면 오른쪽 위 활성화 스위치(<code class="val">Active</code>)를
-       켜둡니다. 이제 매일 아침 7시에 저절로 날씨가 옵니다.</p>
+    <p class="hint">최고 기온이 빠지는 것도 정상 — 특정 회차에만 값이 들어있음</p>
+    <p>확인 후 활성화 스위치 켜기 — 매일 아침 7시 자동 실행</p>
     <div class="note tip">
       <b>2일차 완주를 축하합니다</b>
-      이틀 동안 만든 것을 돌아보면 — 민원을 접수해 시트·메일·캘린더·AI로 퍼뜨리는
-      시스템 하나, 그리고 <b>파일을 읽는 자동화 · 시각에 맞춰 도는 자동화 ·
-      AI가 판단하는 자동화 · 바깥 데이터를 받아오는 자동화</b> 넷입니다.
-      업무에 쓸 자동화는 대부분 이 넷의 조합입니다.
+      민원 접수 시스템 하나 + 파일 처리·시각 트리거·AI 판단·외부 API 연동 네 자동화. 업무 자동화는 대부분 이 조합입니다.
     </div>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
-    <p><b>"등록되지 않은 서비스키"라는 응답이 옵니다</b> — 가장 흔한 두 가지 원인이
-       있습니다. 먼저 <code class="val">Encoding</code> 키를 넣지 않았는지
-       확인하세요. <b><code class="val">Decoding</code> 키</b>여야 합니다. 그다음
-       공공데이터포털에서 <b>활용신청이 승인되었는지</b> 확인하세요. 신청만 하고
-       승인 전이면 키는 보이지만 작동하지 않습니다.</p>
-    <p><b>승인받은 지 얼마 안 됐는데 안 됩니다</b> — 공공데이터포털은 승인 직후
-       키가 바로 활성화되지 않는 경우가 있습니다. 한 시간쯤 뒤에 다시 시도해보세요.</p>
-    <p><b>응답은 오는데 예보 내용이 비어 있습니다</b> —
-       <code class="val">발표시각 계산</code> 노드가 계산한 회차가 아직 발표 전일
-       수 있습니다. 그 노드를 실행해 <code class="val">base_date</code>와
-       <code class="val">base_time</code> 값을 확인하고, 발표 시각(02·05·08·11·14·17·20·23시)
-       에서 10분 이상 지난 회차인지 보세요. 또는
-       <code class="val">nx</code>·<code class="val">ny</code>에 없는 좌표를 넣었을
-       수도 있습니다. 우선 <code class="val">56</code>·<code class="val">124</code>로
-       되돌려 시험해보세요.</p>
-    <p><b>"노드를 찾을 수 없다"는 오류가 납니다</b> — 두 번째 Code 노드 첫 줄의
-       <code class="val">$('발표시각 계산')</code>과 실제 노드 제목이 다릅니다.
-       캔버스에서 첫 Code 노드의 제목을 확인해 정확히 맞추세요.</p>
-    <p><b>메시지에 <code class="val">undefined</code>가 섞여 나옵니다</b> — 기상청이
-       그 항목을 이번 회차에 안 보내준 것입니다. 최저·최고 기온은 하루 중 특정
-       회차에만 들어 있어서 정상적으로 빠질 수 있습니다. 기온·하늘·강수까지 모두
-       <code class="val">undefined</code>라면 좌표나 발표시각 문제입니다.</p>
-    <p><b>텔레그램 메시지가 안 옵니다</b> — P1의 <b>안 될 때</b>와 같습니다.
-       <code class="val">Chat ID</code>가 숫자인지, 내가 먼저 봇에게 말을 걸었는지
-       확인하세요.</p>
+    <ul class="bullets">
+      <li><b>"등록되지 않은 서비스키"</b> — Decoding 키인지, 활용신청 승인됐는지 확인</li>
+      <li><b>승인 직후 안 됨</b> — 한 시간쯤 뒤 재시도</li>
+      <li><b>예보 내용이 비어 있음</b> — <code class="val">base_date</code>·<code class="val">base_time</code> 확인, 좌표를 <code class="val">56</code>·<code class="val">124</code>로 시험</li>
+      <li><b>"노드를 찾을 수 없다"</b> — <code class="val">$('발표시각 계산')</code>과 실제 노드 제목 일치 확인</li>
+      <li><b><code class="val">undefined</code> 섞임</b> — 최저·최고 기온은 특정 회차에만 존재(정상), 전부 undefined면 좌표·발표시각 문제</li>
+      <li><b>텔레그램 메시지 안 옴</b> — Chat ID 숫자 확인, 봇에게 먼저 말 걸었는지 확인</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="quiz">
+    <h2 class="sec-title">확인 문제</h2>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q1. 공공데이터포털 인증키 중 n8n에 넣어야 하는 것은?</p>
+      <ol class="quiz-choices">
+        <li>일반 인증키(Encoding)</li>
+        <li>일반 인증키(Decoding)</li>
+        <li>둘 다 상관없음</li>
+        <li>발급받은 순서대로 아무거나</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> n8n이 값을 보낼 때 자동으로 한 번 변환하므로, 이미 변환된 Encoding 키를 넣으면 두 번 변환되어 오류가 납니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q2. 첫 번째 Code 노드가 계산하는 것은 무엇인가요?</p>
+      <ol class="quiz-choices">
+        <li>텔레그램 메시지 본문</li>
+        <li>가장 최근에 발표된 기상청 예보 회차(발표시각)</li>
+        <li>구글 시트에 쓸 값</li>
+        <li>AI 프롬프트</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> 기상청은 하루 여덟 번만 예보를 내므로, 지금 시각 기준으로 가장 최근 발표 회차를 계산해야 합니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">단답형</span>Q3. 본인 동네로 좌표를 바꾸려면 어떤 문서에서 NX·NY 값을 찾아야 하나요?</p>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답:</b> 공공데이터포털 기상청 단기예보 API 페이지의 활용가이드 문서(엑셀 파일) — 전국 읍·면·동별 격자 X·Y 값이 표로 정리되어 있습니다.</p>
+      </details>
+    </div>
   </section>
 
   <section class="sec" id="download">
