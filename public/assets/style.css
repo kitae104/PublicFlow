@@ -125,9 +125,11 @@ b, strong { font-weight: 700; color: var(--ink); }
 }
 
 h1, h2, h3 { line-height: 1.4; letter-spacing: -0.022em; font-weight: 700; }
-h1 { font-size: 1.8rem; margin: 0 0 .35rem; }
-h2 { font-size: 1.22rem; margin: 0 0 .9rem; }
-h3 { font-size: 1.02rem; margin: 1.8rem 0 .45rem; }
+/* em 기준 — 본문 글자 크기가 body(특히 lecture-mode의 뷰포트 반응형 크기)를 따라
+   커져도 제목이 rem(문서 루트 16px 고정) 때문에 본문보다 작아 보이는 일이 없도록 함 */
+h1 { font-size: 1.8em; margin: 0 0 .35rem; }
+h2 { font-size: 1.22em; margin: 0 0 .9rem; }
+h3 { font-size: 1.02em; margin: 1.8rem 0 .45rem; }
 
 /* ── 머리말·이동 ───────────────────────────────────────── */
 .crumb {
@@ -235,7 +237,7 @@ ol.steps > li::before {
 
 .step-title {
   display: block;
-  font-size: 1.04rem;
+  font-size: 1.04em;
   font-weight: 700;
   letter-spacing: -0.018em;
   margin-bottom: .3rem;
@@ -274,7 +276,7 @@ code.val {
 }
 .note > b:first-child {
   display: block;
-  font-size: 1rem;
+  font-size: 1.08em;
   letter-spacing: -0.018em;
   margin-bottom: .3rem;
 }

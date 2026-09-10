@@ -12,9 +12,11 @@ body.lecture-mode {
   font-size: clamp(17px, 0.95vw + 13px, 23px);
 }
 
-body.lecture-mode .page-head h1 { font-size: clamp(1.8rem, 2.3vw, 2.7rem); }
-body.lecture-mode h2 { font-size: clamp(1.22rem, 1.5vw, 1.65rem); }
-body.lecture-mode h3 { font-size: clamp(1.02rem, 1.1vw, 1.3rem); }
+/* em 기준 — rem(문서 루트 고정 16px)을 쓰면 body의 반응형 글자 크기와 무관하게
+   고정되어, 넓은 화면에서 본문보다 제목이 작아 보이는 문제가 있었음 */
+body.lecture-mode .page-head h1 { font-size: clamp(1.8em, 2.3vw, 2.7em); }
+body.lecture-mode h2 { font-size: clamp(1.22em, 1.5vw, 1.65em); }
+body.lecture-mode h3 { font-size: clamp(1.02em, 1.1vw, 1.3em); }
 
 body.lecture-mode figure.capture img { max-width: min(100%, 64rem); }
 
