@@ -1,0 +1,274 @@
+{
+  "name": "[공무원] 추가자료 민원 서비스 만족도 조사 자동 분석 보고서",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -120
+      ],
+      "id": "extra1-manual",
+      "name": "수동 실행"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                5
+              ],
+              "triggerAtHour": 17
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        120
+      ],
+      "id": "extra1-schedule",
+      "name": "매주 금요일 17시"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "extra1-set-1",
+              "name": "spreadsheetUrl",
+              "type": "string",
+              "value": "https://docs.google.com/spreadsheets/d/여기에_본인_시트_ID/edit"
+            },
+            {
+              "id": "extra1-set-2",
+              "name": "sheetName",
+              "type": "string",
+              "value": "설문지 응답 시트1"
+            },
+            {
+              "id": "extra1-set-3",
+              "name": "reportEmail",
+              "type": "string",
+              "value": "본인이메일@example.com"
+            },
+            {
+              "id": "extra1-set-4",
+              "name": "reportTitle",
+              "type": "string",
+              "value": "민원 서비스 만족도 조사 결과"
+            },
+            {
+              "id": "extra1-set-5",
+              "name": "reportDays",
+              "type": "number",
+              "value": 0
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        220,
+        0
+      ],
+      "id": "extra1-setup",
+      "name": "실습 설정"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $json.spreadsheetUrl }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "={{ $json.sheetName }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        440,
+        0
+      ],
+      "id": "extra1-sheets",
+      "name": "응답 데이터 읽기"
+    },
+    {
+      "parameters": {
+        "jsCode": "const days = Number($('실습 설정').first().json.reportDays) || 0;\nconst cutoff = days > 0 ? Date.now() - days * 24 * 60 * 60 * 1000 : null;\n\nconst rows = $input.all()\n  .map((item) => item.json)\n  .filter((row) => {\n    if (!cutoff) return true;\n    const ts = new Date(row['타임스탬프']).getTime();\n    return !Number.isNaN(ts) && ts >= cutoff;\n  });\n\nconst total = rows.length;\n\nconst avg = (key) => {\n  const nums = rows.map((r) => Number(r[key])).filter((n) => !Number.isNaN(n));\n  if (nums.length === 0) return 0;\n  return Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 10) / 10;\n};\n\nconst countBy = (key) => {\n  const counts = {};\n  for (const r of rows) {\n    const v = r[key] || '미응답';\n    counts[v] = (counts[v] || 0) + 1;\n  }\n  return Object.entries(counts).map(([name, count]) => ({\n    name,\n    count,\n    percent: total > 0 ? Math.round((count / total) * 1000) / 10 : 0,\n  }));\n};\n\nconst opinions = rows\n  .map((r) => (r['개선이 필요한 사항'] || '').trim())\n  .filter((s) => s.length > 0);\n\nreturn [{\n  json: {\n    totalCount: total,\n    avgOverall: avg('전체 만족도'),\n    avgSpeed: avg('처리 속도 만족도'),\n    avgKindness: avg('직원 친절도'),\n    avgRevisit: avg('다시 이용할 의향'),\n    byAge: countBy('연령대'),\n    byService: countBy('이용한 행정 서비스'),\n    opinions,\n    opinionCount: opinions.length,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "extra1-stats",
+      "name": "통계 집계"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=당신은 공공·행정 서비스 만족도 조사 결과를 분석하는 보고서 작성 전문가입니다.\n\n아래 통계는 n8n이 실제 응답 데이터에서 직접 계산한 확정된 값입니다.\n수치를 임의로 수정하거나 새로운 숫자를 만들어내지 마세요. 당신의 역할은 숫자 해석과 문장 작성입니다.\n\n[통계]\n- 총 응답자 수: {{ $json.totalCount }}명\n- 전체 만족도 평균: {{ $json.avgOverall }} / 5\n- 처리 속도 만족도 평균: {{ $json.avgSpeed }} / 5\n- 직원 친절도 평균: {{ $json.avgKindness }} / 5\n- 다시 이용할 의향 평균: {{ $json.avgRevisit }} / 5\n- 연령대별 분포: {{ JSON.stringify($json.byAge) }}\n- 서비스별 분포: {{ JSON.stringify($json.byService) }}\n\n[서술형 의견 목록]\n{{ JSON.stringify($json.opinions) }}\n\n다음 여섯 항목을 분석해 작성하세요.\n1. 핵심 결과 요약\n2. 만족도가 높은 부분\n3. 개선이 필요한 부분\n4. 서술형 의견에서 반복되는 주제\n5. 실제 업무에 적용할 수 있는 개선안\n6. 종합 의견\n\n[출력 형식]\n아래처럼 각 항목을 <h3> 제목과 <p> 본문으로 작성해 HTML 조각만 반환하세요. 코드블록 기호나 다른 설명은 붙이지 마세요.\n\n<h3>1. 핵심 결과 요약</h3>\n<p>...</p>",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        880,
+        0
+      ],
+      "id": "extra1-ai",
+      "name": "Gemini 보고서 분석"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        820,
+        180
+      ],
+      "id": "extra1-gemini",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "jsCode": "const stats = $('통계 집계').first().json;\nconst setup = $('실습 설정').first().json;\nconst aiHtml = $json.text;\n\nconst days = Number(setup.reportDays) || 0;\nconst periodLabel = days === 0 ? '전체 기간' : `최근 ${days}일`;\n\nconst now = new Date(Date.now() + 9 * 60 * 60 * 1000);\nconst pad2 = (n) => String(n).padStart(2, '0');\nconst generatedAt = `${now.getUTCFullYear()}-${pad2(now.getUTCMonth() + 1)}-${pad2(now.getUTCDate())} ${pad2(now.getUTCHours())}:${pad2(now.getUTCMinutes())}`;\n\nconst tableRows = (list) => list.map((row) =>\n  `<tr><td style=\"padding:6px 10px;border:1px solid #ddd;\">${row.name}</td>` +\n  `<td style=\"padding:6px 10px;border:1px solid #ddd;text-align:right;\">${row.count}건</td>` +\n  `<td style=\"padding:6px 10px;border:1px solid #ddd;text-align:right;\">${row.percent}%</td></tr>`\n).join('');\n\nconst tableHead =\n  '<tr><th style=\"padding:6px 10px;border:1px solid #ddd;background:#f4f6f9;\">구분</th>' +\n  '<th style=\"padding:6px 10px;border:1px solid #ddd;background:#f4f6f9;\">응답 수</th>' +\n  '<th style=\"padding:6px 10px;border:1px solid #ddd;background:#f4f6f9;\">비율</th></tr>';\n\nconst emailHtml = `\n<div style=\"font-family:'Malgun Gothic',sans-serif;max-width:640px;margin:0 auto;color:#222;line-height:1.7;\">\n  <h2 style=\"border-bottom:2px solid #ea4b71;padding-bottom:8px;\">${setup.reportTitle}</h2>\n  <p style=\"color:#666;font-size:13px;\">분석 기간: ${periodLabel} · 보고서 생성 시각: ${generatedAt}</p>\n\n  <h3>핵심 지표</h3>\n  <table style=\"border-collapse:collapse;width:100%;\">\n    <tr><td style=\"padding:6px 10px;border:1px solid #ddd;\">총 응답자 수</td><td style=\"padding:6px 10px;border:1px solid #ddd;text-align:right;\">${stats.totalCount}명</td></tr>\n    <tr><td style=\"padding:6px 10px;border:1px solid #ddd;\">전체 만족도</td><td style=\"padding:6px 10px;border:1px solid #ddd;text-align:right;\">${stats.avgOverall} / 5</td></tr>\n    <tr><td style=\"padding:6px 10px;border:1px solid #ddd;\">처리 속도 만족도</td><td style=\"padding:6px 10px;border:1px solid #ddd;text-align:right;\">${stats.avgSpeed} / 5</td></tr>\n    <tr><td style=\"padding:6px 10px;border:1px solid #ddd;\">직원 친절도</td><td style=\"padding:6px 10px;border:1px solid #ddd;text-align:right;\">${stats.avgKindness} / 5</td></tr>\n    <tr><td style=\"padding:6px 10px;border:1px solid #ddd;\">다시 이용할 의향</td><td style=\"padding:6px 10px;border:1px solid #ddd;text-align:right;\">${stats.avgRevisit} / 5</td></tr>\n    <tr><td style=\"padding:6px 10px;border:1px solid #ddd;\">서술형 의견 수</td><td style=\"padding:6px 10px;border:1px solid #ddd;text-align:right;\">${stats.opinionCount}건</td></tr>\n  </table>\n\n  <h3>서비스 이용 분포</h3>\n  <table style=\"border-collapse:collapse;width:100%;\">${tableHead}${tableRows(stats.byService)}</table>\n\n  <h3>연령대 분포</h3>\n  <table style=\"border-collapse:collapse;width:100%;\">${tableHead}${tableRows(stats.byAge)}</table>\n\n  <h3>AI 분석</h3>\n  ${aiHtml}\n</div>\n`;\n\nconst subject = `[${setup.reportTitle}] ${periodLabel} 결과 (${generatedAt.slice(0, 10)})`;\n\nreturn [{ json: { emailHtml, subject } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "extra1-html",
+      "name": "HTML 보고서 만들기"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('실습 설정').first().json.reportEmail }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.emailHtml }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "extra1-gmail",
+      "name": "Gmail 보고서 발송"
+    }
+  ],
+  "connections": {
+    "수동 실행": {
+      "main": [
+        [
+          {
+            "node": "실습 설정",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "매주 금요일 17시": {
+      "main": [
+        [
+          {
+            "node": "실습 설정",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "실습 설정": {
+      "main": [
+        [
+          {
+            "node": "응답 데이터 읽기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "응답 데이터 읽기": {
+      "main": [
+        [
+          {
+            "node": "통계 집계",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "통계 집계": {
+      "main": [
+        [
+          {
+            "node": "Gemini 보고서 분석",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 보고서 분석": {
+      "main": [
+        [
+          {
+            "node": "HTML 보고서 만들기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini 보고서 분석",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML 보고서 만들기": {
+      "main": [
+        [
+          {
+            "node": "Gmail 보고서 발송",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

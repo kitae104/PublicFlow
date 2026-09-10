@@ -4,9 +4,40 @@
    페이지 전체가 n8n 캔버스이고, 각 단원이 그 위에 놓인 노드 패널입니다.
    1일차는 하나의 워크플로우가 자라는 것이므로 세로 배선(spine)으로,
    2일차는 서로 독립된 네 프로젝트이므로 카드 네 장으로 그립니다.
+
+   제목은 세리프 대신 Pretendard 굵은 웨이트로 통일 — 실제로 웹폰트를
+   불러오는 값이라 기기에 관계없이 같은 모습으로 보입니다(index.html
+   에서 CDN 로드). 카드류에는 이너 하이라이트 + 레이어드 섀도우로
+   n8n 캔버스 위에 얹힌 노드처럼 입체감을 줍니다.
    ══════════════════════════════════════════════════════════ */
 
-body.home { padding: 0 1.15rem 0; }
+:root {
+  --home-display: var(--font-body);
+  --home-highlight: rgba(255, 255, 255, .65);
+  --home-shadow-ambient: rgba(16, 24, 32, .14);
+  --home-shadow-contact: rgba(16, 24, 32, .07);
+  --home-glow: rgba(234, 75, 113, .22);
+  --home-wash: rgba(234, 75, 113, .08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --home-highlight: rgba(255, 255, 255, .06);
+    --home-shadow-ambient: rgba(0, 0, 0, .5);
+    --home-shadow-contact: rgba(0, 0, 0, .35);
+    --home-glow: rgba(255, 123, 156, .28);
+    --home-wash: rgba(255, 123, 156, .10);
+  }
+}
+
+body.home {
+  padding: 0 1.15rem 0;
+  background-image:
+    radial-gradient(ellipse 70% 46% at 50% -10%, var(--home-wash), transparent 65%),
+    radial-gradient(circle at 1px 1px, var(--canvas-dot) 1px, transparent 0);
+  background-size: 100% 100%, 24px 24px;
+  background-repeat: no-repeat, repeat;
+}
 
 .home-wrap {
   max-width: 58rem;
@@ -43,14 +74,15 @@ body.home { padding: 0 1.15rem 0; }
 .eyebrow {
   display: flex;
   flex-wrap: wrap;
-  gap: .4rem;
+  gap: .45rem;
   margin: 0 0 1.4rem;
 }
 .eyebrow span {
-  padding: .18rem .6rem;
+  padding: .22rem .68rem;
   border: 1px solid var(--line-2);
   border-radius: 999px;
-  background: var(--panel);
+  background: linear-gradient(180deg, var(--panel), var(--paper-2));
+  box-shadow: inset 0 1px 0 var(--home-highlight), 0 1px 2px var(--home-shadow-contact);
   font-family: var(--font-mono);
   font-size: .74rem;
   letter-spacing: .01em;
@@ -58,11 +90,11 @@ body.home { padding: 0 1.15rem 0; }
 }
 
 .hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 5.6vw, 3.1rem);
-  font-weight: 700;
+  font-family: var(--home-display);
+  font-size: clamp(2rem, 5.6vw, 3.15rem);
+  font-weight: 800;
   line-height: 1.32;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   margin: 0 0 1.1rem;
   color: var(--ink);
 }
@@ -88,13 +120,27 @@ body.home { padding: 0 1.15rem 0; }
   position: relative;
   flex: 1 1 0;
   min-width: 0;
-  padding: .85rem .7rem;
-  background: var(--panel);
+  padding: .95rem .8rem;
+  background: linear-gradient(180deg, var(--panel), var(--paper-2));
   border: 1.5px solid var(--line-2);
-  border-radius: 10px;
+  border-radius: 12px;
   text-align: center;
-  box-shadow: 0 1px 2px rgba(16, 24, 32, .06);
+  box-shadow:
+    inset 0 1px 0 var(--home-highlight),
+    0 1px 1px var(--home-shadow-contact),
+    0 12px 22px -14px var(--home-shadow-ambient),
+    0 18px 30px -20px var(--home-glow);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   animation: node-in .5s cubic-bezier(.2, .7, .3, 1) backwards;
+}
+.chain-node:hover {
+  transform: translateY(-3px);
+  border-color: var(--brand);
+  box-shadow:
+    inset 0 1px 0 var(--home-highlight),
+    0 2px 2px var(--home-shadow-contact),
+    0 18px 28px -14px var(--home-shadow-ambient),
+    0 22px 36px -16px var(--home-glow);
 }
 .chain-node .t {
   display: block;
@@ -112,7 +158,8 @@ body.home { padding: 0 1.15rem 0; }
   text-overflow: ellipsis;
 }
 
-/* 배선은 코럴 — 이 선이 곧 자동화입니다 */
+/* 배선은 코럴 — 이 선이 곧 자동화입니다. 이어지는 자리마다
+   커넥터 점을 찍어 실제 n8n 캔버스의 포트처럼 보이게 합니다. */
 .chain-node + .chain-node { margin-left: 1.1rem; }
 .chain-node + .chain-node::before {
   content: "";
@@ -121,8 +168,21 @@ body.home { padding: 0 1.15rem 0; }
   right: 100%;
   width: 1.1rem;
   height: 2px;
-  background: var(--brand);
+  background: linear-gradient(90deg, var(--brand), var(--brand-deep));
   transform-origin: left center;
+  animation: wire-in .35s ease-out backwards;
+}
+.chain-node + .chain-node::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(100% + .43rem);
+  width: .42rem;
+  height: .42rem;
+  margin-top: -.21rem;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 3px var(--panel);
   animation: wire-in .35s ease-out backwards;
 }
 
@@ -131,10 +191,10 @@ body.home { padding: 0 1.15rem 0; }
 .chain-node:nth-child(3) { animation-delay: .35s; }
 .chain-node:nth-child(4) { animation-delay: .50s; }
 .chain-node:nth-child(5) { animation-delay: .65s; }
-.chain-node:nth-child(2)::before { animation-delay: .14s; }
-.chain-node:nth-child(3)::before { animation-delay: .29s; }
-.chain-node:nth-child(4)::before { animation-delay: .44s; }
-.chain-node:nth-child(5)::before { animation-delay: .59s; }
+.chain-node:nth-child(2)::before, .chain-node:nth-child(2)::after { animation-delay: .14s; }
+.chain-node:nth-child(3)::before, .chain-node:nth-child(3)::after { animation-delay: .29s; }
+.chain-node:nth-child(4)::before, .chain-node:nth-child(4)::after { animation-delay: .44s; }
+.chain-node:nth-child(5)::before, .chain-node:nth-child(5)::after { animation-delay: .59s; }
 
 @keyframes node-in {
   from { opacity: 0; transform: translateY(8px); }
@@ -165,6 +225,14 @@ body.home { padding: 0 1.15rem 0; }
     transform-origin: center top;
     animation-name: wire-in-v;
   }
+  .chain-node + .chain-node::after {
+    top: auto;
+    right: auto;
+    bottom: calc(100% + .43rem);
+    left: 50%;
+    margin-top: 0;
+    margin-left: -.21rem;
+  }
 }
 
 @keyframes wire-in-v {
@@ -189,15 +257,29 @@ body.home { padding: 0 1.15rem 0; }
   color: var(--ink);
   font-weight: 700;
   text-decoration: none;
-  transition: border-color .15s ease, background-color .15s ease;
+  box-shadow: inset 0 1px 0 var(--home-highlight), 0 1px 2px var(--home-shadow-contact);
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background-color .15s ease;
 }
-.cta:hover { border-color: var(--brand); background: var(--brand-soft); }
+.cta:hover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 var(--home-highlight), 0 10px 18px -10px var(--home-shadow-ambient);
+}
+.cta:active { transform: translateY(0); }
+
 .cta-go {
-  background: var(--brand-ink);
-  border-color: var(--brand-ink);
+  background: linear-gradient(180deg, var(--brand-ink), var(--brand-deep));
+  border-color: var(--brand-deep);
   color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 10px 20px -10px var(--home-glow);
 }
-.cta-go:hover { background: var(--brand-deep); border-color: var(--brand-deep); }
+.cta-go:hover {
+  background: linear-gradient(180deg, var(--brand-deep), var(--brand-deep));
+  border-color: var(--brand-deep);
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 14px 26px -12px var(--home-glow);
+}
 
 @media (prefers-color-scheme: dark) {
   .cta-go { color: #2a0a15; }
@@ -207,11 +289,13 @@ body.home { padding: 0 1.15rem 0; }
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 16px;
   padding: 2rem 2rem 2.1rem;
   margin-bottom: 1.15rem;
-  box-shadow: 0 1px 2px rgba(16, 24, 32, .05),
-              0 18px 40px -28px rgba(16, 24, 32, .35);
+  box-shadow:
+    inset 0 1px 0 var(--home-highlight),
+    0 1px 2px var(--home-shadow-contact),
+    0 26px 46px -30px var(--home-shadow-ambient);
 }
 .panel-plain { background: transparent; border: 0; box-shadow: none; padding: 1.5rem 0 0; }
 
@@ -224,11 +308,11 @@ body.home { padding: 0 1.15rem 0; }
   color: var(--brand-ink);
 }
 .panel-title {
-  font-family: var(--font-display);
+  font-family: var(--home-display);
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.4;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   margin: 0 0 .7rem;
 }
 .panel-lead {
@@ -256,9 +340,9 @@ body.home { padding: 0 1.15rem 0; }
   background: var(--paper-2);
   color: var(--ink);
   text-decoration: none;
-  transition: border-color .15s ease, background-color .15s ease;
+  transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
 }
-.rows a:hover { border-color: var(--brand); background: var(--brand-soft); }
+.rows a:hover { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 8px 16px -10px var(--home-glow); }
 .rows-n {
   flex: none;
   width: 3.6rem;
@@ -279,6 +363,7 @@ body.home { padding: 0 1.15rem 0; }
   border: 1px solid var(--line-2);
   border-radius: 999px;
   background: var(--panel);
+  box-shadow: inset 0 1px 0 var(--home-highlight);
 }
 
 /* ── 1일차 배선 목록 ───────────────────────────────────── */
@@ -320,15 +405,21 @@ body.home { padding: 0 1.15rem 0; }
   height: 2.1rem;
   display: grid;
   place-items: center;
-  border-radius: 7px;
+  border-radius: 8px;
   border: 1.5px solid var(--line-2);
-  background: var(--panel);
+  background: linear-gradient(180deg, var(--panel), var(--paper-2));
+  box-shadow: inset 0 1px 0 var(--home-highlight), 0 1px 2px var(--home-shadow-contact);
   font-family: var(--font-mono);
   font-size: .82rem;
   font-weight: 700;
   color: var(--ink-2);
+  transition: border-color .15s ease, color .15s ease, box-shadow .15s ease;
 }
-.spine a:hover .spine-n { border-color: var(--brand); color: var(--brand-ink); }
+.spine a:hover .spine-n {
+  border-color: var(--brand);
+  color: var(--brand-ink);
+  box-shadow: inset 0 1px 0 var(--home-highlight), 0 6px 14px -6px var(--home-glow);
+}
 
 .spine-body { flex: 1 1 auto; min-width: 0; line-height: 1.55; }
 .spine-body .t { display: block; font-weight: 700; letter-spacing: -0.018em; }
@@ -363,13 +454,18 @@ body.home { padding: 0 1.15rem 0; }
   flex: 1 1 auto;
   padding: 1.1rem 1.15rem 1.15rem;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--paper-2);
   color: var(--ink);
   text-decoration: none;
-  transition: border-color .15s ease, background-color .15s ease;
+  transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease, transform .15s ease;
 }
-.projects a:hover { border-color: var(--brand); background: var(--brand-soft); }
+.projects a:hover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px -16px var(--home-shadow-ambient), 0 10px 20px -14px var(--home-glow);
+}
 .projects .tag {
   display: inline-block;
   margin-bottom: .5rem;
@@ -380,6 +476,7 @@ body.home { padding: 0 1.15rem 0; }
   font-family: var(--font-mono);
   font-size: .72rem;
   font-weight: 700;
+  box-shadow: 0 1px 2px var(--home-shadow-contact);
 }
 .projects .t {
   display: block;
@@ -420,12 +517,21 @@ body.home { padding: 0 1.15rem 0; }
 }
 .home-foot p { margin: 0; }
 
+/* ── 접근성 ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .chain-node, .cta, .projects a { transition: none; }
+  .chain-node:hover, .cta:hover, .projects a:hover { transform: none; }
+}
+
 /* ── 인쇄 ──────────────────────────────────────────────── */
 @media print {
+  body.home { background-image: none; }
   .panel { border: 1px solid #bbb; box-shadow: none; break-inside: avoid; }
   .hero { padding: 1rem 0 1.5rem; }
   .cta-row { display: none; }
-  .chain-node { animation: none; }
+  .chain-node { animation: none; box-shadow: none; background: #fff; }
   .chain-node + .chain-node::before { animation: none; background: #666; }
+  .chain-node + .chain-node::after { display: none; }
   .spine::before { background: #666; }
+  .spine-n { box-shadow: none; background: #fff; }
 }

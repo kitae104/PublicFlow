@@ -118,6 +118,28 @@ details.quiz-answer .quiz-a {
 }
 details.quiz-answer .quiz-a b { color: var(--ink); }
 
+/* 표 — 설문 질문표·응답 예시·설정값표처럼 행·열이 뚜렷한 자료용 */
+.tbl-wrap { margin: .9rem 0; overflow-x: auto; }
+table.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .92rem;
+}
+table.tbl th,
+table.tbl td {
+  padding: .55rem .75rem;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+table.tbl th {
+  background: var(--paper-2);
+  font-weight: 700;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+table.tbl tbody tr:nth-child(even) td { background: var(--paper-2); }
+
 
 /* 좁은 화면(모바일)에서는 원래 읽기용 레이아웃으로 되돌림 */
 @media (max-width: 46rem) {
