@@ -1,3 +1,6 @@
 Wifi:nhi_AI
 ID: nhiai
 PW: Earthworm2026!
+
+
+{{ $json.text.replace(/\\n/g, '\n') }}
