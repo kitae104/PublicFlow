@@ -1,2 +1,3 @@
-문서테스트 확인
-내용 확인
+Wifi:nhi_AI
+ID: nhiai
+PW: Earthworm2026!
