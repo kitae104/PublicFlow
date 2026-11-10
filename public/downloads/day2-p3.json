@@ -1,15 +1,20 @@
 {
-  "name": "[공무원] 2일차 P3 AI 민원 자동 분류·답변 초안",
+  "name": "[공무원] 2일차 P3 AI 민원 자동 분류·답변 초안 + 결재",
   "nodes": [
     {
       "parameters": {
         "formTitle": "민원 내용 입력",
-        "formDescription": "분류할 민원 내용을 입력하세요.",
+        "formDescription": "분류할 민원 내용과 답변 받을 이메일을 입력하세요.",
         "formFields": {
           "values": [
             {
               "fieldLabel": "민원내용",
               "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "이메일",
+              "fieldType": "email",
               "requiredField": true
             }
           ]
@@ -114,10 +119,85 @@
       "typeVersion": 4.7,
       "position": [
         440,
-        0
+        -100
       ],
       "id": "d2p3-sheets",
       "name": "분류 결과 기록"
+    },
+    {
+      "parameters": {
+        "sendTo": "본인이메일@example.com",
+        "subject": "[결재 요청] 민원 답변 초안",
+        "message": "=민원 내용:\n{{ $('민원 내용 입력').item.json.민원내용 }}\n\nAI 분류·답변 초안:\n{{ $json.text }}\n\n아래 [Approve]를 누르면 답변 초안이 민원인에게 발송됩니다. 수정이 필요하면 [Disapprove]를 누르세요.",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {},
+        "resource": "message",
+        "operation": "sendAndWait",
+        "responseType": "approval"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        120
+      ],
+      "webhookId": "2f6c1a98-b047-4d35-8e91-5a3d7c0b9e14",
+      "id": "8d3a5f12-0b97-4c64-a2e8-6e1f9b7c3d25",
+      "name": "결재 요청"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "a7c2e5b1-4d08-4f93-b6a1-3e9d0c8f5a36",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        660,
+        120
+      ],
+      "id": "f4b8d0a3-7e51-4c29-8d6f-1a2c9e5b7d47",
+      "name": "승인됐나?"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('민원 내용 입력').first().json.이메일 }}",
+        "subject": "민원 답변 안내",
+        "message": "={{ $('AI 분류·답변').first().json.text.split('답변초안:').pop().trim() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        120
+      ],
+      "id": "3e9c7b05-a1d4-4862-95f0-8b6d2a4c1e58",
+      "name": "답변 발송"
     }
   ],
   "connections": {
@@ -139,6 +219,11 @@
             "node": "분류 결과 기록",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "결재 요청",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -152,6 +237,29 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "결재 요청": {
+      "main": [
+        [
+          {
+            "node": "승인됐나?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "승인됐나?": {
+      "main": [
+        [
+          {
+            "node": "답변 발송",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     }
   },
