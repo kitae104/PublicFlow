@@ -1,161 +1,216 @@
 {
-  "name": "[공무원] 2일차 P4 날씨 알리미",
+  "name": "[공무원] 2일차 P4 엑셀 오류 찾기",
   "nodes": [
     {
       "parameters": {
-        "rule": {
-          "interval": [
+        "formTitle": "집행내역 점검 서비스",
+        "formDescription": "집행내역 엑셀(.xlsx)을 올리면 한도 초과·증빙 누락 건을 AI가 찾아 메일로 보내드립니다.",
+        "formFields": {
+          "values": [
             {
-              "triggerAtHour": 7
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        0,
-        0
-      ],
-      "id": "d2p4-schedule",
-      "name": "매일 아침 7시"
-    },
-    {
-      "parameters": {
-        "jsCode": "// ── 여기 세 줄만 본인 지역에 맞게 바꾸세요 ──────────────\nconst REGION = '인천 남동구 구월2동';   // 메시지에 표시할 지역 이름\nconst NX = 56;                          // 기상청 격자 X\nconst NY = 124;                         // 기상청 격자 Y\n// ───────────────────────────────────────────────────\n\n// 기상청 단기예보는 02·05·08·11·14·17·20·23시에 발표되고\n// 발표 약 10분 뒤부터 받아올 수 있습니다.\nconst now = new Date(Date.now() + 9 * 60 * 60 * 1000);  // UTC -> 한국 시각\nconst baseTimes = [23, 20, 17, 14, 11, 8, 5, 2];\nconst pad2 = (n) => String(n).padStart(2, '0');\nconst DAY = 24 * 60 * 60 * 1000;\n\n// 현재 시각에서 10분을 뺀다. 자정 직후면 날짜도 함께 전날로 넘긴다.\nlet day = now;\nlet mins = now.getUTCHours() * 60 + now.getUTCMinutes() - 10;\nif (mins < 0) {\n  mins += 24 * 60;\n  day = new Date(day.getTime() - DAY);\n}\n\nlet pickHour = baseTimes.find((h) => h <= Math.floor(mins / 60));\nif (pickHour === undefined) {\n  pickHour = 23;                       // 02시 이전이면 전날 23시 발표분\n  day = new Date(day.getTime() - DAY);\n}\n\nconst base_date = `${day.getUTCFullYear()}${pad2(day.getUTCMonth() + 1)}${pad2(day.getUTCDate())}`;\nconst base_time = pad2(pickHour) + '00';\n\nreturn [{ json: { base_date, base_time, nx: NX, ny: NY, region: REGION } }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        220,
-        0
-      ],
-      "id": "d2p4-basetime",
-      "name": "발표시각 계산"
-    },
-    {
-      "parameters": {
-        "url": "https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "serviceKey",
-              "value": "여기에_본인_서비스키"
-            },
-            {
-              "name": "pageNo",
-              "value": "1"
-            },
-            {
-              "name": "numOfRows",
-              "value": "300"
-            },
-            {
-              "name": "dataType",
-              "value": "JSON"
-            },
-            {
-              "name": "base_date",
-              "value": "={{ $json.base_date }}"
-            },
-            {
-              "name": "base_time",
-              "value": "={{ $json.base_time }}"
-            },
-            {
-              "name": "nx",
-              "value": "={{ $json.nx }}"
-            },
-            {
-              "name": "ny",
-              "value": "={{ $json.ny }}"
+              "fieldLabel": "XLSX",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx",
+              "requiredField": true
             }
           ]
         },
         "options": {}
       },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        440,
-        0
-      ],
-      "id": "d2p4-http",
-      "name": "기상청 API 호출"
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [0, 0],
+      "webhookId": "a4c18e72-6b05-4d93-8f2a-3e71d09b5c64",
+      "id": "6f1b3c52-8a4e-4d07-b9c1-2e5a7d0f4a11",
+      "name": "엑셀 업로드 폼"
     },
     {
       "parameters": {
-        "jsCode": "const region = $('발표시각 계산').first().json.region;\nconst body = $input.first().json;\nconst items = body?.response?.body?.items?.item;\n\n// 키가 틀렸거나 발표 전이면 예보가 오지 않습니다. 그때도 알려주고 끝냅니다.\nif (!items || !Array.isArray(items)) {\n  const code = body?.response?.header?.resultCode ?? '알 수 없음';\n  const msg = body?.response?.header?.resultMsg ?? '응답을 읽지 못했습니다';\n  return [{ json: { message: `기상청 API 오류 (${code}): ${msg}\\n서비스키와 발표시각을 확인하세요.` } }];\n}\n\n// 가장 이른 예보 시각 한 회차만 대표로 씁니다.\nconst d0 = items[0].fcstDate;\nconst t0 = items[0].fcstTime;\nconst pick = (cat) =>\n  items.find((i) => i.category === cat && i.fcstDate === d0 && i.fcstTime === t0)?.fcstValue;\n\nconst tmp = pick('TMP');   // 기온\nconst pop = pick('POP');   // 강수확률\nconst reh = pick('REH');   // 습도\nconst wsd = pick('WSD');   // 풍속\nconst sky = pick('SKY');   // 하늘상태\nconst pty = pick('PTY');   // 강수형태\nconst tmn = items.find((i) => i.category === 'TMN')?.fcstValue;  // 일 최저\nconst tmx = items.find((i) => i.category === 'TMX')?.fcstValue;  // 일 최고\n\nconst skyMap = { '1': '☀️ 맑음', '3': '⛅ 구름많음', '4': '☁️ 흐림' };\nconst ptyMap = { '0': '없음', '1': '🌧 비', '2': '🌨 비/눈', '3': '❄️ 눈', '4': '🌦 소나기' };\n\nconst t = Number(tmp);\nlet tip;\nif (t <= 0) tip = '🧥 매우 추워요. 두껍게 입으세요!';\nelse if (t <= 10) tip = '🧣 쌀쌀해요. 외투를 챙기세요.';\nelse if (t >= 28) tip = '🥵 더워요. 수분 보충 잊지 마세요.';\nelse tip = '😊 활동하기 좋은 날씨예요.';\nif (Number(pop) >= 50 || (pty && pty !== '0')) tip += '\\n☔ 우산을 챙기세요!';\n\nlet temp = `${tmp}°C`;\nif (tmn && tmx) temp += ` (최저 ${tmn}°C / 최고 ${tmx}°C)`;\nelse if (tmn) temp += ` (최저 ${tmn}°C)`;\nelse if (tmx) temp += ` (최고 ${tmx}°C)`;\n\nconst message = [\n  `🌤 오늘의 날씨 (${region})`,\n  `예보 시각: ${t0.slice(0, 2)}시`,\n  '',\n  `하늘: ${skyMap[sky] ?? '정보 없음'}`,\n  `강수: ${ptyMap[pty] ?? '없음'} (확률 ${pop}%)`,\n  `기온: ${temp}`,\n  `습도: ${reh}%`,\n  `풍속: ${wsd}m/s`,\n  '',\n  tip,\n].join('\\n');\n\nreturn [{ json: { message } }];"
+        "operation": "xlsx",
+        "binaryPropertyName": "XLSX",
+        "options": {}
       },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        660,
-        0
-      ],
-      "id": "d2p4-format",
-      "name": "메시지 가공"
-    },
-    {
-      "parameters": {
-        "chatId": "여기에_본인_chat_id",
-        "text": "={{ $json.message }}",
-        "additionalFields": {
-          "appendAttribution": false
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
+      "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1.2,
-      "position": [
-        880,
-        0
-      ],
-      "webhookId": "c06b9d15-7a24-4e83-9f60-b8d5217e34ac",
-      "id": "d2p4-telegram",
-      "name": "텔레그램 발송"
+      "position": [220, 0],
+      "id": "0b9d4e83-5c17-4a62-8e3f-71a0c6d2b522",
+      "name": "엑셀 읽기"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c3e75a10-9f24-4b8d-a6e1-0d58b2f93c33",
+              "name": "점검결과",
+              "value": "={{ !$json.증빙번호 ? '증빙 누락' : ($json.금액 > 100000 ? '한도 초과' : '정상') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [440, 0],
+      "id": "d82f6b94-1e53-4c70-9a2d-5b47e8c01d44",
+      "name": "점검 결과 표시"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4a6e9c07-b3d8-4f15-8c62-9e0f1a7d5b55",
+              "leftValue": "={{ $json.점검결과 }}",
+              "rightValue": "정상",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.4,
+      "position": [660, 0],
+      "id": "7e2b5d18-4a90-4c36-bf71-0c83d6a9e266",
+      "name": "오류만 남기기"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [880, 0],
+      "id": "93d0a4f6-2c81-4e5b-a7d3-8f16b5e0c377",
+      "name": "한 건으로 합치기"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=당신은 시청 감사 업무를 돕는 비서입니다.\n아래는 지출 집행내역을 점검해 찾아낸 의심 건 목록입니다.\n\n[점검 기준]\n- 한도 초과: 1건 금액이 100,000원을 넘는 경우\n- 증빙 누락: 증빙번호가 비어 있는 경우\n\n[작성 규칙]\n- 맨 첫 줄에 '전체 {{ $('엑셀 읽기').all().length }}건 중 {{ $json.data.length }}건에서 문제가 발견되었습니다.'라고 씁니다.\n- 오류 유형별로 나누고, 건마다 사용일·사용자·항목·금액을 한 줄씩 적습니다.\n- 마지막에 담당자가 해야 할 조치를 2줄 이내로 제안합니다.\n- 목록에 없는 내용은 지어내지 않습니다.\n\n[의심 건 목록]\n{{ JSON.stringify($json.data) }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [1100, 0],
+      "id": "1c8f7a25-6d39-4b04-92e8-c4a05d7b1488",
+      "name": "AI 점검 보고서"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [1040, 180],
+      "id": "e5a3d812-7f60-4c29-8b14-6a9c0e3f2599",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "sendTo": "본인이메일@example.com",
+        "subject": "=[집행내역 점검] {{ $now.toFormat('yyyy-MM-dd') }}",
+        "emailType": "text",
+        "message": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [1320, 0],
+      "id": "b07c4e39-8d12-4a75-9f60-3e1d8a5c6a00",
+      "name": "점검 메일"
     }
   ],
   "connections": {
-    "매일 아침 7시": {
+    "엑셀 업로드 폼": {
       "main": [
         [
           {
-            "node": "발표시각 계산",
+            "node": "엑셀 읽기",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "발표시각 계산": {
+    "엑셀 읽기": {
       "main": [
         [
           {
-            "node": "기상청 API 호출",
+            "node": "점검 결과 표시",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "기상청 API 호출": {
+    "점검 결과 표시": {
       "main": [
         [
           {
-            "node": "메시지 가공",
+            "node": "오류만 남기기",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "메시지 가공": {
+    "오류만 남기기": {
       "main": [
         [
           {
-            "node": "텔레그램 발송",
+            "node": "한 건으로 합치기",
             "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "한 건으로 합치기": {
+      "main": [
+        [
+          {
+            "node": "AI 점검 보고서",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI 점검 보고서": {
+      "main": [
+        [
+          {
+            "node": "점검 메일",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI 점검 보고서",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
