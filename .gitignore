@@ -9,3 +9,6 @@ __pycache__/
 
 .vercel
 .env*
+
+# 수강생 설문 원본 (응답자 의견 포함) — 저장소에 올리지 않음
+datas/excel/
