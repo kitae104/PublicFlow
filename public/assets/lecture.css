@@ -151,3 +151,42 @@ table.tbl tbody tr:nth-child(even) td { background: var(--paper-2); }
     font-size: 17px;
   }
 }
+
+
+/* ── 인쇄 (수업용 와이드 레이아웃 보정) ─────────────────────
+   body.lecture-mode 의 화면 비례 글자 크기(vw)와 넓은 폭은 종이에서 어색하므로
+   인쇄에서는 되돌립니다. 종이에서는 필요 없는 부분(내려받기, 퀴즈 정답 버튼)을 숨기고
+   코드·표·그림이 쪽 사이에서 잘리지 않게 합니다. */
+@media print {
+  body.lecture-mode {
+    --maxw: none;
+    --pad: 0;
+    font-size: 11pt;
+    line-height: 1.55;
+  }
+  body.lecture-mode .page-head h1 { font-size: 20pt; }
+  body.lecture-mode h2 { font-size: 14pt; break-after: avoid; }
+  body.lecture-mode h3 { font-size: 12pt; break-after: avoid; }
+  body.lecture-mode figure.capture img { max-width: 100%; }
+
+  /* 종이에서는 의미 없는 것 */
+  #download, .dl { display: none; }
+  details.quiz-answer { display: none; }
+  .capture-guide { border-style: dashed; }
+
+  /* 쪽 나눔 */
+  pre.code-block { white-space: pre-wrap; break-inside: avoid; }
+  .tbl-wrap, table.tbl, .quiz-item { break-inside: avoid; }
+  table.tbl th, table.tbl td { padding: .3rem .5rem; }
+  body.lecture-mode ul.bullets > li::before { background: #000; }
+}
+
+/* 한두 쪽에 담아 나눠 줄 자료(개념 지도 등)는 글자를 줄여 인쇄 */
+@media print {
+  body.lecture-mode.print-compact { font-size: 9.5pt; line-height: 1.4; }
+  body.print-compact .page-head h1 { font-size: 16pt; }
+  body.print-compact h2 { font-size: 11.5pt; }
+  body.print-compact .sec { margin-top: .5rem; padding-top: .5rem; }
+  body.print-compact table.tbl th, body.print-compact table.tbl td { padding: .2rem .4rem; }
+  body.print-compact .note { margin: .5rem 0; padding: .45rem .7rem; }
+}

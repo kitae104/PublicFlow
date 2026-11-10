@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
+<title>내 업무 자동화 설계 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/lecture.css">
+</head>
+<body class="lecture-mode">
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 마무리</nav>
+
+  <header class="page-head">
+    <h1>내 업무 자동화 설계</h1>
+    <p class="sub">오늘 배운 부품으로 내 일을 설계해 봅니다 — 25분</p>
+  </header>
+
+  <section class="sec" id="why">
+    <h2 class="sec-title">왜 이게 필요한가</h2>
+    <ul class="bullets">
+      <li>이틀 동안 만든 것은 모두 연습용 소재였습니다. 수업이 끝나면 <b>"내 일에는 뭘 만들지?"</b>가 남습니다</li>
+      <li>자동화는 도구를 아는 것보다 <b>어떤 일을 맡길지 고르는 것</b>이 더 어렵습니다. 처음 하나를 잘 고르면 성공하고, 잘못 고르면 포기하게 됩니다</li>
+      <li>25분 동안 워크시트(이 페이지를 인쇄하세요)에 설계까지 해 두면, 다음 날 바로 만들기 시작할 수 있습니다</li>
+    </ul>
+    <div class="note tip">
+      <b>만들지는 않습니다</b>
+      오늘은 설계만 합니다. 이 시간의 결과물은 n8n 화면이 아니라 <b>채워진 워크시트</b>입니다.
+    </div>
+  </section>
+
+  <section class="sec" id="steps">
+    <h2 class="sec-title">따라하기</h2>
+    <ol class="steps">
+      <li><span class="step-title">반복되는 일 세 가지 적기 (5분)</span>
+        지난 한 달 동안 <b>같은 모양으로 반복한 일</b>을 떠올려 아래 칸에 적습니다.
+        <div class="note">
+          <b>이런 일이 후보입니다</b>
+          <ul class="bullets">
+            <li>매일·매주·매월 <b>같은 시기</b>에 하는 일</li>
+            <li>파일, 메일, 시트처럼 <b>입력과 결과가 눈에 보이는</b> 일</li>
+            <li>"이럴 땐 이렇게" 같은 <b>규칙이 분명한</b> 일</li>
+          </ul>
+        </div>
+        <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>내 반복 업무</th><th>얼마나 자주</th><th>한 번에 걸리는 시간</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>&nbsp;<br>&nbsp;</td><td></td><td></td></tr>
+            <tr><td>2</td><td>&nbsp;<br>&nbsp;</td><td></td><td></td></tr>
+            <tr><td>3</td><td>&nbsp;<br>&nbsp;</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </li>
+
+      <li><span class="step-title">하나 고르기 (5분)</span>
+        세 후보에 점수를 매기고 <b>가장 높은 하나</b>를 고릅니다. 1점(낮음) ~ 3점(높음)입니다.
+        <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>기준</th><th>1번</th><th>2번</th><th>3번</th></tr></thead>
+          <tbody>
+            <tr><td><b>자주 반복되는가</b> (자주일수록 높음)</td><td></td><td></td><td></td></tr>
+            <tr><td><b>규칙이 분명한가</b> (판단이 적을수록 높음)</td><td></td><td></td><td></td></tr>
+            <tr><td><b>시간이 많이 드는가</b></td><td></td><td></td><td></td></tr>
+            <tr><td><b>안전한가</b> (개인정보가 적을수록 높음)</td><td></td><td></td><td></td></tr>
+            <tr><td><b>합계</b></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="note warn">
+          <b>첫 자동화는 "작고 안전한 것"으로</b>
+          합계가 같다면 개인정보가 적은 쪽을 고르세요. 민원인 개인정보가 든 일은 <a href="../prep/security.html">개인정보·보안 유의</a>를 먼저 확인하고 시작해야 합니다.
+        </div>
+      </li>
+
+      <li><span class="step-title">부품으로 설계하기 (10분)</span>
+        고른 일을 아래 틀에 옮깁니다. 오른쪽 <b>부품 지도</b>에서 쓸 부품을 골라 적으세요.
+        <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>칸</th><th>내 업무</th></tr></thead>
+          <tbody>
+            <tr><td><b>고른 업무</b></td><td>&nbsp;<br>&nbsp;</td></tr>
+            <tr><td><b>① 언제 시작하나</b> (트리거)</td><td>&nbsp;<br>&nbsp;</td></tr>
+            <tr><td><b>② 무엇을 받나</b> (입력)</td><td>&nbsp;<br>&nbsp;</td></tr>
+            <tr><td><b>③ 어떻게 판단하나</b> (규칙·AI)</td><td>&nbsp;<br>&nbsp;</td></tr>
+            <tr><td><b>④ 결과는 어디로</b> (출력)</td><td>&nbsp;<br>&nbsp;</td></tr>
+            <tr><td><b>⑤ 사람이 확인할 곳</b></td><td>&nbsp;<br>&nbsp;</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p><b>부품 지도 — 이틀 동안 쓴 것</b></p>
+        <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>칸</th><th>쓸 수 있는 부품</th><th>배운 곳</th></tr></thead>
+          <tbody>
+            <tr><td>① 시작</td><td>수동 실행 · <b>폼 제출</b> · <b>정해진 시각</b>(매일 아침 9시 등)</td><td>1일차 1·8강, P2</td></tr>
+            <tr><td>② 입력</td><td><b>구글 시트 읽기</b> · <b>PDF</b> 읽기 · <b>엑셀</b> 읽기 · 폼 입력값</td><td>1일차 3강, P1, P4</td></tr>
+            <tr><td>③ 판단</td><td><b>IF</b>(둘로 나누기) · <b>Filter</b>(조건에 맞는 것만) · 표현식 <code class="val">조건 ? A : B</code> · <b>AI</b>(요약, 분류, 값 뽑기, 글쓰기)</td><td>1일차 6·7강, P1, P3, P4</td></tr>
+            <tr><td>④ 출력</td><td>시트 기록 · 메일 · 캘린더 일정 · 텔레그램 · 한 건으로 합쳐 보고서</td><td>1일차 3~5강, P1, P2</td></tr>
+            <tr><td>⑤ 사람 확인</td><td><b>승인 메일</b>(결재) — 승인해야만 다음 단계로</td><td>P3</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </li>
+
+      <li><span class="step-title">짝에게 설명하고 질문 받기 (5분)</span>
+        짝에게 칸 ①~⑤를 1분 안에 설명합니다. 듣는 사람은 아래 세 가지를 물어봅니다.
+        <ol>
+          <li><b>사람이 꼭 확인해야 하는 곳은 어디인가요?</b> (실수하면 곤란한 발송·결정)</li>
+          <li><b>개인정보가 들어가나요?</b> 외부 AI·메일로 나가도 되는 자료인가요?</li>
+          <li><b>중간에 실패하면 어떻게 되나요?</b> (파일이 비어 있거나, 규칙에 안 맞는 건이 오면)</li>
+        </ol>
+        <span class="hint">답이 막히는 칸에 별표를 치세요. 그것이 다음에 가장 먼저 해결할 부분입니다.</span>
+      </li>
+    </ol>
+  </section>
+
+  <section class="sec" id="examples">
+    <h2 class="sec-title">작성 예시 세 가지</h2>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th></th><th>① 출장비 정산 점검</th><th>② 주간 업무 보고 취합</th><th>③ 공고문 일정 등록</th></tr></thead>
+      <tbody>
+        <tr><td><b>시작</b></td><td>월말, 담당자가 폼에 엑셀 업로드</td><td>매주 금요일 오후 4시</td><td>공문 PDF를 폼에 업로드</td></tr>
+        <tr><td><b>입력</b></td><td>집행내역 엑셀</td><td>팀원들이 쓴 구글 시트(주간 실적)</td><td>공고문·공문 PDF</td></tr>
+        <tr><td><b>판단</b></td><td>한도 초과·증빙 누락을 Filter로, 보고서는 AI가</td><td>한 건으로 합친 뒤 AI가 팀 전체 요약</td><td>AI가 제목·마감일·담당부서 추출</td></tr>
+        <tr><td><b>출력</b></td><td>점검 보고서를 메일로</td><td>과장에게 요약 메일</td><td>마감일을 캘린더에, 요약은 텔레그램으로</td></tr>
+        <tr><td><b>사람 확인</b></td><td>메일을 읽고 직접 시정 요청</td><td>과장이 읽고 수정 지시</td><td>캘린더 일정이 맞는지 한 번 확인</td></tr>
+        <tr><td><b>쓴 부품</b></td><td>P4와 같음</td><td>P2와 같음</td><td>P1과 같음</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note tip">
+      <b>처음부터 새로 만들지 않아도 됩니다</b>
+      위 세 가지는 이틀 동안 만든 프로젝트에서 <b>소재만 바꾼 것</b>입니다. 내 일이 어느 프로젝트와 닮았는지 찾으면, 그 프로젝트의 완성본 파일을 불러와 시트 이름이나 프롬프트만 고쳐서 시작할 수 있습니다.
+    </div>
+  </section>
+
+  <section class="sec" id="next">
+    <h2 class="sec-title">다음 한 걸음</h2>
+    <ul class="bullets">
+      <li>채운 워크시트를 <b>사진으로 찍어 두세요</b> (또는 이 페이지를 인쇄 → PDF로 저장)</li>
+      <li>돌아가서 <b>가장 닮은 프로젝트의 완성본</b>(<code class="val">day2-p1.json</code> ~ <code class="val">day2-p4.json</code>)을 n8n에서 불러와 보세요</li>
+      <li>더 나아가고 싶다면 <a href="../roadmap.html">다음 단계 로드맵</a>을 보세요</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a href="../day2/p4.html">← P4 엑셀 오류 찾기</a>
+    <a href="../roadmap.html">다음 단계 로드맵 →</a>
+  </nav>
+
+</main>
+</body>
+</html>
