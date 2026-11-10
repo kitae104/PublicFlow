@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
+<title>개인정보·보안 유의 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/lecture.css">
+</head>
+<body class="lecture-mode">
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 개인정보·보안 유의</nav>
+
+  <header class="page-head">
+    <h1>개인정보·보안 유의</h1>
+    <p class="sub">실습은 안전하지만, 실제 업무에 쓰기 전에 꼭 확인할 것 — 5분</p>
+  </header>
+
+  <section class="sec" id="rule">
+    <h2 class="sec-title">이 과정의 원칙</h2>
+    <ul class="bullets">
+      <li>수업의 <b>모든 데이터는 가상</b>입니다. 샘플 민원, 연습용 공문, 연습용 엑셀 모두 지어낸 값입니다</li>
+      <li>실습할 때도 <b>실제 민원인의 이름·연락처·주민등록번호·계좌번호</b>를 넣지 마세요. 본인 이름이나 가명이면 충분합니다</li>
+      <li>업무 문서로 연습하고 싶다면 <b>외부에 공개해도 되는 문서</b>(이미 공개된 공고문, 보도자료 등)만 쓰세요</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="where">
+    <h2 class="sec-title">데이터가 어디로 나가나요</h2>
+    <p>워크플로우에 넣은 내용은 연결한 서비스의 서버로 전달됩니다. 어느 서비스가 무엇을 받는지 알고 써야 합니다.</p>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>서비스</th><th>이 과정에서 전달되는 것</th><th>확인할 점</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>n8n 클라우드</b></td><td>워크플로우 정의, 실행 기록(처리한 데이터 포함)</td><td>서버가 외국에 있을 수 있음. 기관의 클라우드 이용 지침</td></tr>
+        <tr><td><b>Gemini (구글 AI)</b></td><td>AI 노드의 프롬프트에 들어간 <b>모든 글자</b> (민원 내용, 공문 본문 등)</td><td>무료 사용 구간의 약관은 입력 내용을 서비스 개선에 쓸 수 있다고 정할 수 있음 → 약관 확인</td></tr>
+        <tr><td><b>구글 시트·Gmail·캘린더</b></td><td>기록하고 보내는 내용 전부</td><td>개인 계정이라면 기관 문서 보관 규정과 별개</td></tr>
+        <tr><td><b>텔레그램</b></td><td>봇이 보내는 메시지 전부</td><td>일부 기관망에서 차단. 대화 내용이 외부 서버에 남음</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="sec" id="before">
+    <h2 class="sec-title">실제 업무에 쓰기 전에</h2>
+    <div class="note warn">
+      <b>아래 세 가지를 소속 기관의 정보보안 담당자에게 먼저 확인하세요</b>
+      <ol class="steps">
+        <li><span class="step-title">개인정보가 든 자료를 외부 AI에 보내도 되는가</span>
+          민원 내용·공문·엑셀에 개인정보가 있다면 가장 먼저 확인할 사항입니다. 보통 별도의 승인이나 비식별화가 필요합니다.</li>
+        <li><span class="step-title">외부 클라우드 서비스를 업무에 써도 되는가</span>
+          n8n 클라우드, 개인 구글 계정, 텔레그램 모두 해당합니다.</li>
+        <li><span class="step-title">자동 발송이 허용되는 업무인가</span>
+          민원인에게 가는 답변은 <b>사람이 확인</b>하고 보내는 것이 원칙이어야 합니다. 2일차 P3의 결재 단계가 그 구조입니다.</li>
+      </ol>
+    </div>
+    <p>허용되지 않거나 불확실하다면 <b>개인정보를 빼고 구조만 자동화</b>하는 것부터 시작하세요.
+       예를 들어 민원 내용 대신 "접수 건수와 종류별 통계"만 AI에게 보내는 방식입니다.</p>
+    <p>정말 내부 데이터가 필요하다면 n8n을 <b>기관 내부 서버에 직접 설치</b>(자체 호스팅)하고 내부망에서 쓰는 방법이 있습니다.
+       이 경우 설치와 운영은 전산 담당 부서와 협의해야 합니다.</p>
+  </section>
+
+  <section class="sec" id="keys">
+    <h2 class="sec-title">키와 토큰은 비밀번호입니다</h2>
+    <ul class="bullets">
+      <li><b>Gemini API 키, 텔레그램 봇 토큰, 공공데이터 서비스키</b>는 비밀번호와 같습니다. 단톡방이나 메일에 붙여넣지 마세요</li>
+      <li>워크플로우를 <b>스크린샷이나 화면 공유</b>로 보여 줄 때 키가 보이는 노드(특히 HTTP Request의 쿼리 값)는 가리세요</li>
+      <li>내려받은 <code class="val">.json</code>에는 자격증명이 들어 있지 않습니다. 그래도 <b>시트 ID·이메일 주소·chat id</b>는 들어 있으니 남에게 줄 때 본인 값을 비우세요</li>
+      <li>키가 노출됐다면 발급 사이트에서 <b>즉시 재발급</b>하고 기존 키를 삭제합니다</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a href="glossary.html">← 개념 지도</a>
+    <a href="../index.html">목차로 →</a>
+  </nav>
+
+</main>
+</body>
+</html>
