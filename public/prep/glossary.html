@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
+<title>개념 지도와 화면 용어 사전 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/lecture.css">
+</head>
+<body class="lecture-mode print-compact">
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 개념 지도</nav>
+
+  <header class="page-head">
+    <h1>개념 지도와 화면 용어 사전</h1>
+    <p class="sub">두 쪽으로 정리했습니다 — 인쇄해서 옆에 두고 보세요</p>
+  </header>
+
+  <section class="sec" id="flow">
+    <h2 class="sec-title">자동화는 이렇게 흘러갑니다</h2>
+    <pre class="code-block">[트리거] ──→ [노드] ──→ [노드] ──→ [노드]
+ 언제 시작?     무엇을 할까?  (다음 일)   (다음 일)
+
+예)  폼 제출  →  시트에 기록  →  메일 보내기  →  캘린더에 일정</pre>
+    <ul class="bullets">
+      <li>맨 앞에는 <b>트리거가 하나</b> 있고, 그 뒤로 <b>노드</b>가 줄줄이 이어집니다</li>
+      <li>민원 한 건이 접수되면 그 한 건이 노드를 따라 흐르며 차례로 처리됩니다</li>
+      <li>한 노드에서 선이 여러 갈래로 나뉘면 갈래마다 일이 따로 진행됩니다 (1일차 3강부터)</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="concepts">
+    <h2 class="sec-title">개념 여섯 개</h2>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>용어</th><th>업무에 빗대면</th><th>한 줄 설명</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>트리거</b></td><td>업무를 시작시키는 접수 도장</td><td>워크플로우가 <b>언제</b> 시작할지 정합니다. 버튼, 폼 제출, 정해진 시각 등</td></tr>
+        <tr><td><b>노드</b></td><td>한 가지 일만 맡은 담당자 한 명</td><td>시트에 쓰기, 메일 보내기, AI에게 묻기처럼 <b>무엇을</b> 할지 정합니다</td></tr>
+        <tr><td><b>연결선</b></td><td>서류가 다음 담당자에게 넘어가는 길</td><td>노드와 노드를 잇습니다. 오른쪽 동그란 점에서 다음 노드로 끌어 놓습니다</td></tr>
+        <tr><td><b>항목</b></td><td>서류 한 장 (민원 한 건)</td><td>노드 사이로 흘러가는 데이터 한 건입니다. 시트의 한 줄과 비슷합니다</td></tr>
+        <tr><td><b>표현식</b></td><td>서류 양식의 빈칸</td><td><code class="val">{{ }}</code> 안에 적어 앞 노드의 값을 가져와 채웁니다</td></tr>
+        <tr><td><b>자격증명</b></td><td>업무용 계정 로그인</td><td>구글·텔레그램 같은 서비스에 한 번 연결해 두면 여러 노드가 재사용합니다</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="sec" id="screen">
+    <h2 class="sec-title">화면 용어 사전</h2>
+    <p class="hint">n8n 화면의 메뉴는 영어로 나옵니다. 자주 만나는 것만 모았습니다.</p>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>화면에 보이는 말</th><th>뜻</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code class="val">Execute workflow</code></td><td>워크플로우 <b>전체를 한 번 실행</b> (시험 실행)</td></tr>
+        <tr><td><code class="val">Execute step</code> / <code class="val">Test step</code></td><td>지금 열어 둔 <b>노드 하나만</b> 실행</td></tr>
+        <tr><td><code class="val">INPUT</code> / <code class="val">OUTPUT</code></td><td>노드로 <b>들어온 값</b> / 노드가 <b>내보낸 값</b>. 막히면 가장 먼저 여기를 봅니다</td></tr>
+        <tr><td><code class="val">+</code> (노드 오른쪽)</td><td>다음 노드를 추가</td></tr>
+        <tr><td><code class="val">Credential</code></td><td>자격증명 (서비스 연결 정보)</td></tr>
+        <tr><td><code class="val">Fixed</code> / <code class="val">Expression</code></td><td>값 칸의 두 가지 모드. 글자 그대로 쓰는 <b>고정값</b>, <code class="val">{{ }}</code>로 계산하는 <b>표현식</b></td></tr>
+        <tr><td><code class="val">Active</code> (활성화 스위치)</td><td>켜 두면 트리거가 <b>저절로</b> 동작합니다. 시험 중에는 꺼 둡니다</td></tr>
+        <tr><td><code class="val">Test URL</code> / <code class="val">Production URL</code></td><td>폼의 <b>시험용 주소</b> / <b>상시 주소</b></td></tr>
+        <tr><td><code class="val">Duplicate</code></td><td>워크플로우 <b>복제</b>. 망칠까 걱정될 때 복사본에서 실험</td></tr>
+        <tr><td><code class="val">Import from File</code></td><td>내려받은 <code class="val">.json</code> 워크플로우를 <b>불러오기</b></td></tr>
+        <tr><td><code class="val">Save</code></td><td>저장 (<code class="val">Ctrl</code>+<code class="val">S</code>). 실행해도 저장은 따로 해야 하는 경우가 있습니다</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="sec" id="expr">
+    <h2 class="sec-title">자주 쓰는 표현식 여섯 개</h2>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr><th>식</th><th>뜻</th><th>나오는 곳</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code class="val">{{ $json.이름 }}</code></td><td>바로 앞 노드가 넘겨준 <b>이름</b> 값</td><td>1일차 2강</td></tr>
+        <tr><td><code class="val">{{ $now.toFormat('yyyy-MM-dd') }}</code></td><td>오늘 날짜를 <code class="val">2026-09-14</code> 모양으로</td><td>1일차 3강</td></tr>
+        <tr><td><code class="val">{{ $now.plus(3,'days').toISO() }}</code></td><td>3일 뒤 날짜·시각</td><td>1일차 5강</td></tr>
+        <tr><td><code class="val">{{ $('노드 이름').item.json.값 }}</code></td><td>몇 칸 앞 <b>다른 노드</b>의 값을 이름으로 직접 가져옴</td><td>2일차 P3</td></tr>
+        <tr><td><code class="val">{{ $json.data.length }}</code></td><td>목록에 든 건수</td><td>2일차 P4</td></tr>
+        <tr><td><code class="val">{{ 조건 ? A : B }}</code></td><td>조건이 맞으면 A, 아니면 B</td><td>2일차 P4</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="note tip">
+      <b>막혔을 때 순서</b>
+      ① 막힌 노드를 열어 <b>INPUT</b>에 값이 들어왔는지 본다 → ② 표현식이 가리키는 <b>이름이 철자까지 같은지</b> 본다 →
+      ③ 각 강의 "안 될 때"를 본다 → ④ 앞 강 완성본 <code class="val">.json</code>을 불러와 합류한다.
+    </div>
+  </section>
+
+  <nav class="pager">
+    <a href="../index.html">← 목차로</a>
+    <a href="security.html">개인정보·보안 유의 →</a>
+  </nav>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
+<title>추가자료 날씨 알리미 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/lecture.css">
+</head>
+<body class="lecture-mode">
+<main class="wrap">
+
+  <nav class="crumb"><a href="../index.html">목차</a> › 추가자료</nav>
+
+  <header class="page-head">
+    <h1>날씨 알리미</h1>
+    <p class="sub">공공데이터 API를 받아 매일 아침 텔레그램으로 알려줍니다 — 약 60~90분</p>
+  </header>
+
+  <section class="sec" id="why">
+    <h2 class="sec-title">왜 이게 필요한가</h2>
+    <ul class="bullets">
+      <li>야외 행사·도로 순찰·제설·제초 작업처럼 날씨 하나에 하루 일정이 통째로 바뀌는 업무가 생각보다 많아 매일 앱을 켜고 단톡방에 옮겨 적음</li>
+      <li>진짜 문제는 <b>깜빡했을 때</b> — 우산을 안 챙기거나 행사 천막 설치를 못 미루는 일이 그때 생김</li>
+      <li>해결: 매일 아침 7시 기상청 공공데이터를 받아와 우리 동네 날씨와 한 줄 조언까지 텔레그램으로 자동 발송</li>
+    </ul>
+    <div class="note">
+      <b>추가 실습입니다</b> — 1·2일차 과정을 마친 뒤 골라서 진행하세요. P1~P4에서 쓴 구글·Gemini·텔레그램 준비가 되어 있다고 가정합니다.
+    </div>
+    <div class="note tip">
+      <b>새로 배우는 것</b> — 전용 노드가 없는 <b>공공데이터포털 API 연동</b>입니다. 지금까지는 구글·텔레그램처럼 n8n이 전용 노드를 갖춘 서비스만 썼지만, 이번에는 HTTP Request로 직접 요청을 보내 데이터를 받아옵니다.
+    </div>
+    <div class="note warn">
+      <b>코드 붙여넣기가 나옵니다</b>
+      기상청 데이터는 기계용 형태로 오기 때문에, 사람이 읽을 문장으로 바꾸는 부분은 준비된 코드를 그대로 복사합니다. <b>코드를 이해할 필요는 없습니다</b> — 바꿀 곳은 세 줄뿐이며 표시해두었습니다.
+    </div>
+  </section>
+
+  <section class="sec" id="goal">
+    <h2 class="sec-title">이번 시간에 만들 것</h2>
+    <p>매일 아침 7시에 기상청 공공데이터 API에서 우리 동네 날씨를 받아와, 사람이 읽을 수 있는 메시지로 가공한 뒤 텔레그램으로 보내는 워크플로우를 만듭니다.</p>
+    <div class="note warn">
+      <b>기상청 API 키 필요</b>
+      <a href="../prep/day1.html#weather-api">준비물 ① 기상청 단기예보 API 키 신청</a>을 먼저 확인(승인까지 시간 소요).
+    </div>
+    <figure class="capture" id="fig-extra2-1">
+      <div class="capture-cap">[그림 W-1] 완성 — 다섯 노드가 일직선. <code class="val">{ }</code> 아이콘 두 개가 <code class="val">Code</code> 노드</div>
+      <img src="../assets/img/fig-extra2-1.png" alt="완성된 모습">
+    </figure>
+    <p class="hint">Code 노드 하나는 요청 전 값 계산, 다른 하나는 응답을 문장으로 가공. AI 노드는 없음.</p>
+  </section>
+
+  <section class="sec" id="steps">
+    <h2 class="sec-title">따라하기</h2>
+    <ol class="steps">
+      <li><span class="step-title">인증키 준비하기 — 두 가지 중 어느 것인지 확인</span>
+        공공데이터포털 마이페이지에서 인증키를 보면 <b>두 가지</b>가 나란히 있습니다.
+        <code class="val">일반 인증키(Encoding)</code>와
+        <code class="val">일반 인증키(Decoding)</code>입니다.
+        <div class="note warn">
+          <b>Decoding 키를 쓰세요</b>
+          n8n은 값을 보낼 때 <b>알아서 한 번 변환</b>합니다. 이미 변환된
+          Encoding 키를 넣으면 <b>두 번 변환</b>되어 기상청 쪽에서 등록되지 않은
+          키로 인식합니다. "키를 분명히 발급받았는데 등록되지 않은 키라고 나온다"는
+          문제의 열에 아홉은 이것입니다.
+          <p>Decoding 키에는 <code class="val">+</code>,
+             <code class="val">/</code>, 끝에 <code class="val">==</code> 같은 기호가
+             섞여 있습니다. 그 모습이면 맞게 고른 것입니다.</p>
+        </div>
+        <p>키를 복사해 메모장에 잠시 붙여둡니다.</p>
+      </li>
+
+      <li><span class="step-title">새 워크플로우와 시각 트리거</span>
+        새 워크플로우를 만들고 이름을 <code class="val">날씨 알리미</code>로
+        바꿉니다. 캔버스 가운데 <code class="val">+</code>를 눌러
+        <code class="val">Schedule Trigger</code>를 고르고, P2와 같은 방법으로
+        <code class="val">Days</code> · <code class="val">Trigger at Hour</code>
+        <code class="val">7am</code> · <code class="val">Trigger at Minute</code>
+        <code class="val">0</code>으로 설정합니다.
+      </li>
+
+      <li><span class="step-title">첫 번째 Code 노드 — 발표시각 계산</span>
+        트리거 오른쪽 <code class="val">+</code>를 누르고
+        <code class="val">Code</code>를 고릅니다.
+        <code class="val">Language</code>는 기본값
+        <code class="val">JavaScript</code> 그대로 둡니다.
+        <p>코드 칸에 원래 들어 있던 예시 내용을 <b>전부 지우고</b> 아래를 그대로
+           붙여넣습니다.</p>
+<pre class="code-block">// ── 여기 세 줄만 본인 지역에 맞게 바꾸세요 ──────────────
+const REGION = '인천 남동구 구월2동';   // 메시지에 표시할 지역 이름
+const NX = 56;                          // 기상청 격자 X
+const NY = 124;                         // 기상청 격자 Y
+// ───────────────────────────────────────────────────
+
+// 기상청 단기예보는 02·05·08·11·14·17·20·23시에 발표되고
+// 발표 약 10분 뒤부터 받아올 수 있습니다.
+const now = new Date(Date.now() + 9 * 60 * 60 * 1000);  // UTC -&gt; 한국 시각
+const baseTimes = [23, 20, 17, 14, 11, 8, 5, 2];
+const pad2 = (n) =&gt; String(n).padStart(2, '0');
+const DAY = 24 * 60 * 60 * 1000;
+
+// 현재 시각에서 10분을 뺀다. 자정 직후면 날짜도 함께 전날로 넘긴다.
+let day = now;
+let mins = now.getUTCHours() * 60 + now.getUTCMinutes() - 10;
+if (mins &lt; 0) {
+  mins += 24 * 60;
+  day = new Date(day.getTime() - DAY);
+}
+
+let pickHour = baseTimes.find((h) =&gt; h &lt;= Math.floor(mins / 60));
+if (pickHour === undefined) {
+  pickHour = 23;                       // 02시 이전이면 전날 23시 발표분
+  day = new Date(day.getTime() - DAY);
+}
+
+const base_date = `${day.getUTCFullYear()}${pad2(day.getUTCMonth() + 1)}${pad2(day.getUTCDate())}`;
+const base_time = pad2(pickHour) + '00';
+
+return [{ json: { base_date, base_time, nx: NX, ny: NY, region: REGION } }];</pre>
+        <div class="note">
+          <b>이 코드가 하는 일 (읽지 않아도 됩니다)</b>
+          기상청은 <b>하루 여덟 번만</b> 예보를 새로 냅니다 — 새벽 2시, 5시, 8시…
+          이런 식입니다. 데이터를 받아오려면 <b>"몇 시 발표분을 달라"</b>고 정확히
+          지정해야 하는데, 아직 발표되지 않은 회차를 요청하면 빈 응답이 옵니다.
+          <p>이 코드는 <b>지금 시각을 보고 "가장 최근에 발표된 회차"를 계산</b>합니다.
+             아침 7시에 실행되면 5시 발표분을 고르는 식입니다.</p>
+        </div>
+        <div class="note warn">
+          <b>바꿀 곳은 맨 위 세 줄뿐입니다</b>
+          그대로 두면 <b>인천 남동구 구월2동</b> 날씨가 옵니다. 실습을 확인하는
+          데는 지장이 없으니, 우선 그대로 두고 끝까지 진행한 뒤 나중에 바꿔도 됩니다.
+          <p>본인 동네로 바꾸려면 <code class="val">NX</code>·<code class="val">NY</code>에
+             들어갈 숫자가 필요합니다. 공공데이터포털의 기상청 단기예보 API 페이지에서
+             내려받는 <b>활용가이드 문서(엑셀 파일)</b> 안에 전국 읍·면·동별 격자
+             X·Y 값이 표로 정리되어 있습니다. 본인 동네를 찾아 두 숫자를 옮겨 적고,
+             <code class="val">REGION</code>에는 메시지에 표시할 이름을 아무렇게나
+             적으면 됩니다.</p>
+        </div>
+        <figure class="capture" id="fig-extra2-2">
+          <div class="capture-cap">[그림 W-2] 붙여넣은 코드의 맨 위 다섯 줄. 줄표(<code class="val">──</code>) 사이의 <b>2·3·4번 줄</b>만 바꾸면 됩니다</div>
+          <img src="../assets/img/fig-extra2-2.png" alt="붙여넣은 코드의 맨 위 다섯 줄">
+        </figure>
+        <span class="hint">코드 칸 위에 <code class="val">Code</code>와
+        <code class="val">Ask AI</code> 두 개의 탭이 있습니다.
+        <code class="val">Code</code> 탭에 붙여넣는 것이 맞습니다.
+        <code class="val">Ask AI</code>는 AI에게 코드를 대신 짜달라고 시키는 기능이라
+        이번에는 쓰지 않습니다.</span>
+        <span class="hint">붙여넣은 뒤 왼쪽 <b>줄 번호</b>가 보이면 잘 들어간
+        것입니다. 1번 줄이 <code class="val">// ── 여기 세 줄만…</code>으로 시작하지
+        않는다면 원래 있던 예시 코드가 위에 남아 있는 것이니, 칸 안을 전부 지우고
+        (<code class="val">Ctrl</code>+<code class="val">A</code> →
+        <code class="val">Delete</code>) 다시 붙여넣으세요.</span>
+      </li>
+
+      <li><span class="step-title">기상청에 요청 보내기</span>
+        <code class="val">Code</code> 오른쪽 <code class="val">+</code>를 누르고
+        <code class="val">HTTP Request</code>를 고릅니다.
+        <p><code class="val">Method</code>는 기본값 <code class="val">GET</code> 그대로
+           두고, <code class="val">URL</code> 칸에 아래 주소를 붙여넣습니다.</p>
+<pre class="code-block">https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst</pre>
+        <p>그 아래 <code class="val">Authentication</code>은
+           <code class="val">None</code> 그대로 둡니다. 인증키를 헤더가 아니라 주소
+           뒤에 붙여 보내기 때문입니다.</p>
+        <p>그다음 <code class="val">Send Query Parameters</code> 스위치를 <b>켭니다.</b>
+           <code class="val">Specify Query Parameters</code>가
+           <code class="val">Using Fields Below</code>로 나타나면 그대로 두고, 그 아래
+           <code class="val">Query Parameters</code>에서
+           <code class="val">Name</code>·<code class="val">Value</code> 한 쌍씩 아래
+           <b>여덟 개</b>를 순서대로 채웁니다. 쌍을 다 채울 때마다 맨 아래
+           <code class="val">Add Parameter</code>를 눌러 다음 칸을 만듭니다.</p>
+        <p>
+          <code class="val">serviceKey</code> → 1번에서 복사한 <b>Decoding 인증키</b>(글자 그대로)<br>
+          <code class="val">pageNo</code> → <code class="val">1</code><br>
+          <code class="val">numOfRows</code> → <code class="val">300</code><br>
+          <code class="val">dataType</code> → <code class="val">JSON</code><br>
+          <code class="val">base_date</code> → 표현식 모드로 바꾸고 <code class="val">{{ $json.base_date }}</code><br>
+          <code class="val">base_time</code> → 표현식 모드로 바꾸고 <code class="val">{{ $json.base_time }}</code><br>
+          <code class="val">nx</code> → 표현식 모드로 바꾸고 <code class="val">{{ $json.nx }}</code><br>
+          <code class="val">ny</code> → 표현식 모드로 바꾸고 <code class="val">{{ $json.ny }}</code>
+        </p>
+        <span class="hint">앞의 네 개는 항상 같은 값이라 글자 그대로 적고, 뒤의 네
+        개는 앞 Code 노드가 계산해준 값이라 표현식으로 가져옵니다.
+        <b>뒤 네 칸은 각각 따로</b> 표현식 스위치를 눌러야 합니다.</span>
+        <div class="note">
+          <b>이 노드가 하는 일</b>
+          지금까지 쓴 <code class="val">Google Sheets</code>나
+          <code class="val">Telegram</code> 노드는 n8n이 그 서비스 전용으로 미리 만들어둔
+          것이었습니다. 기상청은 그런 전용 노드가 없으므로,
+          <b>"이 주소로 이런 값들을 보내달라"</b>고 직접 적어주는 것입니다.
+          <code class="val">dataType=JSON</code>은 "사람 말고 기계가 읽기 좋은 형태로
+          달라"는 뜻입니다.
+        </div>
+        <figure class="capture" id="fig-extra2-3">
+          <div class="capture-cap">[그림 W-3] <code class="val">Send Query Parameters</code>를 켜고 첫 두 쌍(<code class="val">serviceKey</code>·<code class="val">pageNo</code>)을 채운 모습. 아래로 여섯 쌍이 더 이어집니다</div>
+          <img src="../assets/img/fig-extra2-3.png" alt="Send Query Parameters를 켜고 파라미터를 채우기 시작한 HTTP Request 노드">
+        </figure>
+        <span class="hint">그림의 <code class="val">serviceKey</code> 값 자리에는
+        자리표시자가 들어 있습니다. 여기에 <b>본인 Decoding 인증키</b>를
+        붙여넣으세요. 맨 위 <code class="val">Import cURL</code> 버튼은 쓰지
+        않습니다.</span>
+      </li>
+
+      <li><span class="step-title">여기서 한 번 실행해보기</span>
+        다음 단계로 넘어가기 전에 이 노드까지만 확인합니다.
+        <code class="val">HTTP Request</code> 노드 안의
+        <code class="val">Test step</code>(이 단계만 실행)과 비슷한 문구의 버튼을
+        누릅니다.
+        <p>오른쪽 OUTPUT 패널에 <code class="val">response</code> 아래로
+           <code class="val">fcstDate</code>, <code class="val">fcstTime</code>,
+           <code class="val">category</code>, <code class="val">fcstValue</code> 같은
+           이름이 잔뜩 나오면 성공입니다. 이게 기상청이 보내준 <b>가공 전 날씨
+           데이터</b>입니다.</p>
+        <span class="hint">여기서 실패하면 뒤 단계를 아무리 잘 만들어도 소용없습니다.
+        <b>안 될 때</b> 항목을 먼저 확인하고 넘어가세요.</span>
+      </li>
+
+      <li><span class="step-title">두 번째 Code 노드 — 메시지 가공</span>
+        <code class="val">HTTP Request</code> 오른쪽 <code class="val">+</code>를
+        누르고 <code class="val">Code</code>를 다시 하나 고릅니다. 코드 칸을 전부
+        지우고 아래를 붙여넣습니다.
+<pre class="code-block">const region = $('발표시각 계산').first().json.region;
+const body = $input.first().json;
+const items = body?.response?.body?.items?.item;
+
+// 키가 틀렸거나 발표 전이면 예보가 오지 않습니다. 그때도 알려주고 끝냅니다.
+if (!items || !Array.isArray(items)) {
+  const code = body?.response?.header?.resultCode ?? '알 수 없음';
+  const msg = body?.response?.header?.resultMsg ?? '응답을 읽지 못했습니다';
+  return [{ json: { message: `기상청 API 오류 (${code}): ${msg}\n서비스키와 발표시각을 확인하세요.` } }];
+}
+
+// 가장 이른 예보 시각 한 회차만 대표로 씁니다.
+const d0 = items[0].fcstDate;
+const t0 = items[0].fcstTime;
+const pick = (cat) =&gt;
+  items.find((i) =&gt; i.category === cat &amp;&amp; i.fcstDate === d0 &amp;&amp; i.fcstTime === t0)?.fcstValue;
+
+const tmp = pick('TMP');   // 기온
+const pop = pick('POP');   // 강수확률
+const reh = pick('REH');   // 습도
+const wsd = pick('WSD');   // 풍속
+const sky = pick('SKY');   // 하늘상태
+const pty = pick('PTY');   // 강수형태
+const tmn = items.find((i) =&gt; i.category === 'TMN')?.fcstValue;  // 일 최저
+const tmx = items.find((i) =&gt; i.category === 'TMX')?.fcstValue;  // 일 최고
+
+const skyMap = { '1': '☀️ 맑음', '3': '⛅ 구름많음', '4': '☁️ 흐림' };
+const ptyMap = { '0': '없음', '1': '🌧 비', '2': '🌨 비/눈', '3': '❄️ 눈', '4': '🌦 소나기' };
+
+const t = Number(tmp);
+let tip;
+if (t &lt;= 0) tip = '🧥 매우 추워요. 두껍게 입으세요!';
+else if (t &lt;= 10) tip = '🧣 쌀쌀해요. 외투를 챙기세요.';
+else if (t &gt;= 28) tip = '🥵 더워요. 수분 보충 잊지 마세요.';
+else tip = '😊 활동하기 좋은 날씨예요.';
+if (Number(pop) &gt;= 50 || (pty &amp;&amp; pty !== '0')) tip += '\n☔ 우산을 챙기세요!';
+
+let temp = `${tmp}°C`;
+if (tmn &amp;&amp; tmx) temp += ` (최저 ${tmn}°C / 최고 ${tmx}°C)`;
+else if (tmn) temp += ` (최저 ${tmn}°C)`;
+else if (tmx) temp += ` (최고 ${tmx}°C)`;
+
+const message = [
+  `🌤 오늘의 날씨 (${region})`,
+  `예보 시각: ${t0.slice(0, 2)}시`,
+  '',
+  `하늘: ${skyMap[sky] ?? '정보 없음'}`,
+  `강수: ${ptyMap[pty] ?? '없음'} (확률 ${pop}%)`,
+  `기온: ${temp}`,
+  `습도: ${reh}%`,
+  `풍속: ${wsd}m/s`,
+  '',
+  tip,
+].join('\n');
+
+return [{ json: { message } }];</pre>
+        <div class="note">
+          <b>이 코드가 하는 일 (읽지 않아도 됩니다)</b>
+          기상청 데이터는 <code class="val">TMP</code>(기온),
+          <code class="val">POP</code>(강수확률),
+          <code class="val">SKY</code>(하늘상태)처럼 <b>암호 같은 약자</b>로 옵니다.
+          하늘상태는 숫자로 와서 <code class="val">1</code>이 맑음,
+          <code class="val">3</code>이 구름많음입니다.
+          <p>이 코드는 그 약자와 숫자를 <b>사람이 읽는 말로 바꾸고</b>, 기온에 따라
+             "외투를 챙기세요" 같은 한 줄 조언을 붙여 <b>완성된 메시지 하나</b>를
+             만듭니다. 결과는 <code class="val">message</code>라는 이름으로 나옵니다.</p>
+        </div>
+        <div class="note warn">
+          <b>맨 첫 줄의 노드 이름을 확인하세요</b>
+          첫 줄 <code class="val">$('발표시각 계산')</code>은 P3에서 배운 그
+          문법입니다 — 두 칸 앞의 Code 노드로 거슬러 올라가 지역 이름을 가져옵니다.
+          <b>그 노드의 제목이 정확히 <code class="val">발표시각 계산</code>이어야
+          합니다.</b> 아직 이름을 안 바꿨다면 다음 단계에서 바꾼 뒤 다시 실행하세요.
+        </div>
+      </li>
+
+      <li><span class="step-title">텔레그램으로 보내기</span>
+        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Telegram</code>을
+        고릅니다. P1에서 만든 자격증명을 고르고,
+        <code class="val">Chat ID</code>에 본인 chat id 숫자를 넣습니다.
+        <p><code class="val">Text</code> 칸은 표현식 모드로 바꾸고
+           <code class="val">{{ $json.message }}</code>를 입력합니다.</p>
+        <span class="hint">앞 Code 노드가 메시지를 통째로 완성해두었으므로 여기서는
+        그것을 그대로 꺼내 보내기만 하면 됩니다.</span>
+      </li>
+
+      <li><span class="step-title">노드 이름 정리하기</span>
+        노드 제목을 각각 더블클릭해 아래 이름으로 바꿉니다.
+        <p><code class="val">매일 아침 7시</code> ·
+           <code class="val">발표시각 계산</code> ·
+           <code class="val">기상청 API 호출</code> ·
+           <code class="val">메시지 가공</code> ·
+           <code class="val">텔레그램 발송</code></p>
+        <div class="note warn">
+          <b>첫 Code 노드 이름은 반드시 <code class="val">발표시각 계산</code>으로</b>
+          두 번째 Code 노드의 첫 줄이 이 이름을 부르고 있습니다. 다른 이름을 쓰면
+          "노드를 찾을 수 없다"는 오류가 납니다.
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="sec" id="verify">
+    <h2 class="sec-title">실행하고 확인하기</h2>
+    <ul class="bullets">
+      <li><code class="val">Execute workflow</code> → 텔레그램 도착 확인</li>
+    </ul>
+<pre class="code-block">🌤 오늘의 날씨 (인천 남동구 구월2동)
+예보 시각: 15시
+
+하늘: ☀️ 맑음
+강수: 없음 (확률 0%)
+기온: 36°C (최저 26.0°C)
+습도: 50%
+풍속: 0.9m/s
+
+🥵 더워요. 수분 보충 잊지 마세요.</pre>
+    <figure class="capture" id="fig-extra2-4">
+      <div class="capture-cap">[그림 W-4] 오후에 실행해 도착한 실제 메시지</div>
+      <img src="../assets/img/fig-extra2-4.png" alt="텔레그램에 도착한 날씨 알림">
+    </figure>
+    <p class="hint">최고 기온이 빠지는 것도 정상 — 특정 회차에만 값이 들어있음</p>
+    <p>확인 후 활성화 스위치 켜기 — 매일 아침 7시 자동 실행</p>
+    <div class="note tip">
+      <b>전용 노드가 없는 서비스도 연결할 수 있습니다</b>
+      <code class="val">HTTP Request</code>만 익히면 공공데이터포털의 다른 API(미세먼지, 버스 도착, 행사 정보 등)도 같은 방식으로 붙일 수 있습니다.
+    </div>
+  </section>
+
+  <section class="sec" id="trouble">
+    <h2 class="sec-title">안 될 때</h2>
+    <ul class="bullets">
+      <li><b>"등록되지 않은 서비스키"</b> — Decoding 키인지, 활용신청 승인됐는지 확인</li>
+      <li><b>승인 직후 안 됨</b> — 한 시간쯤 뒤 재시도</li>
+      <li><b>예보 내용이 비어 있음</b> — <code class="val">base_date</code>·<code class="val">base_time</code> 확인, 좌표를 <code class="val">56</code>·<code class="val">124</code>로 시험</li>
+      <li><b>"노드를 찾을 수 없다"</b> — <code class="val">$('발표시각 계산')</code>과 실제 노드 제목 일치 확인</li>
+      <li><b><code class="val">undefined</code> 섞임</b> — 최저·최고 기온은 특정 회차에만 존재(정상), 전부 undefined면 좌표·발표시각 문제</li>
+      <li><b>텔레그램 메시지 안 옴</b> — Chat ID 숫자 확인, 봇에게 먼저 말 걸었는지 확인</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="quiz">
+    <h2 class="sec-title">확인 문제</h2>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q1. 공공데이터포털 인증키 중 n8n에 넣어야 하는 것은?</p>
+      <ol class="quiz-choices">
+        <li>일반 인증키(Encoding)</li>
+        <li>일반 인증키(Decoding)</li>
+        <li>둘 다 상관없음</li>
+        <li>발급받은 순서대로 아무거나</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> n8n이 값을 보낼 때 자동으로 한 번 변환하므로, 이미 변환된 Encoding 키를 넣으면 두 번 변환되어 오류가 납니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q2. 첫 번째 Code 노드가 계산하는 것은 무엇인가요?</p>
+      <ol class="quiz-choices">
+        <li>텔레그램 메시지 본문</li>
+        <li>가장 최근에 발표된 기상청 예보 회차(발표시각)</li>
+        <li>구글 시트에 쓸 값</li>
+        <li>AI 프롬프트</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> 기상청은 하루 여덟 번만 예보를 내므로, 지금 시각 기준으로 가장 최근 발표 회차를 계산해야 합니다.</p>
+      </details>
+    </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">단답형</span>Q3. 본인 동네로 좌표를 바꾸려면 어떤 문서에서 NX·NY 값을 찾아야 하나요?</p>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답:</b> 공공데이터포털 기상청 단기예보 API 페이지의 활용가이드 문서(엑셀 파일) — 전국 읍·면·동별 격자 X·Y 값이 표로 정리되어 있습니다.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="sec" id="download">
+    <h2 class="sec-title">이번 프로젝트 워크플로우 받기</h2>
+    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.
+       코드 두 덩어리가 이미 들어 있으므로 붙여넣기 실수를 피하고 싶을 때도
+       쓸 만합니다.</p>
+    <div class="note warn">
+      <b>불러온 뒤 반드시 확인하세요</b>
+      이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤
+      <code class="val">텔레그램 발송</code> 노드를 열어 자격증명을 다시 골라야
+      합니다. 그리고 아래 두 자리표시자를 본인 값으로 바꿔야 합니다.
+      <p><code class="val">기상청 API 호출</code>의
+         <code class="val">serviceKey</code> →
+         <code class="val">여기에_본인_서비스키</code><br>
+         <code class="val">텔레그램 발송</code>의 <code class="val">Chat ID</code> →
+         <code class="val">여기에_본인_chat_id</code></p>
+      지역은 <code class="val">발표시각 계산</code> 노드 맨 위 세 줄에서 바꿉니다.
+      그대로 두면 인천 남동구 구월2동 날씨가 옵니다.
+    </div>
+    <a class="dl" href="../downloads/extra-weather.json" download>
+      워크플로우 내려받기 <span class="dl-name">extra-weather.json</span>
+    </a>
+  </section>
+
+  <nav class="pager">
+    <a href="../index.html">← 목차로</a>
+  </nav>
+
+</main>
+</body>
+</html>

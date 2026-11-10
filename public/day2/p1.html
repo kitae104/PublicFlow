@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
-<title>P1 공문서 요약 서비스 — 공무원을 위한 n8n</title>
+<title>P1 공문서 요약과 기한 등록 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" href="../assets/lecture.css">
 </head>
@@ -14,8 +14,8 @@
   <nav class="crumb"><a href="../index.html">목차</a> › 2일차 › P1</nav>
 
   <header class="page-head">
-    <h1>P1 공문서 요약 서비스</h1>
-    <p class="sub">PDF를 올리면 요약을 보내줍니다</p>
+    <h1>P1 공문서 요약과 기한 등록</h1>
+    <p class="sub">PDF를 올리면 요약은 텔레그램으로, 제출 기한은 캘린더로 갑니다</p>
   </header>
 
   <section class="sec" id="why">
@@ -23,8 +23,13 @@
     <ul class="bullets">
       <li>아침마다 첨부 공문이 대여섯 건씩 오지만, 대부분 우리 부서와 상관없는 협조 공문이거나 이미 아는 사업의 후속 안내 — 열어보기 전엔 어느 쪽인지 알 수 없음</li>
       <li>한 건에 3~5분, 하루 20분이 그저 훑어보는 데 소요됨</li>
-      <li>해결: PDF를 올리면 목적·주요 내용·지원 사항·대상·일정 다섯 줄 요약이 몇 초 뒤 텔레그램으로 도착</li>
+      <li>더 아픈 문제는 <b>기한을 놓치는 일</b> — 공문 한 장에 설명회 날짜, 조사 기간, 제출 기한이 뒤섞여 있어서 달력에 옮겨 적다가 틀리거나 아예 잊음</li>
+      <li>해결: PDF를 올리면 목적·주요 내용·지원 사항·대상·일정 다섯 줄 요약이 몇 초 뒤 텔레그램으로 도착하고, <b>제출 기한은 캘린더에 자동으로 등록</b></li>
     </ul>
+    <div class="note tip">
+      <b>새로 배우는 것</b> — AI에게 글을 쓰게 하는 대신 <b>글에서 필요한 값만 뽑게 하는</b>
+      <code class="val">Information Extractor</code>입니다. 뽑은 날짜는 1일차 05강에서 만든 캘린더 일정 노드에 그대로 넘깁니다.
+    </div>
     <div class="note tip">
       <b>요약은 판단을 대신하지 않습니다</b>
       실제로 처리할 공문은 반드시 원문을 여세요. 목적은 읽지 않는 것이 아니라 "먼저 읽을 것을 고르는 시간"을 줄이는 것입니다.
@@ -33,16 +38,28 @@
 
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
-    <p>폼에 PDF 공문서를 올리면 텍스트를 뽑아내 AI가 다섯 줄로 요약한 뒤 텔레그램으로 보내주는 독립 프로젝트를 만듭니다. 1일차와 달리 처음부터 새로 만드는 워크플로우입니다.</p>
+    <p>폼에 PDF 공문서를 올리면 텍스트를 뽑아내 두 갈래로 일을 시키는 독립 프로젝트를 만듭니다. 1일차와 달리 처음부터 새로 만드는 워크플로우입니다.</p>
+    <ul class="bullets">
+      <li><b>위 갈래</b> — AI가 다섯 줄로 요약해 텔레그램으로 보냄</li>
+      <li><b>아래 갈래</b> — AI가 제목·제출 기한·담당부서·필요조치를 뽑아 구글 캘린더에 일정으로 등록</li>
+    </ul>
     <div class="note warn">
-      <b>텔레그램 봇 필요</b>
-      <a href="../prep/day2.html">준비물 ② 텔레그램 봇 만들기</a>에서 봇 토큰·chat id 확인.
+      <b>텔레그램 봇과 구글 캘린더 필요</b>
+      <a href="../prep/day2.html">준비물 ② 텔레그램 봇 만들기</a>에서 봇 토큰·chat id 확인. 캘린더는 1일차 05강에서 연결한 것을 그대로 씁니다.
+    </div>
+    <p>연습용 공문은 <b>가상의 공문 한 장</b>입니다. 날짜가 네 개 들어 있어서 AI가 그중 <b>제출 기한</b>을 제대로 고르는지 확인할 수 있습니다.</p>
+    <a class="dl" href="../downloads/day2-p1-sample.pdf" download>
+      연습용 공문 내려받기 <span class="dl-name">day2-p1-sample.pdf</span>
+    </a>
+    <div class="note">
+      <b>연습용 공문의 날짜는 2026년입니다</b>
+      수업 날짜보다 이전이어도 캘린더에는 그 날짜 그대로 등록됩니다. 등록 위치를 확인하는 실습이므로 지장이 없습니다.
     </div>
     <figure class="capture" id="fig-d2-p1-1">
-      <div class="capture-cap">[그림 P1-1] 완성 — <code class="val">공문서 업로드 폼</code> → <code class="val">PDF 텍스트 추출</code> → <code class="val">AI 요약</code> → <code class="val">텔레그램 발송</code></div>
-      <img src="../assets/img/fig-d2-p1-1.png" alt="완성된 모습">
+      <div class="capture-cap">[그림 P1-1] 완성 — <code class="val">PDF 텍스트 추출</code>에서 선이 두 갈래로 나뉘는 모습</div>
+      <div class="capture-guide">캡처 위치: 완성된 P1 캔버스 전체 — 공문서 업로드 폼 → PDF 텍스트 추출, 이어서 (위) AI 요약 → 텔레그램 발송, (아래) 기한 추출 → 기한 일정 등록. 각 AI 노드 아래에 Gemini 모델이 매달린 모습</div>
     </figure>
-    <p class="hint">일직선 구조. <code class="val">Google Gemini Chat Model</code>만 <code class="val">AI 요약</code> 아래에 점선 매달림.</p>
+    <p class="hint">1일차 결정과 같은 <b>부챗살 구조</b>입니다. 한쪽이 실패해도 다른 쪽은 영향을 받지 않습니다.</p>
   </section>
 
   <section class="sec" id="steps">
@@ -131,8 +148,70 @@
         </figure>
       </li>
 
+      <li><span class="step-title">여기까지 한 번 실행해 보기</span>
+        <code class="val">Execute workflow</code> → 연습용 공문(<code class="val">day2-p1-sample.pdf</code>)을 올립니다. 텔레그램에 요약이 오면 위 갈래는 완성입니다.
+        <span class="hint">이어서 같은 공문에서 <b>제출 기한</b>도 뽑아 캘린더에 올립니다. 이미 만든 흐름은 건드리지 않고 갈래만 하나 더 뻗습니다.</span>
+      </li>
+
+      <li><span class="step-title">공문에서 기한 뽑아내기 — 두 번째 갈래</span>
+        <code class="val">PDF 텍스트 추출</code> 노드 오른쪽 끝의 동그란 점을 잡고 빈 곳으로 끌어 놓은 뒤
+        <code class="val">Information Extractor</code>를 고릅니다. (이미 선이 하나 나가 있어도 새 선을 더 낼 수 있습니다.)
+        <p>
+          <code class="val">Text</code> → 표현식 모드로 <code class="val">{{ $json.text }}</code><br>
+          <code class="val">Schema Type</code> → <code class="val">From Attribute Descriptions</code>
+        </p>
+        <p><code class="val">Add Attribute</code>를 눌러 아래 <b>네 개</b>를 만듭니다. <code class="val">Name</code>과 <code class="val">Description</code>을 채웁니다.</p>
+        <p>
+          <code class="val">문서제목</code> → 공문서의 제목 (<code class="val">Required</code> 켬)<br>
+          <code class="val">제출기한</code> → <code class="val">회신·제출의 마감 날짜를 YYYY-MM-DD 형식으로. 설명회·행사·조사 기간의 날짜와 헷갈리지 말 것. 마감이 없으면 빈 값</code><br>
+          <code class="val">담당부서</code> → 공문을 보낸 부서 이름<br>
+          <code class="val">필요조치</code> → 받는 기관이 해야 할 일을 한 줄로
+        </p>
+        <div class="note warn">
+          <b>설명이 곧 지시문입니다</b>
+          AI는 <code class="val">Name</code>이 아니라 <b><code class="val">Description</code>을 읽고</b> 값을 고릅니다. 공문에는 날짜가 여러 개 나오므로,
+          <code class="val">제출기한</code> 설명을 "마감 날짜"라고 구체적으로 적고 다른 날짜와 구분하라고 알려 줘야 합니다.
+          1일차 06강의 프롬프트와 같은 원리입니다.
+        </div>
+        <p>아래쪽 <code class="val">Model</code> 자리 <code class="val">+</code>에서 <code class="val">Google Gemini Chat Model</code>을 달고,
+           <code class="val">models/gemini-2.5-flash</code>를 직접 고릅니다. 이 노드의 이름은 자동으로
+           <code class="val">Google Gemini Chat Model1</code>이 됩니다. 그대로 두세요.</p>
+        <p>실행 후 OUTPUT을 보면 <code class="val">output</code> 아래에 네 개 값이 나옵니다. <code class="val">제출기한</code>이 <code class="val">2026-12-18</code>인지 확인하세요.</p>
+        <figure class="capture" id="fig-d2-p1-6">
+          <div class="capture-cap">[그림 P1-6] <code class="val">기한 추출</code> OUTPUT — <code class="val">output</code> 아래 네 개 값</div>
+          <div class="capture-guide">캡처 위치: 기한 추출 노드의 OUTPUT(JSON 또는 Table). 문서제목·제출기한(2026-12-18)·담당부서·필요조치가 보이는 화면</div>
+        </figure>
+        <span class="hint">값은 <code class="val">{{ $json.text }}</code>가 아니라 <code class="val">{{ $json.output.제출기한 }}</code>처럼 <b><code class="val">output</code>을 한 번 거쳐</b> 꺼냅니다.</span>
+      </li>
+
+      <li><span class="step-title">제출 기한을 캘린더에 등록하기</span>
+        <code class="val">기한 추출</code> 오른쪽 <code class="val">+</code> → <code class="val">Google Calendar</code> → <code class="val">Create an event</code>.
+        1일차 05강의 자격증명을 그대로 고릅니다.
+        <p>
+          <code class="val">Calendar</code> → 본인 캘린더 (보통 본인 Gmail 주소)<br>
+          <code class="val">Start</code> → 표현식 모드로 아래
+        </p>
+<pre class="code-block">{{ $json.output.제출기한 + 'T09:00:00' }}</pre>
+        <p><code class="val">End</code> → 표현식 모드로 아래</p>
+<pre class="code-block">{{ $json.output.제출기한 + 'T10:00:00' }}</pre>
+        <p><code class="val">Add Field</code>로 <code class="val">Summary</code>와 <code class="val">Description</code>을 추가하고 표현식으로 채웁니다.</p>
+<pre class="code-block">[공문 기한] {{ $json.output.문서제목 }}</pre>
+<pre class="code-block">담당부서: {{ $json.output.담당부서 }}
+필요조치: {{ $json.output.필요조치 }}</pre>
+        <div class="note">
+          <b>이 식이 하는 일</b>
+          <code class="val">제출기한</code>은 <code class="val">2026-12-18</code> 같은 날짜 글자입니다. 뒤에 <code class="val">'T09:00:00'</code>(오전 9시)를 붙이면
+          캘린더가 읽는 날짜·시각 형태가 됩니다. 글자와 글자를 <code class="val">+</code>로 이으면 한 글자열이 됩니다.
+        </div>
+        <figure class="capture" id="fig-d2-p1-7">
+          <div class="capture-cap">[그림 P1-7] <code class="val">Start</code>·<code class="val">End</code>·<code class="val">Summary</code>에 표현식을 채운 캘린더 노드</div>
+          <div class="capture-guide">캡처 위치: 기한 일정 등록 노드 설정 화면. Start·End·Summary·Description 칸에 fx 표시와 미리보기 값이 보이는 모습</div>
+        </figure>
+      </li>
+
       <li><span class="step-title">노드 이름 정리하기</span>
-        <p><code class="val">공문서 업로드 폼</code> · <code class="val">PDF 텍스트 추출</code> · <code class="val">AI 요약</code> · <code class="val">텔레그램 발송</code></p>
+        <p><code class="val">공문서 업로드 폼</code> · <code class="val">PDF 텍스트 추출</code> · <code class="val">AI 요약</code> · <code class="val">텔레그램 발송</code> ·
+           <code class="val">기한 추출</code> · <code class="val">기한 일정 등록</code></p>
       </li>
     </ol>
   </section>
@@ -141,8 +220,15 @@
     <h2 class="sec-title">실행하고 확인하기</h2>
     <ul class="bullets">
       <li><code class="val">Execute workflow</code> → 임시 폼 주소로 파일 업로드</li>
-      <li>제출 후 몇 초 뒤 텔레그램에 <code class="val">📄 공문서 요약</code> 메시지 도착 = 성공</li>
+      <li>제출 후 몇 초 뒤 텔레그램에 <code class="val">📄 공문서 요약</code> 메시지 도착 = 위 갈래 성공</li>
+      <li>구글 캘린더에 <code class="val">[공문 기한] 2026년 지역 어르신 돌봄 서비스 수요조사 협조 요청</code> 일정이 <b>2026-12-18 오전 9시</b>로 생겼다면 아래 갈래도 성공</li>
     </ul>
+    <div class="note tip">
+      <b>함정을 피했나요?</b>
+      연습용 공문에는 날짜가 네 개 있습니다 — 조사 기간 끝(12월 12일), 사전 설명회(12월 3일), <b>제출 기한(12월 18일)</b>, 활동비 지급(2027년 1월).
+      일정이 12월 18일에 만들어졌다면 AI가 "제출 기한"이라는 설명을 제대로 읽은 것입니다. 다른 날짜로 만들어졌다면
+      <code class="val">제출기한</code>의 <code class="val">Description</code>을 더 구체적으로 고쳐 보세요.
+    </div>
     <figure class="capture" id="fig-d2-p1-5">
       <div class="capture-cap">[그림 P1-5] 브라우저에서 연 폼 화면. 파일 칸 이름이 <code class="val">PDF</code>로 나오고 별표(<code class="val">*</code>)는 필수라는 뜻입니다</div>
       <img src="../assets/img/fig-d2-p1-5.png" alt="브라우저에서 연 폼 화면">
@@ -165,6 +251,9 @@
       <li><b>모델을 못 찾는다는 오류</b> — <code class="val">models/gemini-2.5-flash</code> 직접 선택, 자격증명 확인</li>
       <li><b>텔레그램만 빨간색</b> — <code class="val">Chat ID</code> 숫자 확인, 봇에게 먼저 말 걸었는지 확인</li>
       <li><b>계속 기다림</b> — 30초 정도는 정상, 오래 걸리면 멈춘 노드 확인</li>
+      <li><b>캘린더에 일정이 안 생김</b> — <code class="val">기한 추출</code> OUTPUT의 <code class="val">제출기한</code>이 <code class="val">2026-12-18</code>처럼 <b>YYYY-MM-DD</b>인지 확인(다른 모양이면 Description에 형식을 다시 강조)</li>
+      <li><b>기한이 없는 공문에서 캘린더 노드만 빨간색</b> — 정상입니다. 마감이 없으면 <code class="val">제출기한</code>이 비어 일정을 만들 수 없지만, 위 갈래(요약)는 이미 끝나 있습니다</li>
+      <li><b>기한 추출의 OUTPUT이 비어 있음</b> — 왼쪽 INPUT에 <code class="val">text</code>가 있는지, <code class="val">Text</code> 칸이 <code class="val">{{ $json.text }}</code>인지 확인</li>
     </ul>
   </section>
 
@@ -200,6 +289,18 @@
         <p class="quiz-a"><b>정답:</b> text — 다음 단계에서 <code class="val">{{ $json.text }}</code>로 가져다 씁니다.</p>
       </details>
     </div>
+    <div class="quiz-item">
+      <p class="quiz-q"><span class="qtype">객관식</span>Q4. 공문에 날짜가 여러 개인데 AI가 엉뚱한 날짜를 기한으로 뽑았습니다. 가장 먼저 고칠 곳은?</p>
+      <ol class="quiz-choices">
+        <li>캘린더 노드의 <code class="val">Start</code></li>
+        <li><code class="val">기한 추출</code>의 <code class="val">제출기한</code> <code class="val">Description</code></li>
+        <li>텔레그램 노드</li>
+        <li>폼의 파일 필드 이름</li>
+      </ol>
+      <details class="quiz-answer"><summary>정답 확인</summary>
+        <p class="quiz-a"><b>정답: ②</b> Information Extractor는 이름이 아니라 설명을 읽고 값을 고릅니다. 어떤 날짜를 원하는지 구체적으로 적어야 합니다.</p>
+      </details>
+    </div>
   </section>
 
   <section class="sec" id="download">
@@ -208,12 +309,14 @@
     <div class="note warn">
       <b>불러온 뒤 반드시 확인하세요</b>
       이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤
-      <code class="val">Google Gemini Chat Model</code>과
-      <code class="val">텔레그램 발송</code> 두 노드를 각각 열어 자격증명을 다시
-      골라야 합니다. 그리고 <code class="val">텔레그램 발송</code>의
-      <code class="val">Chat ID</code> 칸에는
-      <code class="val">여기에_본인_chat_id</code> 자리표시자가 들어 있으므로 본인
-      숫자로 바꿔야 합니다. 이 두 가지를 하지 않으면 불러온 워크플로우는 빨간
+      <code class="val">Google Gemini Chat Model</code>·<code class="val">Google Gemini Chat Model1</code>·
+      <code class="val">텔레그램 발송</code>·<code class="val">기한 일정 등록</code> 네 노드를 각각 열어
+      자격증명을 다시 골라야 합니다. 그리고 두 자리표시자를 본인 값으로 바꿔야 합니다.
+      <p><code class="val">텔레그램 발송</code>의 <code class="val">Chat ID</code> →
+         <code class="val">여기에_본인_chat_id</code><br>
+         <code class="val">기한 일정 등록</code>의 <code class="val">Calendar</code> →
+         <code class="val">본인이메일@example.com</code>(본인 캘린더)</p>
+      이 작업을 하지 않으면 불러온 워크플로우는 빨간
       오류 표시가 난 채로 열립니다 — 고장난 것이 아니라 원래 그렇습니다.
     </div>
     <a class="dl" href="../downloads/day2-p1.json" download>

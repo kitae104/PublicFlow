@@ -18,6 +18,12 @@
     <p class="sub">Gemini가 안내문 초안을 씁니다</p>
   </header>
 
+  <div class="note">
+    <b>앞 강을 못 마쳤다면</b>
+    이 강은 05강을 마친 워크플로우에서 시작합니다. 뒤처졌다면 <a href="../downloads/day1-05.json" download>day1-05.json</a>을 내려받아 n8n에서 불러오면 바로 합류할 수 있습니다.
+    <p>불러온 뒤 자격증명을 다시 고르고 <code class="val">본인이메일@example.com</code>·<code class="val">여기에_본인_시트_ID</code> 같은 자리표시자를 본인 값으로 바꿔야 합니다. 방법은 <a href="05.html#download">05강 맨 아래</a>에 있습니다.</p>
+  </div>
+
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
     <ul class="bullets">
@@ -160,6 +166,17 @@
         <p class="quiz-a"><b>정답:</b> 어디로도 자동 발송되지 않습니다 — 노드 출력 화면에서 확인만 하는 용도로 씁니다.</p>
       </details>
     </div>
+  </section>
+
+  <section class="sec" id="challenge">
+    <h2 class="sec-title">더 해보기 (선택)</h2>
+    <p class="hint">일찍 끝난 분을 위한 선택 과제입니다. 안 해도 다음 강을 따라가는 데 지장이 없습니다. 워크플로우를 망치고 싶지 않다면 먼저 워크플로우를 <b>복제(Duplicate)</b>해서 복사본에서 실험하세요.</p>
+    <ul class="bullets">
+      <li>프롬프트의 <code class="val">[작성 규칙]</code>에 한 줄을 더해 보세요</li>
+    </ul>
+<pre class="code-block">- 처리 예정일은 접수일로부터 3일 이내라고 안내합니다.</pre>
+    <p>실행해서 안내문이 달라졌는지 비교합니다. 규칙을 한 줄 더하는 것만으로 답변이 달라지는 것, 그리고
+       05강에서 잡은 마감과 <b>안내문의 약속이 맞아야 한다</b>는 점을 확인하는 과제입니다.</p>
   </section>
 
   <section class="sec" id="download">

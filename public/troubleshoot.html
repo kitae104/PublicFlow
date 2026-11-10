@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/img/n8n-logo.svg">
+<title>막힐 때 보는 오류 10선 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/lecture.css">
+</head>
+<body class="lecture-mode">
+<main class="wrap">
+
+  <nav class="crumb"><a href="index.html">목차</a> › 막힐 때</nav>
+
+  <header class="page-head">
+    <h1>막힐 때 보는 오류 10선</h1>
+    <p class="sub">수업 중 가장 자주 나오는 막힘 열 가지 — 손을 들기 전에 먼저 보세요</p>
+  </header>
+
+  <section class="sec" id="first">
+    <h2 class="sec-title">먼저 이것부터</h2>
+    <ol class="steps">
+      <li><span class="step-title">빨간 표시가 난 노드를 연다</span>
+        오류는 대개 <b>그 노드 하나</b>에서 납니다. 위쪽의 빨간 메시지를 그대로 읽어 보세요.</li>
+      <li><span class="step-title">왼쪽 INPUT에 값이 들어왔는지 본다</span>
+        INPUT이 비어 있으면 <b>앞 노드가 문제</b>입니다. 한 칸 앞으로 가서 같은 방법으로 봅니다.</li>
+      <li><span class="step-title">표현식 칸이면 이름을 한 글자씩 대조한다</span>
+        <code class="val">{{ }}</code> 안의 이름이 실제 노드 이름·열 이름과 <b>철자·띄어쓰기까지</b> 같은지 봅니다.</li>
+    </ol>
+  </section>
+
+  <section class="sec" id="top10">
+    <h2 class="sec-title">자주 막히는 열 가지</h2>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>#</th><th>이렇게 보인다</th><th>대개 이것 때문</th><th>이렇게 한다</th></tr></thead>
+      <tbody>
+        <tr><td>1</td>
+          <td>노드에 <b>빨간 표시</b>, "자격증명이 없다"</td>
+          <td>서비스 연결(자격증명)을 아직 안 했거나, 내려받은 파일을 불러온 직후</td>
+          <td>노드를 열어 <code class="val">Credential</code>에서 본인 계정을 고릅니다. 불러온 파일은 자격증명이 비어 있는 게 정상입니다</td></tr>
+        <tr><td>2</td>
+          <td><code class="val">{{ $json.이름 }}</code>이 <b>빈 값</b></td>
+          <td>바로 앞 노드를 지나며 원래 값이 사라졌거나, 이름 철자가 다름</td>
+          <td>앞 노드 OUTPUT에서 실제 이름을 확인합니다. 몇 칸 앞 값이면 <code class="val">{{ $('노드 이름').first().json.이름 }}</code></td></tr>
+        <tr><td>3</td>
+          <td>"<b>노드를 찾을 수 없다</b>" / "unexecuted"</td>
+          <td><code class="val">$('...')</code> 안의 노드 이름이 실제 제목과 다름, 또는 그 노드가 아직 실행 전</td>
+          <td>노드 제목을 더블클릭해 정확한 이름을 복사해 붙입니다. 앞 노드까지 <code class="val">Execute workflow</code>로 한 번 실행</td></tr>
+        <tr><td>4</td>
+          <td>실행을 눌렀는데 <b>아무 일도 없다</b></td>
+          <td>트리거가 없거나 연결이 끊김, 또는 마지막 노드에서 끝남</td>
+          <td>맨 앞에 트리거가 있는지, 노드마다 선이 이어졌는지 확인합니다</td></tr>
+        <tr><td>5</td>
+          <td><b>폼 주소</b>를 열었는데 "등록되지 않음"</td>
+          <td>시험용 주소(Test URL)는 <code class="val">Execute workflow</code>로 대기 중일 때만 열립니다</td>
+          <td>먼저 <code class="val">Execute workflow</code>를 누른 뒤 그 폼 주소로 제출합니다. 상시로 쓰려면 <code class="val">Active</code>를 켜고 Production URL을 씁니다</td></tr>
+        <tr><td>6</td>
+          <td>구글 연결에서 <b>권한 오류</b></td>
+          <td>기관(@korea.kr 등) 계정이라 관리자가 외부 앱 연결을 막아 둠</td>
+          <td><b>개인 Gmail</b> 계정으로 다시 연결합니다. <a href="prep/day1.html#google-account">준비물 ① 구글 계정</a></td></tr>
+        <tr><td>7</td>
+          <td><b>Gemini 모델</b>을 못 찾는다 / 할당량 초과</td>
+          <td>모델을 직접 고르지 않았거나, 무료 사용량을 넘김</td>
+          <td><code class="val">Model</code> 목록에서 <code class="val">models/gemini-2.5-flash</code>를 직접 고릅니다. 초과라면 <code class="val">models/gemini-2.5-flash-lite</code>로 바꾸거나 잠시 뒤 다시</td></tr>
+        <tr><td>8</td>
+          <td>시트 값이 <b>엉뚱한 칸</b>에 들어가거나 비어 있다</td>
+          <td>시트 머리글(1행)과 노드의 열 이름 철자가 다름</td>
+          <td>1행 머리글을 노드 매핑 이름과 한 글자씩 대조합니다. 탭 이름도 확인</td></tr>
+        <tr><td>9</td>
+          <td>메일이 <b>안 온다</b> / 표와 서식이 <b>글자 그대로</b> 보인다</td>
+          <td>받는 주소 오류·스팸함, 또는 <code class="val">Email Type</code>이 <code class="val">Text</code>인 채 HTML을 보냄</td>
+          <td>받는 주소와 스팸함을 확인합니다. HTML을 보낼 때는 <code class="val">Email Type</code> = <code class="val">HTML</code></td></tr>
+        <tr><td>10</td>
+          <td>고쳤는데 <b>똑같이 나온다</b></td>
+          <td>저장하지 않았거나, 앞 노드의 이전 결과가 그대로 남아 있음</td>
+          <td><code class="val">Ctrl</code>+<code class="val">S</code>로 저장한 뒤 <code class="val">Execute workflow</code>로 처음부터 다시 실행합니다. <code class="val">Active</code>가 켜진 워크플로우는 저장해야 반영됩니다</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="sec" id="more">
+    <h2 class="sec-title">그래도 안 되면</h2>
+    <ul class="bullets">
+      <li>해당 강의 페이지의 <b>"안 될 때"</b> 항목을 봅니다 — 그 강에서만 나오는 막힘이 정리되어 있습니다</li>
+      <li>각 강 맨 위의 <b>"앞 강을 못 마쳤다면"</b> 안내대로 <b>앞 강 완성본 파일</b>을 불러와 합류합니다</li>
+      <li>화면 영어 메뉴가 헷갈리면 <a href="prep/glossary.html">개념 지도와 화면 용어 사전</a>을 봅니다</li>
+      <li>옆자리 짝과 서로의 화면을 봐 주세요. 다른 사람이 보면 철자 오류는 금방 찾아집니다</li>
+    </ul>
+  </section>
+
+  <nav class="pager">
+    <a href="index.html">← 목차로</a>
+    <a href="prep/glossary.html">개념 지도와 화면 용어 사전 →</a>
+  </nav>
+
+</main>
+</body>
+</html>

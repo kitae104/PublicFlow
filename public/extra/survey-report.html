@@ -21,10 +21,16 @@
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
     <ul class="bullets">
-      <li>만족도 조사를 돌리고 나면 늘 같은 순서가 반복됨 — 응답을 다운로드 → 엑셀에서 평균 계산 → 연령대·서비스별로 손으로 집계 → 의견 수십 개를 눈으로 읽고 요약 → 보고서 작성 → 담당자에게 메일</li>
+      <li>만족도 조사를 돌리고 나면 늘 같은 순서가 반복됨 — 응답을 다운로드 → 엑셀에서 평균 계산 → 소속·후속 과정별로 손으로 집계 → 의견 수십 개를 눈으로 읽고 요약 → 보고서 작성 → 담당자에게 메일</li>
       <li>이 중 <b>집계와 서식은 기계가 사람보다 정확하고 빠름</b> — 사람이 잘하는 건 의견을 읽고 판단하는 일이지, 평균을 손으로 더하는 일이 아님</li>
       <li>해결: Google Form으로 설문을 받고, n8n이 매주 금요일마다 스스로 응답을 읽어 통계를 계산하고, Gemini가 서술형 의견을 분석해, 완성된 HTML 보고서를 담당자 메일로 보냄</li>
     </ul>
+    <div class="note tip">
+      <b>소재는 "방금 끝난 교육의 만족도 조사"입니다</b>
+      수강생이 직접 응답자가 되고, 그 응답이 곧바로 분석 보고서가 됩니다. 강사는 수업 마지막 10분에 이 설문을 돌려
+      "여러분이 방금 쓴 의견을 AI가 읽습니다"를 시연할 수 있습니다. 실제 수료 설문처럼 <b>다음 교육에 반영할 내용</b>이 보고서로 정리됩니다.
+      교육 담당자가 아니어도 직원 만족도 조사, 행사 후기, 주민 의견 수렴 등 <b>같은 구조의 설문이면 질문 이름만 바꿔 그대로</b> 쓸 수 있습니다.
+    </div>
     <div class="note tip">
       <b>1일차·2일차에서 배운 것을 그대로 조합합니다</b>
       새 노드는 거의 없습니다. Google Sheets 읽기(1일차 3강) · Code 노드(P4) · Basic LLM Chain과 Gemini 모델(1일차 6강) · Gmail 발송(1일차 4강) · 여러 값을 한 곳에 모아두는 Set 노드(1일차 2강)까지, 지금까지 배운 노드를 실제 업무 하나로 이어 붙이는 실습입니다.
@@ -58,19 +64,19 @@
     <ol class="steps">
       <li><span class="step-title">Google Form 만들기</span>
         <code class="val">https://forms.google.com</code>에서 새 설문지를 만들고,
-        제목은 <code class="val">민원 서비스 만족도 조사</code>,
-        설명은 <code class="val">행정 서비스 이용 만족도와 개선 의견을 조사하기 위한 설문입니다. 응답 내용은 서비스 개선을 위한 통계 분석에 활용됩니다.</code>로 입력합니다.
+        제목은 <code class="val">교육 만족도 조사</code>,
+        설명은 <code class="val">교육 내용·진행 방식에 대한 만족도와 개선 의견을 조사하기 위한 설문입니다. 응답 내용은 다음 교육 개선을 위한 통계 분석에 활용됩니다.</code>로 입력합니다.
         <p>아래 표대로 질문 일곱 개를 순서대로 만듭니다.</p>
         <div class="tbl-wrap">
           <table class="tbl">
             <thead><tr><th>순서</th><th>질문</th><th>유형</th><th>항목 / 범위</th><th>필수</th></tr></thead>
             <tbody>
-              <tr><td>1</td><td>연령대</td><td>객관식 질문</td><td>20대 · 30대 · 40대 · 50대 · 60대 이상</td><td>필수</td></tr>
-              <tr><td>2</td><td>이용한 행정 서비스</td><td>드롭다운</td><td>주민등록 · 복지 · 세금 · 교통 · 기타</td><td>필수</td></tr>
+              <tr><td>1</td><td>소속 구분</td><td>객관식 질문</td><td>중앙부처 · 광역지자체 · 기초지자체 · 공공기관 · 기타</td><td>필수</td></tr>
+              <tr><td>2</td><td>희망 후속 과정</td><td>드롭다운</td><td>중급 과정 · 업무별 심화 · 엑셀·보고서 자동화 · 공문서·민원 자동화 · 기타</td><td>필수</td></tr>
               <tr><td>3</td><td>전체 만족도</td><td>선형 배율</td><td>1(매우 불만족) ~ 5(매우 만족)</td><td>필수</td></tr>
-              <tr><td>4</td><td>처리 속도 만족도</td><td>선형 배율</td><td>1(매우 불만족) ~ 5(매우 만족)</td><td>필수</td></tr>
-              <tr><td>5</td><td>직원 친절도</td><td>선형 배율</td><td>1(매우 불만족) ~ 5(매우 만족)</td><td>필수</td></tr>
-              <tr><td>6</td><td>다시 이용할 의향</td><td>선형 배율</td><td>1(전혀 없음) ~ 5(매우 높음)</td><td>필수</td></tr>
+              <tr><td>4</td><td>진행 속도 만족도</td><td>선형 배율</td><td>1(매우 불만족) ~ 5(매우 만족)</td><td>필수</td></tr>
+              <tr><td>5</td><td>설명 만족도</td><td>선형 배율</td><td>1(매우 불만족) ~ 5(매우 만족)</td><td>필수</td></tr>
+              <tr><td>6</td><td>현업 활용 가능성</td><td>선형 배율</td><td>1(전혀 없음) ~ 5(매우 높음)</td><td>필수</td></tr>
               <tr><td>7</td><td>개선이 필요한 사항</td><td>장문형</td><td>설명: 서비스를 이용하면서 불편했던 점이나 개선되었으면 하는 사항을 자유롭게 작성해주세요.</td><td>선택</td></tr>
             </tbody>
           </table>
@@ -78,15 +84,14 @@
         <div class="note warn">
           <b>질문 이름은 반드시 아래와 똑같이 — 뒤 단계 전부가 이 이름에 의존합니다</b>
           Google Form의 질문 제목은 Google Sheets에 연결되는 순간 그대로 <b>열 머리글</b>이 되고, n8n의 통계 집계 Code 노드는 이 머리글 이름을 그대로 코드에 써서 값을 찾습니다. 철자가 하나라도 다르면(띄어쓰기 포함) 그 항목만 조용히 계산에서 빠집니다.
-          <p><code class="val">타임스탬프</code> · <code class="val">연령대</code> · <code class="val">이용한 행정 서비스</code> ·
-             <code class="val">전체 만족도</code> · <code class="val">처리 속도 만족도</code> · <code class="val">직원 친절도</code> ·
-             <code class="val">다시 이용할 의향</code> · <code class="val">개선이 필요한 사항</code></p>
+          <p><code class="val">타임스탬프</code> · <code class="val">소속 구분</code> · <code class="val">희망 후속 과정</code> ·
+             <code class="val">전체 만족도</code> · <code class="val">진행 속도 만족도</code> · <code class="val">설명 만족도</code> ·
+             <code class="val">현업 활용 가능성</code> · <code class="val">개선이 필요한 사항</code></p>
           <p><code class="val">타임스탬프</code>는 Form 질문으로 만들지 않습니다 — 응답이 Google Sheets에 저장될 때 구글이 자동으로 맨 앞 열에 채워 넣습니다.</p>
         </div>
         <figure class="capture" id="fig-extra1-2">
           <div class="capture-cap">[그림 추가자료-2] 질문 일곱 개가 순서대로 만들어진 Google Form 편집 화면</div>
-          <!-- 캡처 위치: Google Form 편집 화면에서 질문 목록 전체가 보이는 화면 -->
-          <img src="../assets/img/fig-extra1-2.png" alt="질문 일곱 개가 순서대로 만들어진 Google Form 편집 화면">
+          <div class="capture-guide">캡처 위치: Google Form 편집 화면에서 질문 목록 전체가 보이는 화면</div>
         </figure>
       </li>
 
@@ -100,11 +105,11 @@
         </p>
 <pre class="code-block">function createSurveyForm() {
 
-  const form = FormApp.create('민원 서비스 만족도 조사');
+  const form = FormApp.create('교육 만족도 조사');
 
   form.setDescription(
-    '행정 서비스 이용 만족도와 개선 의견을 조사하기 위한 설문입니다.\n' +
-    '응답 내용은 서비스 개선을 위한 통계 분석에 활용됩니다.'
+    '교육 내용·진행 방식에 대한 만족도와 개선 의견을 조사하기 위한 설문입니다.\n' +
+    '응답 내용은 다음 교육 개선을 위한 통계 분석에 활용됩니다.'
   );
 
   form.setConfirmationMessage(
@@ -112,23 +117,23 @@
   );
 
   form.addMultipleChoiceItem()
-    .setTitle('연령대')
+    .setTitle('소속 구분')
     .setChoiceValues([
-      '20대',
-      '30대',
-      '40대',
-      '50대',
-      '60대 이상'
+      '중앙부처',
+      '광역지자체',
+      '기초지자체',
+      '공공기관',
+      '기타'
     ])
     .setRequired(true);
 
   form.addListItem()
-    .setTitle('이용한 행정 서비스')
+    .setTitle('희망 후속 과정')
     .setChoiceValues([
-      '주민등록',
-      '복지',
-      '세금',
-      '교통',
+      '중급 과정',
+      '업무별 심화',
+      '엑셀·보고서 자동화',
+      '공문서·민원 자동화',
       '기타'
     ])
     .setRequired(true);
@@ -140,19 +145,19 @@
     .setRequired(true);
 
   form.addScaleItem()
-    .setTitle('처리 속도 만족도')
+    .setTitle('진행 속도 만족도')
     .setBounds(1, 5)
     .setLabels('매우 불만족', '매우 만족')
     .setRequired(true);
 
   form.addScaleItem()
-    .setTitle('직원 친절도')
+    .setTitle('설명 만족도')
     .setBounds(1, 5)
     .setLabels('매우 불만족', '매우 만족')
     .setRequired(true);
 
   form.addScaleItem()
-    .setTitle('다시 이용할 의향')
+    .setTitle('현업 활용 가능성')
     .setBounds(1, 5)
     .setLabels('전혀 없음', '매우 높음')
     .setRequired(true);
@@ -165,7 +170,7 @@
     .setRequired(false);
 
   const spreadsheet =
-    SpreadsheetApp.create('민원 서비스 만족도 조사 응답');
+    SpreadsheetApp.create('교육 만족도 조사 응답');
 
   form.setDestination(
     FormApp.DestinationType.SPREADSHEET,
@@ -215,13 +220,12 @@
           <b>외부 응답자가 있다면 조직 제한을 확인하세요</b>
           업무용 Google Workspace 계정으로 만든 Form은 기본값이 <b>같은 조직 사용자만
           응답 가능</b>으로 되어 있을 수 있습니다. 보내기 창의 <code class="val">응답 수집 제한</code>
-          관련 옵션에서 "조직 내 사용자로 제한"이 켜져 있는지 확인하고, 외부 시민도 응답해야
+          관련 옵션에서 "조직 내 사용자로 제한"이 켜져 있는지 확인하고, 다른 기관 수강생도 응답해야
           한다면 꺼두세요.
         </div>
         <figure class="capture" id="fig-extra1-3">
           <div class="capture-cap">[그림 추가자료-3] 테스트 응답을 제출한 뒤의 Google Form 응답 요약 화면</div>
-          <!-- 캡처 위치: Form 편집 화면의 응답 탭 — 응답 개수와 요약 그래프가 보이는 화면 -->
-          <img src="../assets/img/fig-extra1-3.png" alt="테스트 응답을 제출한 뒤의 Google Form 응답 요약 화면">
+          <div class="capture-guide">캡처 위치: Form 편집 화면의 응답 탭 — 응답 개수와 요약 그래프가 보이는 화면</div>
         </figure>
       </li>
 
@@ -231,14 +235,14 @@
         <div class="tbl-wrap">
           <table class="tbl">
             <thead><tr>
-              <th>타임스탬프</th><th>연령대</th><th>이용한 행정 서비스</th><th>전체 만족도</th>
-              <th>처리 속도 만족도</th><th>직원 친절도</th><th>다시 이용할 의향</th><th>개선이 필요한 사항</th>
+              <th>타임스탬프</th><th>소속 구분</th><th>희망 후속 과정</th><th>전체 만족도</th>
+              <th>진행 속도 만족도</th><th>설명 만족도</th><th>현업 활용 가능성</th><th>개선이 필요한 사항</th>
             </tr></thead>
             <tbody>
-              <tr><td>2026-09-01 10:12</td><td>30대</td><td>주민등록</td><td>5</td><td>4</td><td>5</td><td>5</td><td>온라인 신청 절차가 더 간단하면 좋겠습니다.</td></tr>
-              <tr><td>2026-09-01 14:03</td><td>40대</td><td>복지</td><td>4</td><td>3</td><td>5</td><td>4</td><td>대기 시간이 조금 길었습니다.</td></tr>
-              <tr><td>2026-09-02 09:47</td><td>50대</td><td>세금</td><td>3</td><td>3</td><td>4</td><td>3</td><td>안내 문구가 조금 어렵습니다.</td></tr>
-              <tr><td>2026-09-02 16:31</td><td>20대</td><td>교통</td><td>5</td><td>5</td><td>5</td><td>5</td><td>모바일에서도 신청할 수 있으면 좋겠습니다.</td></tr>
+              <tr><td>2026-09-14 16:12</td><td>기초지자체</td><td>중급 과정</td><td>5</td><td>3</td><td>5</td><td>5</td><td>업무에 바로 쓸 예시가 더 있으면 좋겠습니다.</td></tr>
+              <tr><td>2026-09-14 16:15</td><td>중앙부처</td><td>업무별 심화</td><td>4</td><td>3</td><td>5</td><td>4</td><td>실습 시간이 조금 더 길었으면 합니다.</td></tr>
+              <tr><td>2026-09-15 16:20</td><td>공공기관</td><td>엑셀·보고서 자동화</td><td>5</td><td>4</td><td>5</td><td>5</td><td>엑셀 정리 자동화가 인상 깊었습니다.</td></tr>
+              <tr><td>2026-09-15 16:22</td><td>광역지자체</td><td>공문서·민원 자동화</td><td>4</td><td>2</td><td>4</td><td>4</td><td>진행이 조금 빨랐습니다.</td></tr>
             </tbody>
           </table>
         </div>
@@ -246,8 +250,7 @@
            <code class="val">설문지 응답 시트1</code>입니다. 6단계 실습 설정 노드에 그대로 씁니다.</p>
         <figure class="capture" id="fig-extra1-4">
           <div class="capture-cap">[그림 추가자료-4] 위 표와 같은 구조로 응답이 쌓인 실제 Google Sheets 화면</div>
-          <!-- 캡처 위치: Google Sheets에서 1행 머리글과 응답 2~3줄이 함께 보이는 화면 -->
-          <img src="../assets/img/fig-extra1-4.png" alt="위 표와 같은 구조로 응답이 쌓인 실제 Google Sheets 화면">
+          <div class="capture-guide">캡처 위치: Google Sheets에서 1행 머리글과 응답 2~3줄이 함께 보이는 화면</div>
         </figure>
       </li>
 
@@ -284,7 +287,7 @@
               <tr><td><code class="val">spreadsheetUrl</code></td><td>String</td><td>본인 응답 시트 URL</td><td>Google Form 응답이 저장되는 Google Sheets 주소</td></tr>
               <tr><td><code class="val">sheetName</code></td><td>String</td><td><code class="val">설문지 응답 시트1</code></td><td>응답이 쌓이는 시트 탭 이름</td></tr>
               <tr><td><code class="val">reportEmail</code></td><td>String</td><td>본인 이메일</td><td>보고서를 받을 담당자 메일 주소</td></tr>
-              <tr><td><code class="val">reportTitle</code></td><td>String</td><td><code class="val">민원 서비스 만족도 조사 결과</code></td><td>보고서 제목</td></tr>
+              <tr><td><code class="val">reportTitle</code></td><td>String</td><td><code class="val">교육 만족도 조사 결과</code></td><td>보고서 제목</td></tr>
               <tr><td><code class="val">reportDays</code></td><td>Number</td><td><code class="val">0</code></td><td>분석할 기간 — 0은 전체, 7은 최근 7일, 30은 최근 30일</td></tr>
             </tbody>
           </table>
@@ -297,8 +300,7 @@
         </div>
         <figure class="capture" id="fig-extra1-5">
           <div class="capture-cap">[그림 추가자료-5] 다섯 개 값이 채워진 실습 설정 노드, 그리고 그 왼쪽으로 모이는 두 트리거</div>
-          <!-- 캡처 위치: n8n 캔버스 — 수동 실행·스케줄 트리거 두 선이 실습 설정 노드 하나로 모이는 모습과 Fields to Set 패널 -->
-          <img src="../assets/img/fig-extra1-5.png" alt="다섯 개 값이 채워진 실습 설정 노드, 그리고 그 왼쪽으로 모이는 두 트리거">
+          <div class="capture-guide">캡처 위치: n8n 캔버스 — 수동 실행·스케줄 트리거 두 선이 실습 설정 노드 하나로 모이는 모습과 Fields to Set 패널</div>
         </figure>
       </li>
 
@@ -312,14 +314,14 @@
         <p>노드 이름을 <code class="val">응답 데이터 읽기</code>로 바꾸고, <code class="val">Test step</code>으로
            단독 실행해봅니다. 응답 한 줄마다 아래와 비슷한 항목이 나오면 성공입니다.</p>
 <pre class="code-block">{
-  "타임스탬프": "2026/09/03 오후 2:11:04",
-  "연령대": "30대",
-  "이용한 행정 서비스": "복지",
+  "타임스탬프": "2026/09/15 오후 4:20:11",
+  "소속 구분": "공공기관",
+  "희망 후속 과정": "엑셀·보고서 자동화",
   "전체 만족도": 4,
-  "처리 속도 만족도": 3,
-  "직원 친절도": 5,
-  "다시 이용할 의향": 4,
-  "개선이 필요한 사항": "대기 시간이 조금 길었습니다."
+  "진행 속도 만족도": 3,
+  "설명 만족도": 5,
+  "현업 활용 가능성": 4,
+  "개선이 필요한 사항": "엑셀 정리 자동화가 인상 깊었습니다."
 }</pre>
         <div class="note warn">
           <b>필드 이름이 비어 있거나 값이 안 보인다면</b>
@@ -379,11 +381,11 @@ return [{
   json: {
     totalCount: total,
     avgOverall: avg('전체 만족도'),
-    avgSpeed: avg('처리 속도 만족도'),
-    avgKindness: avg('직원 친절도'),
-    avgRevisit: avg('다시 이용할 의향'),
-    byAge: countBy('연령대'),
-    byService: countBy('이용한 행정 서비스'),
+    avgSpeed: avg('진행 속도 만족도'),
+    avgExplain: avg('설명 만족도'),
+    avgUsefulness: avg('현업 활용 가능성'),
+    byOrg: countBy('소속 구분'),
+    byNext: countBy('희망 후속 과정'),
     opinions,
     opinionCount: opinions.length,
   },
@@ -392,7 +394,7 @@ return [{
           <b>이 코드가 하는 일 (읽지 않아도 됩니다)</b>
           맨 위에서 <code class="val">실습 설정</code> 노드의 <code class="val">reportDays</code>
           값을 보고 <code class="val">타임스탬프</code>가 그 기간 안에 있는 응답만 남깁니다
-          (0이면 전부 통과). 그다음 총 응답자 수, 네 가지 만족도 평균, 연령대·서비스별
+          (0이면 전부 통과). 그다음 총 응답자 수, 네 가지 만족도 평균, 소속·후속 과정별
           응답 수와 비율, 빈칸이 아닌 서술형 의견 목록을 계산해 하나의 결과로 묶어
           돌려줍니다.
         </div>
@@ -404,7 +406,7 @@ return [{
         <code class="val">통계 집계</code> 오른쪽 <code class="val">+</code> →
         <code class="val">Basic LLM Chain</code> → <code class="val">Source for Prompt</code> =
         <code class="val">Define below</code>, 아래 프롬프트를 그대로 붙여넣습니다.
-<pre class="code-block">당신은 공공·행정 서비스 만족도 조사 결과를 분석하는 보고서 작성 전문가입니다.
+<pre class="code-block">당신은 교육과정 만족도 조사 결과를 분석하는 보고서 작성 전문가입니다.
 
 아래 통계는 n8n이 실제 응답 데이터에서 직접 계산한 확정된 값입니다.
 수치를 임의로 수정하거나 새로운 숫자를 만들어내지 마세요. 당신의 역할은 숫자 해석과 문장 작성입니다.
@@ -412,11 +414,11 @@ return [{
 [통계]
 - 총 응답자 수: {{ $json.totalCount }}명
 - 전체 만족도 평균: {{ $json.avgOverall }} / 5
-- 처리 속도 만족도 평균: {{ $json.avgSpeed }} / 5
-- 직원 친절도 평균: {{ $json.avgKindness }} / 5
-- 다시 이용할 의향 평균: {{ $json.avgRevisit }} / 5
-- 연령대별 분포: {{ JSON.stringify($json.byAge) }}
-- 서비스별 분포: {{ JSON.stringify($json.byService) }}
+- 진행 속도 만족도 평균: {{ $json.avgSpeed }} / 5
+- 설명 만족도 평균: {{ $json.avgExplain }} / 5
+- 현업 활용 가능성 평균: {{ $json.avgUsefulness }} / 5
+- 소속별 분포: {{ JSON.stringify($json.byOrg) }}
+- 후속 과정 희망 분포: {{ JSON.stringify($json.byNext) }}
 
 [서술형 의견 목록]
 {{ JSON.stringify($json.opinions) }}
@@ -426,7 +428,7 @@ return [{
 2. 만족도가 높은 부분
 3. 개선이 필요한 부분
 4. 서술형 의견에서 반복되는 주제
-5. 실제 업무에 적용할 수 있는 개선안
+5. 다음 교육에 반영할 수 있는 개선안
 6. 종합 의견
 
 [출력 형식]
@@ -444,8 +446,7 @@ return [{
         <p>노드 이름을 <code class="val">Gemini 보고서 분석</code>으로 바꿉니다.</p>
         <figure class="capture" id="fig-extra1-6">
           <div class="capture-cap">[그림 추가자료-6] 프롬프트 안에 통계 집계 노드의 값들이 표현식으로 들어간 화면</div>
-          <!-- 캡처 위치: Basic LLM Chain 노드의 Prompt 입력 칸 — 표현식(fx) 아이콘과 프롬프트 전체가 보이는 화면 -->
-          <img src="../assets/img/fig-extra1-6.png" alt="프롬프트 안에 통계 집계 노드의 값들이 표현식으로 들어간 화면">
+          <div class="capture-guide">캡처 위치: Basic LLM Chain 노드의 Prompt 입력 칸 — 표현식(fx) 아이콘과 프롬프트 전체가 보이는 화면</div>
         </figure>
       </li>
 
@@ -484,17 +485,17 @@ const emailHtml = `
   &lt;table style="border-collapse:collapse;width:100%;"&gt;
     &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;총 응답자 수&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.totalCount}명&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;전체 만족도&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgOverall} / 5&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;처리 속도 만족도&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgSpeed} / 5&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;직원 친절도&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgKindness} / 5&lt;/td&gt;&lt;/tr&gt;
-    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;다시 이용할 의향&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgRevisit} / 5&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;진행 속도 만족도&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgSpeed} / 5&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;설명 만족도&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgExplain} / 5&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;현업 활용 가능성&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgUsefulness} / 5&lt;/td&gt;&lt;/tr&gt;
     &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;서술형 의견 수&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.opinionCount}건&lt;/td&gt;&lt;/tr&gt;
   &lt;/table&gt;
 
-  &lt;h3&gt;서비스 이용 분포&lt;/h3&gt;
-  &lt;table style="border-collapse:collapse;width:100%;"&gt;${tableHead}${tableRows(stats.byService)}&lt;/table&gt;
+  &lt;h3&gt;후속 과정 희망 분포&lt;/h3&gt;
+  &lt;table style="border-collapse:collapse;width:100%;"&gt;${tableHead}${tableRows(stats.byNext)}&lt;/table&gt;
 
-  &lt;h3&gt;연령대 분포&lt;/h3&gt;
-  &lt;table style="border-collapse:collapse;width:100%;"&gt;${tableHead}${tableRows(stats.byAge)}&lt;/table&gt;
+  &lt;h3&gt;소속 분포&lt;/h3&gt;
+  &lt;table style="border-collapse:collapse;width:100%;"&gt;${tableHead}${tableRows(stats.byOrg)}&lt;/table&gt;
 
   &lt;h3&gt;AI 분석&lt;/h3&gt;
   ${aiHtml}
@@ -508,7 +509,7 @@ return [{ json: { emailHtml, subject } }];</pre>
           <b>이 코드가 하는 일 (읽지 않아도 됩니다)</b>
           두 칸 앞의 <code class="val">통계 집계</code> 결과와, 바로 앞
           <code class="val">Gemini 보고서 분석</code>이 쓴 HTML 조각(<code class="val">$json.text</code>)을
-          한 화면에 모읍니다. 제목·분석 기간·생성 시각, 핵심 지표 표, 서비스·연령대별
+          한 화면에 모읍니다. 제목·분석 기간·생성 시각, 핵심 지표 표, 후속 과정·소속별
           분포 표, 그리고 AI 분석 결과까지 이어 붙여 <b>메일 본문 하나</b>
           (<code class="val">emailHtml</code>)와 <b>메일 제목</b>(<code class="val">subject</code>)을
           만듭니다.
@@ -564,7 +565,7 @@ return [{ json: { emailHtml, subject } }];</pre>
       <li><code class="val">실습 설정</code> 노드에 본인 값 다섯 개 입력(<code class="val">reportDays</code>는 <code class="val">0</code>)</li>
       <li><code class="val">응답 데이터 읽기</code> 노드만 <code class="val">Test step</code>으로 단독 실행 — 응답 줄 수만큼 항목이 나오는지 확인</li>
       <li><code class="val">통계 집계</code> 노드 실행 — 오류 없이 끝나는지 확인</li>
-      <li>출력 결과에서 <code class="val">totalCount</code>·평균값·<code class="val">byAge</code>·<code class="val">byService</code>가 실제 응답 수와 맞는지 확인</li>
+      <li>출력 결과에서 <code class="val">totalCount</code>·평균값·<code class="val">byOrg</code>·<code class="val">byNext</code>가 실제 응답 수와 맞는지 확인</li>
       <li><code class="val">Gemini 보고서 분석</code> 실행 — <code class="val">text</code>에 여섯 항목이 <code class="val">&lt;h3&gt;</code>로 구분되어 나오는지 확인</li>
       <li><code class="val">HTML 보고서 만들기</code> 실행 — <code class="val">emailHtml</code>이 길게 만들어졌는지 확인</li>
       <li><code class="val">Gmail 보고서 발송</code>까지 실행</li>
@@ -647,10 +648,10 @@ return [{ json: { emailHtml, subject } }];</pre>
     <p class="hint">시간이 남았다면 아래를 순서대로 시도해보세요. 뒤로 갈수록 스스로 코드를 고쳐야 합니다.</p>
     <ul class="bullets">
       <li><b>[기초]</b> <code class="val">실습 설정</code>의 <code class="val">reportDays</code>를 <code class="val">7</code>로 바꿔 최근 7일만 분석해보기</li>
-      <li><b>[중급]</b> <code class="val">통계 집계</code> 코드를 고쳐 특정 행정 서비스(예: 복지)만 걸러서 분석하기</li>
+      <li><b>[중급]</b> <code class="val">통계 집계</code> 코드를 고쳐 특정 후속 과정(예: 중급 과정)만 걸러서 분석하기</li>
       <li><b>[중급]</b> 만족도 3점 이하 응답만 따로 모아 별도 통계 만들기</li>
       <li><b>[고급]</b> 지난주 응답과 이번 주 응답의 만족도 평균을 비교해 보고서에 추가하기</li>
-      <li><b>[고급]</b> 연령대·서비스별 분포를 막대그래프 이미지로 만들어 보고서에 넣기</li>
+      <li><b>[고급]</b> 소속·후속 과정별 분포를 막대그래프 이미지로 만들어 보고서에 넣기</li>
       <li><b>[고급]</b> HTML 보고서를 PDF로 변환해 Gmail 첨부파일로 함께 보내기</li>
       <li><b>[고급]</b> 응답 수가 일정 건수 이상 쌓였을 때만 보고서를 생성하도록 조건 추가하기</li>
     </ul>

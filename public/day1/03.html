@@ -18,6 +18,11 @@
     <p class="sub">만든 데이터를 시트에 쌓습니다</p>
   </header>
 
+  <div class="note">
+    <b>앞 강을 못 마쳤다면</b>
+    이 강은 02강을 마친 워크플로우에서 시작합니다. 뒤처졌다면 <a href="../downloads/day1-02.json" download>day1-02.json</a>을 내려받아 n8n에서 불러오면 바로 합류할 수 있습니다.
+  </div>
+
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
     <ul class="bullets">
@@ -171,6 +176,17 @@
         <p class="quiz-a"><b>정답:</b> 자격증명 — n8n이 내 구글 계정(구글 시트 등)을 대신 사용해도 된다는 허락을 저장해둔 것입니다.</p>
       </details>
     </div>
+  </section>
+
+  <section class="sec" id="challenge">
+    <h2 class="sec-title">더 해보기 (선택)</h2>
+    <p class="hint">일찍 끝난 분을 위한 선택 과제입니다. 안 해도 다음 강을 따라가는 데 지장이 없습니다. 워크플로우를 망치고 싶지 않다면 먼저 워크플로우를 <b>복제(Duplicate)</b>해서 복사본에서 실험하세요.</p>
+    <ul class="bullets">
+      <li>시트 1행에 머리글 <code class="val">접수시각</code>을 새로 만들고, <code class="val">시트에 기록</code>의 칸 매핑에 <code class="val">접수시각</code>을 추가해 아래 식을 넣어 보세요</li>
+    </ul>
+<pre class="code-block">{{ $now.toFormat('HH:mm') }}</pre>
+    <p>민원이 <b>몇 시에</b> 접수됐는지까지 남기는 것은 실제 접수 대장에서도 흔한 요구입니다.
+       다음 강으로 넘어가기 전에 머리글을 지우고 매핑도 원래대로 되돌려 두세요(복제본에서 하면 신경 쓸 필요 없음).</p>
   </section>
 
   <section class="sec" id="download">

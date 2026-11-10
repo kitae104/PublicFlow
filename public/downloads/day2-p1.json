@@ -1,5 +1,5 @@
 {
-  "name": "[공무원] 2일차 P1 공문서 요약 서비스",
+  "name": "[공무원] 2일차 P1 공문서 요약 + 기한 캘린더 등록",
   "nodes": [
     {
       "parameters": {
@@ -89,6 +89,80 @@
       "webhookId": "5c9e2a71-8d34-4b60-ae12-7f0d3b95c218",
       "id": "d2p1-telegram",
       "name": "텔레그램 발송"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "문서제목",
+              "description": "공문서의 제목",
+              "required": true
+            },
+            {
+              "name": "제출기한",
+              "description": "회신·제출의 마감 날짜를 YYYY-MM-DD 형식으로. 설명회·행사·조사 기간의 날짜와 헷갈리지 말 것. 마감이 없으면 빈 값"
+            },
+            {
+              "name": "담당부서",
+              "description": "공문을 보낸 부서 이름"
+            },
+            {
+              "name": "필요조치",
+              "description": "받는 기관이 해야 할 일을 한 줄로"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        440,
+        360
+      ],
+      "id": "5b2e8d41-93a7-4c06-b1f5-7a0d3c9e4a61",
+      "name": "기한 추출"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        380,
+        540
+      ],
+      "id": "c9a4f730-2d58-4e1b-8a63-0f7e5b1d2c72",
+      "name": "Google Gemini Chat Model1"
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendar": {
+          "__rl": true,
+          "mode": "id",
+          "value": "본인이메일@example.com"
+        },
+        "start": "={{ $json.output.제출기한 + 'T09:00:00' }}",
+        "end": "={{ $json.output.제출기한 + 'T10:00:00' }}",
+        "additionalFields": {
+          "summary": "=[공문 기한] {{ $json.output.문서제목 }}",
+          "description": "=담당부서: {{ $json.output.담당부서 }}\n필요조치: {{ $json.output.필요조치 }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        660,
+        360
+      ],
+      "id": "e1d7b9c2-6f34-4a85-90be-2c8a5d3f7b83",
+      "name": "기한 일정 등록"
     }
   ],
   "connections": {
@@ -108,6 +182,11 @@
         [
           {
             "node": "AI 요약",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "기한 추출",
             "type": "main",
             "index": 0
           }
@@ -130,6 +209,28 @@
         [
           {
             "node": "AI 요약",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "기한 추출": {
+      "main": [
+        [
+          {
+            "node": "기한 일정 등록",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "기한 추출",
             "type": "ai_languageModel",
             "index": 0
           }

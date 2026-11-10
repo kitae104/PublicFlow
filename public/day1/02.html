@@ -18,6 +18,11 @@
     <p class="sub">앞 노드의 값을 가져다 씁니다</p>
   </header>
 
+  <div class="note">
+    <b>앞 강을 못 마쳤다면</b>
+    이 강은 01강을 마친 워크플로우에서 시작합니다. 뒤처졌다면 <a href="../downloads/day1-01.json" download>day1-01.json</a>을 내려받아 n8n에서 불러오면 바로 합류할 수 있습니다.
+  </div>
+
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
     <p>같은 서식의 안내 메일을 여러 사람에게 보내본 적이 있을 겁니다. 본문은 똑같고
@@ -152,6 +157,16 @@
         <p class="quiz-a"><b>정답:</b> 안녕하세요, 홍길동님 반갑습니다.</p>
       </details>
     </div>
+  </section>
+
+  <section class="sec" id="challenge">
+    <h2 class="sec-title">더 해보기 (선택)</h2>
+    <p class="hint">일찍 끝난 분을 위한 선택 과제입니다. 안 해도 다음 강을 따라가는 데 지장이 없습니다. 워크플로우를 망치고 싶지 않다면 먼저 워크플로우를 <b>복제(Duplicate)</b>해서 복사본에서 실험하세요.</p>
+    <ul class="bullets">
+      <li><code class="val">값 가져오기</code>의 값 끝에 오늘 날짜를 붙여 보세요</li>
+    </ul>
+<pre class="code-block">{{ $json.인사말 }} 반갑습니다. 오늘은 {{ $now.toFormat('yyyy년 MM월 dd일') }}입니다.</pre>
+    <p>실행하면 문구 끝에 오늘 날짜가 붙습니다. 3강에서 시트에 날짜를 적을 때 쓰는 것과 같은 식입니다.</p>
   </section>
 
   <section class="sec" id="download">

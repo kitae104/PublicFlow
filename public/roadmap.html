@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/img/n8n-logo.svg">
+<title>다음 단계 로드맵 — 공무원을 위한 n8n</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/lecture.css">
+</head>
+<body class="lecture-mode">
+<main class="wrap">
+
+  <nav class="crumb"><a href="index.html">목차</a> › 로드맵</nav>
+
+  <header class="page-head">
+    <h1>다음 단계 로드맵</h1>
+    <p class="sub">입문을 마친 뒤 어디로 갈 수 있는가</p>
+  </header>
+
+  <section class="sec" id="now">
+    <h2 class="sec-title">지금 도착한 곳 — 입문 2일</h2>
+    <ul class="bullets">
+      <li>트리거와 노드를 이어 <b>워크플로우 하나</b>를 만들고 실행할 수 있다</li>
+      <li>앞 노드의 값을 <b>표현식</b>으로 가져다 쓰고, 구글 시트·메일·캘린더·텔레그램에 연결할 수 있다</li>
+      <li>AI를 <b>부품 하나</b>로 쓸 수 있다 — 요약, 분류, 값 뽑기, 보고서 쓰기</li>
+      <li>조건으로 갈라 보고(IF, Filter), 사람의 승인을 끼워 넣을 수 있다(결재)</li>
+      <li>폼, 정해진 시각, 파일 업로드로 자동 시작하게 만들 수 있다</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="levels">
+    <h2 class="sec-title">이어서 배울 수 있는 것</h2>
+    <p class="hint">아래는 <b>후보 주제</b>입니다. 실제 과정 개설은 교육 운영 기관의 일정과 수요에 따라 정해지므로 확정된 것이 아닙니다.</p>
+    <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr><th>단계</th><th>주제</th><th>할 수 있게 되는 일</th></tr></thead>
+      <tbody>
+        <tr><td><b>입문</b><br>(지금)</td><td>트리거·노드·표현식, 구글 연동, AI 부품, 조건 분기</td><td>작은 반복 업무 하나를 직접 만든다</td></tr>
+        <tr><td><b>중급 후보</b></td><td>
+          · 갈래가 셋 이상인 분기(<code class="val">Switch</code>)<br>
+          · 여러 건을 묶고 계산하기(<code class="val">Summarize</code>, <code class="val">Merge</code>)<br>
+          · 실패했을 때의 처리(오류 알림, 재시도)<br>
+          · 외부 시스템 호출(<code class="val">HTTP Request</code>, 공공데이터 API)<br>
+          · 반복되는 조각을 재사용(서브 워크플로우)
+        </td><td>다른 사람이 쓰는 안정적인 자동화를 만든다</td></tr>
+        <tr><td><b>고급 후보</b></td><td>
+          · 대화로 일을 시키는 AI 비서(<code class="val">AI Agent</code>, 도구, 메모리)<br>
+          · 내부 문서·규정에서 답을 찾는 질의응답<br>
+          · 기관 내부 서버에 설치해 운영(자체 호스팅)
+        </td><td>내부 자료를 안전하게 다루는 업무 비서를 만든다</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="sec" id="tracks">
+    <h2 class="sec-title">업무별로 이어 가기</h2>
+    <p>같은 도구라도 어떤 일에 쓰느냐에 따라 다음에 배울 것이 달라집니다.</p>
+    <ul class="bullets">
+      <li><b>민원·공문 담당</b> — 접수 분류, 답변 초안과 결재, 공문 요약과 기한 관리를 더 깊이 (P1, P3의 확장)</li>
+      <li><b>예산·정산 담당</b> — 엑셀 점검, 월말 집계 보고서, 이상 건 알림 (P4의 확장)</li>
+      <li><b>교육·행사 운영</b> — 신청 접수, 명단·정원 관리, 만족도 조사 분석 (1일차 8강과 설문 분석 추가자료의 확장)</li>
+      <li><b>정책·기획</b> — 정기 현황 취합, 브리핑 자료 초안 (P2의 확장)</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="self">
+    <h2 class="sec-title">혼자 이어 가는 방법</h2>
+    <ol class="steps">
+      <li><span class="step-title">설계 시트로 시작하기</span>
+        <a href="wrapup/my-workflow.html">내 업무 자동화 설계</a> 워크시트를 채워 두었다면 가장 닮은 프로젝트의 완성본을 불러와 소재만 바꿔 보세요.</li>
+      <li><span class="step-title">추가자료 해 보기</span>
+        <a href="extra/survey-report.html">설문 자동 분석 보고서</a>, <a href="extra/weather.html">날씨 알리미</a>는 입문에서 배운 부품만으로 만든 독립 실습입니다.</li>
+      <li><span class="step-title">작게 시작해서 사람이 확인하기</span>
+        처음에는 <b>발송은 사람이 확인</b>하는 구조로 두세요. 결과를 믿을 수 있게 된 뒤 자동 발송으로 바꿉니다.</li>
+      <li><span class="step-title">막히면</span>
+        <a href="troubleshoot.html">막힐 때 보는 오류 10선</a>부터 보세요.</li>
+    </ol>
+  </section>
+
+  <nav class="pager">
+    <a href="wrapup/my-workflow.html">← 내 업무 자동화 설계</a>
+    <a href="index.html">목차로 →</a>
+  </nav>
+
+</main>
+</body>
+</html>
