@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
-<title>P4 엑셀 오류 찾기 — 공무원을 위한 n8n</title>
+<title>P4 설문조사 자동 분석 보고서 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" href="../assets/lecture.css">
 </head>
@@ -14,377 +14,682 @@
   <nav class="crumb"><a href="../index.html">목차</a> › 2일차 › P4</nav>
 
   <header class="page-head">
-    <h1>P4 엑셀 오류 찾기</h1>
-    <p class="sub">집행내역 엑셀에 숨은 오류를 워크플로우가 찾아냅니다</p>
+    <h1>P4 설문조사 자동 분석 보고서</h1>
+    <p class="sub">설문이 쌓이면 통계와 AI 분석까지 자동으로 메일이 옵니다 — 약 60~90분</p>
   </header>
 
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
     <ul class="bullets">
-      <li>집행내역·출장 정산·물품 대장처럼 <b>엑셀로 오는 자료를 눈으로 훑어 검토</b>하는 일은 공무원 업무에서 가장 흔한 반복 작업 중 하나</li>
-      <li>사람의 눈은 줄이 길어질수록 놓치기 쉬움 — 금액이 한도를 넘었는지, 증빙번호가 비었는지는 <b>규칙으로 정해진 확인</b>이라 기계가 훨씬 정확하고 빠름</li>
-      <li>해결: 엑셀을 폼에 올리면 규칙에 어긋난 건만 골라내고, AI가 담당자에게 보낼 점검 보고서까지 써서 메일로 발송</li>
+      <li>만족도 조사를 돌리고 나면 늘 같은 순서가 반복됨 — 응답을 다운로드 → 엑셀에서 평균 계산 → 소속·후속 과정별로 손으로 집계 → 의견 수십 개를 눈으로 읽고 요약 → 보고서 작성 → 담당자에게 메일</li>
+      <li>이 중 <b>집계와 서식은 기계가 사람보다 정확하고 빠름</b> — 사람이 잘하는 건 의견을 읽고 판단하는 일이지, 평균을 손으로 더하는 일이 아님</li>
+      <li>해결: Google Form으로 설문을 받고, n8n이 매주 금요일마다 스스로 응답을 읽어 통계를 계산하고, Gemini가 서술형 의견을 분석해, 완성된 HTML 보고서를 담당자 메일로 보냄</li>
     </ul>
     <div class="note tip">
-      <b>새로 배우는 것</b> — <b>엑셀 파일 읽기</b>(Extract from File)와
-      <b>조건에 따라 줄 걸러내기</b>(Filter)입니다. 1일차 07강의 IF는 "한 건을 보고 갈래를 나누는" 노드였고,
-      Filter는 "수십 건 중 조건에 맞는 건만 남기는" 노드입니다. P2에서 배운 <code class="val">Aggregate</code>와
-      P1의 파일 업로드 폼도 그대로 다시 씁니다.
+      <b>소재는 "방금 끝난 교육의 만족도 조사"입니다</b>
+      수강생이 직접 응답자가 되고, 그 응답이 곧바로 분석 보고서가 됩니다. 강사는 수업 마지막 10분에 이 설문을 돌려
+      "여러분이 방금 쓴 의견을 AI가 읽습니다"를 시연할 수 있습니다. 실제 수료 설문처럼 <b>다음 교육에 반영할 내용</b>이 보고서로 정리됩니다.
+      교육 담당자가 아니어도 직원 만족도 조사, 행사 후기, 주민 의견 수렴 등 <b>같은 구조의 설문이면 질문 이름만 바꿔 그대로</b> 쓸 수 있습니다.
     </div>
-    <div class="note">
-      <b>이 실습은 코드가 없습니다</b>
-      날씨 알리미와 달리 Code 노드를 쓰지 않습니다. "금액이 10만 원을 넘으면 한도 초과" 같은
-      규칙은 표현식 한 줄로 적습니다.
+    <div class="note tip">
+      <b>1일차·2일차에서 배운 것을 그대로 조합합니다</b>
+      새 노드는 거의 없습니다. Google Sheets 읽기(1일차 3강) · Code 노드(코드는 붙여넣기만 하면 됩니다) · Basic LLM Chain과 Gemini 모델(1일차 6강) · Gmail 발송(1일차 4강) · 여러 값을 한 곳에 모아두는 Set 노드(1일차 2강)까지, 지금까지 배운 노드를 실제 업무 하나로 이어 붙이는 실습입니다.
     </div>
   </section>
 
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
-    <p>집행내역 엑셀 한 개를 폼으로 올리면, 규칙에 어긋난 건만 뽑아 AI가 점검 보고서를 쓰고 메일로 보내는 워크플로우를 만듭니다.</p>
-    <p><b>점검 규칙은 두 가지입니다.</b></p>
-    <ul class="bullets">
-      <li><b>한도 초과</b> — 1건 금액이 100,000원을 넘는 건</li>
-      <li><b>증빙 누락</b> — 증빙번호 칸이 비어 있는 건</li>
-    </ul>
-    <p>연습용 엑셀은 <b>가상의 부서 집행내역 45건</b>이고, 오류를 일부러 심어 두었습니다.
-       몇 건이 나와야 하는지는 <a href="#verify">실행하고 확인하기</a>에서 공개합니다.
-       먼저 끝까지 만들어 보고, <b>워크플로우가 몇 건을 잡아내는지</b> 확인하세요.</p>
-    <a class="dl" href="../downloads/day2-p4-sample.xlsx" download>
-      연습용 엑셀 내려받기 <span class="dl-name">day2-p4-sample.xlsx</span>
-    </a>
+    <p>아래 순서로 동작하는 자동화를 처음부터 끝까지 만듭니다.</p>
+    <p class="hint">
+      Google Form 작성 → Google Sheets 자동 저장 → (수동 실행 또는 매주 금요일 17시) →
+      n8n이 응답 읽기 → Code 노드가 통계 계산 → Gemini가 의견 분석 →
+      Code 노드가 HTML 보고서 조립 → Gmail로 담당자에게 자동 발송
+    </p>
     <div class="note warn">
-      <b>모두 가상 데이터입니다</b>
-      이름·금액·증빙번호는 연습을 위해 지어낸 값이며 실제 사람이나 기관과 관계가 없습니다.
-      실제 업무에서 이 워크플로우를 쓸 때는 <b>개인정보가 든 엑셀을 외부 AI에 보내도 되는지</b>를
-      먼저 확인하세요.
+      <b>구글 계정·Gemini API 키 필요</b>
+      1일차 준비물을 이미 마쳤다면 그대로 재사용합니다. 아직이라면
+      <a href="../prep/day1.html">1일차 준비물</a>의 ① 구글 계정, ② Gemini API 키 항목을 먼저 마치세요.
     </div>
     <figure class="capture" id="fig-d2-p4-1">
-      <div class="capture-cap">[그림 P4-1] 완성 — 여섯 노드가 일직선, 아래에 Gemini 모델이 붙은 모습</div>
-      <div class="capture-guide">캡처 위치: 완성된 P4 워크플로우 캔버스 전체(엑셀 업로드 폼 → 엑셀 읽기 → 점검 결과 표시 → 오류만 남기기 → 한 건으로 합치기 → AI 점검 보고서 → 점검 메일, AI 점검 보고서 아래에 Google Gemini Chat Model)</div>
+      <div class="capture-cap">[그림 P4-1] 완성 — 두 트리거가 <code class="val">실습 설정</code> 하나로 모이고, 그 뒤는 한 줄로 이어져 <code class="val">Gmail 보고서 발송</code>까지</div>
+      <!-- 캡처 위치: n8n 캔버스에서 완성된 전체 워크플로우 — 수동 실행·스케줄 트리거가 실습 설정으로 모이는 부분이 보이게 -->
+      <img src="../assets/img/fig-d2-p4-1.png" alt="완성 — 두 트리거가 실습 설정 하나로 모이고, 그 뒤는 한 줄로 이어져 Gmail 보고서 발송까지">
     </figure>
+    <p class="hint">노드 아홉 개 중 새로 보는 것은 <code class="val">Schedule Trigger</code>가 두 갈래로 <code class="val">Set</code> 하나에 모이는 모양뿐 — 나머지는 전부 배운 노드입니다.</p>
   </section>
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
+
     <ol class="steps">
-      <li><span class="step-title">연습용 엑셀 열어보기</span>
-        위에서 내려받은 <code class="val">day2-p4-sample.xlsx</code>를 엑셀로 엽니다.
-        <p>열은 여섯 개입니다 — <code class="val">사용일</code> ·
-           <code class="val">부서</code> · <code class="val">사용자</code> ·
-           <code class="val">항목</code> · <code class="val">금액</code> ·
-           <code class="val">증빙번호</code>. 이 <b>첫 줄의 이름</b>이 n8n에서 그대로
-           항목 이름이 됩니다.</p>
-        <span class="hint">눈으로 오류를 찾아보고 싶다면 5분만 시도해 보세요. 45줄에서
-        몇 건이나 찾을 수 있는지 — 그 숫자를 기억해 두었다가 워크플로우 결과와
-        비교하면 재미있습니다.</span>
-      </li>
-
-      <li><span class="step-title">새 워크플로우와 업로드 폼</span>
-        새 워크플로우를 만들고 이름을 <code class="val">P4 엑셀 오류 찾기</code>로
-        바꿉니다. 캔버스 가운데 <code class="val">+</code>를 눌러
-        <code class="val">On form submission</code>을 고릅니다.
-        <p>P1과 같은 방법으로 채웁니다.</p>
-        <p>
-          <code class="val">Form Title</code> → <code class="val">집행내역 점검 서비스</code><br>
-          <code class="val">Form Description</code> → <code class="val">집행내역 엑셀(.xlsx)을 올리면 한도 초과·증빙 누락 건을 AI가 찾아 메일로 보내드립니다.</code>
-        </p>
-        <p><code class="val">Form Elements</code>에서 <code class="val">Add Form Element</code>를
-           눌러 필드를 <b>하나</b> 만듭니다.</p>
-        <p>
-          <code class="val">Label</code> → <code class="val">XLSX</code><br>
-          <code class="val">Element Type</code> → <code class="val">File</code><br>
-          <code class="val">Accepted File Types</code> → <code class="val">.xlsx</code><br>
-          <code class="val">Multiple Files</code> → <b>끔</b><br>
-          <code class="val">Required Field</code> → <b>켬</b>
-        </p>
+      <li><span class="step-title">Google Form 만들기</span>
+        <code class="val">https://forms.google.com</code>에서 새 설문지를 만들고,
+        제목은 <code class="val">교육 만족도 조사</code>,
+        설명은 <code class="val">교육 내용·진행 방식에 대한 만족도와 개선 의견을 조사하기 위한 설문입니다. 응답 내용은 다음 교육 개선을 위한 통계 분석에 활용됩니다.</code>로 입력합니다.
+        <p>아래 표대로 질문 일곱 개를 순서대로 만듭니다.</p>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>순서</th><th>질문</th><th>유형</th><th>항목 / 범위</th><th>필수</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>소속 구분</td><td>객관식 질문</td><td>중앙부처 · 광역지자체 · 기초지자체 · 공공기관 · 기타</td><td>필수</td></tr>
+              <tr><td>2</td><td>희망 후속 과정</td><td>드롭다운</td><td>중급 과정 · 업무별 심화 · 엑셀·보고서 자동화 · 공문서·민원 자동화 · 기타</td><td>필수</td></tr>
+              <tr><td>3</td><td>전체 만족도</td><td>선형 배율</td><td>1(매우 불만족) ~ 5(매우 만족)</td><td>필수</td></tr>
+              <tr><td>4</td><td>진행 속도 만족도</td><td>선형 배율</td><td>1(매우 불만족) ~ 5(매우 만족)</td><td>필수</td></tr>
+              <tr><td>5</td><td>설명 만족도</td><td>선형 배율</td><td>1(매우 불만족) ~ 5(매우 만족)</td><td>필수</td></tr>
+              <tr><td>6</td><td>현업 활용 가능성</td><td>선형 배율</td><td>1(전혀 없음) ~ 5(매우 높음)</td><td>필수</td></tr>
+              <tr><td>7</td><td>개선이 필요한 사항</td><td>장문형</td><td>설명: 서비스를 이용하면서 불편했던 점이나 개선되었으면 하는 사항을 자유롭게 작성해주세요.</td><td>선택</td></tr>
+            </tbody>
+          </table>
+        </div>
         <div class="note warn">
-          <b>필드 이름은 영문 <code class="val">XLSX</code>로 지으세요</b>
-          n8n 폼은 파일 필드의 이름을 그대로 "파일 보관함 이름"으로 씁니다. 한글로 지으면
-          밑줄(<code class="val">_</code>)로 바뀌어 다음 노드에서 이름을 맞추기 어려워집니다.
-          P1의 <code class="val">PDF</code>와 같은 이유입니다.
+          <b>질문 이름은 반드시 아래와 똑같이 — 뒤 단계 전부가 이 이름에 의존합니다</b>
+          Google Form의 질문 제목은 Google Sheets에 연결되는 순간 그대로 <b>열 머리글</b>이 되고, n8n의 통계 집계 Code 노드는 이 머리글 이름을 그대로 코드에 써서 값을 찾습니다. 철자가 하나라도 다르면(띄어쓰기 포함) 그 항목만 조용히 계산에서 빠집니다.
+          <p><code class="val">타임스탬프</code> · <code class="val">소속 구분</code> · <code class="val">희망 후속 과정</code> ·
+             <code class="val">전체 만족도</code> · <code class="val">진행 속도 만족도</code> · <code class="val">설명 만족도</code> ·
+             <code class="val">현업 활용 가능성</code> · <code class="val">개선이 필요한 사항</code></p>
+          <p><code class="val">타임스탬프</code>는 Form 질문으로 만들지 않습니다 — 응답이 Google Sheets에 저장될 때 구글이 자동으로 맨 앞 열에 채워 넣습니다.</p>
         </div>
-      </li>
-
-      <li><span class="step-title">엑셀 읽기</span>
-        폼 오른쪽 <code class="val">+</code>를 누르고 <code class="val">Extract from File</code>을
-        고릅니다. <code class="val">Operation</code>을 <code class="val">Extract From XLSX</code>로
-        바꾸고, <code class="val">Input Binary Field</code>에 <code class="val">XLSX</code>를 적습니다.
-        <div class="note">
-          <b>이 노드가 하는 일</b>
-          엑셀 파일은 "표"로 보이지만 n8n에게는 그냥 파일 덩어리입니다. 이 노드가 파일을 열어
-          <b>표의 한 줄을 항목 하나로</b> 바꿔 줍니다. 45줄이면 항목 45개가 나옵니다. 1일차에서
-          구글 시트를 읽을 때와 같은 모양이 됩니다.
-        </div>
-        <p>이제 한 번 실행해 봅니다. 이 노드 안의 <code class="val">Execute step</code> 또는
-           캔버스 아래 <code class="val">Execute workflow</code>를 누르면 폼 화면이 열립니다.
-           <code class="val">day2-p4-sample.xlsx</code>를 올리고 제출하세요.</p>
-        <p>OUTPUT 패널에 <code class="val">사용일</code> · <code class="val">부서</code> ·
-           <code class="val">사용자</code> · <code class="val">항목</code> · <code class="val">금액</code> ·
-           <code class="val">증빙번호</code>가 줄줄이 보이고, 항목 수가 <b>45</b>로 나오면 성공입니다.</p>
-        <span class="hint">증빙번호가 없는 줄은 <code class="val">증빙번호</code> 항목이 아예
-        <b>없는 채로</b> 나옵니다. 값이 빈 칸이 아니라 "항목 자체가 없다"는 점을 기억해 두세요 —
-        바로 다음 단계에서 이게 쓰입니다.</span>
-      </li>
-
-      <li><span class="step-title">줄마다 점검 결과 붙이기</span>
-        <code class="val">Extract from File</code> 오른쪽 <code class="val">+</code>를 누르고
-        <code class="val">Edit Fields (Set)</code>를 고릅니다.
-        <p><code class="val">Add Field</code>를 눌러 아래처럼 채웁니다.</p>
-        <p>
-          <code class="val">Name</code> → <code class="val">점검결과</code><br>
-          <code class="val">Type</code> → <code class="val">String</code><br>
-          <code class="val">Value</code> → 표현식 모드로 바꾸고 아래를 붙여넣기
-        </p>
-<pre class="code-block">{{ !$json.증빙번호 ? '증빙 누락' : ($json.금액 > 100000 ? '한도 초과' : '정상') }}</pre>
-        <p>아래쪽 <code class="val">Include Other Input Fields</code>를 <b>켜</b>서 원래 열
-           여섯 개가 사라지지 않게 합니다.</p>
-        <div class="note">
-          <b>이 한 줄 읽는 법</b>
-          <code class="val">조건 ? A : B</code>는 "조건이 맞으면 A, 아니면 B"라는 뜻입니다.
-          <ul class="bullets">
-            <li><code class="val">!$json.증빙번호</code> — 증빙번호가 <b>없으면</b></li>
-            <li>→ <code class="val">'증빙 누락'</code></li>
-            <li>아니면 <code class="val">$json.금액 &gt; 100000</code> — 금액이 10만 원을 넘으면 <code class="val">'한도 초과'</code></li>
-            <li>그것도 아니면 <code class="val">'정상'</code></li>
-          </ul>
-          07강의 IF가 노드로 나누던 일을 <b>한 줄 안에서</b> 하는 셈입니다. 줄이 45개여도
-          줄마다 한 번씩 알아서 계산합니다.
-        </div>
-        <p>다시 실행해 OUTPUT을 보면 모든 줄에 <code class="val">점검결과</code>가 붙어 있습니다.
-           <code class="val">정상</code>이 대부분이고 <code class="val">한도 초과</code>와
-           <code class="val">증빙 누락</code>이 섞여 있어야 합니다.</p>
         <figure class="capture" id="fig-d2-p4-2">
-          <div class="capture-cap">[그림 P4-2] <code class="val">점검 결과 표시</code> 노드의 OUTPUT — 줄마다 <code class="val">점검결과</code> 항목이 붙은 모습</div>
-          <div class="capture-guide">캡처 위치: 점검 결과 표시 노드를 열고 오른쪽 OUTPUT을 Table 보기로, 점검결과 열에 정상·한도 초과·증빙 누락이 섞여 보이는 화면</div>
+          <div class="capture-cap">[그림 P4-2] 질문 일곱 개가 순서대로 만들어진 Google Form 편집 화면</div>
+          <div class="capture-guide">캡처 위치: Google Form 편집 화면에서 질문 목록 전체가 보이는 화면</div>
         </figure>
-        <span class="hint">금액 칸이 글자(문자열)로 읽히면 비교가 어긋납니다. 그럴 때는 엑셀에서 금액
-        칸을 숫자 서식으로 바꾼 뒤 다시 올려 보세요. 연습용 파일은 이미 숫자입니다.</span>
       </li>
 
-      <li><span class="step-title">오류인 줄만 남기기</span>
-        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Filter</code>를 고릅니다.
-        <p>조건을 하나 만듭니다.</p>
+      <li><span class="step-title">(선택) Apps Script로 Form과 시트를 한 번에 만들기</span>
+        위 과정을 화면에서 하나씩 클릭하는 대신, 스크립트 한 번 실행으로 Form과 응답용
+        Google Sheets를 동시에 만들 수도 있습니다. 아래 순서대로 진행합니다.
         <p>
-          왼쪽 값 → 표현식 모드로 바꾸고 <code class="val">{{ $json.점검결과 }}</code><br>
-          비교 방식 → <code class="val">String</code> › <code class="val">is not equal to</code><br>
-          오른쪽 값 → <code class="val">정상</code>
+          <code class="val">script.google.com</code> → 새 프로젝트 →
+          <code class="val">Code.gs</code>에 아래 코드 붙여넣기 →
+          상단 함수 목록에서 <code class="val">createSurveyForm</code> 선택 → 실행(▷) 버튼
         </p>
-        <p>실행하면 45건이 <b>오류 건만</b> 남습니다. OUTPUT의 항목 수가 몇 건인지 확인하세요.</p>
-        <div class="note">
-          <b>Filter와 IF의 차이</b>
-          IF는 항목을 <b>참 쪽과 거짓 쪽 두 갈래</b>로 나눕니다. Filter는 조건에 맞는 항목만
-          다음으로 보내고 <b>나머지는 버립니다</b>. "정상은 필요 없고 문제 건만 보면 된다"는
-          지금 같은 일에는 Filter가 맞습니다.
-        </div>
-      </li>
+<pre class="code-block">function createSurveyForm() {
 
-      <li><span class="step-title">한 건으로 합치기</span>
-        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Aggregate</code>를 고릅니다.
-        P2와 똑같이 설정합니다.
-        <p>
-          <code class="val">Aggregate</code> → <code class="val">All Item Data (Into a Single List)</code><br>
-          <code class="val">Put Output in Field</code> → <code class="val">data</code>
-        </p>
-        <span class="hint">이유도 P2와 같습니다. 오류 건이 아홉 개면 AI 노드가 아홉 번 돌고 메일이
-        아홉 통 나갑니다. 하나로 묶어서 AI에게 한 번에 넘겨야 합니다.</span>
-      </li>
+  const form = FormApp.create('교육 만족도 조사');
 
-      <li><span class="step-title">AI 점검 보고서</span>
-        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Basic LLM Chain</code>을
-        고릅니다. 1일차 06강, P1과 같은 방법입니다.
-        <code class="val">Source for Prompt</code>는 <code class="val">Define below</code>로 두고
-        <code class="val">Prompt</code> 칸을 표현식 모드로 바꿔 아래를 붙여넣습니다.
-<pre class="code-block">당신은 시청 감사 업무를 돕는 비서입니다.
-아래는 지출 집행내역을 점검해 찾아낸 의심 건 목록입니다.
+  form.setDescription(
+    '교육 내용·진행 방식에 대한 만족도와 개선 의견을 조사하기 위한 설문입니다.\n' +
+    '응답 내용은 다음 교육 개선을 위한 통계 분석에 활용됩니다.'
+  );
 
-[점검 기준]
-- 한도 초과: 1건 금액이 100,000원을 넘는 경우
-- 증빙 누락: 증빙번호가 비어 있는 경우
+  form.setConfirmationMessage(
+    '설문에 참여해 주셔서 감사합니다.'
+  );
 
-[작성 규칙]
-- 맨 첫 줄에 '전체 {{ $('엑셀 읽기').all().length }}건 중 {{ $json.data.length }}건에서 문제가 발견되었습니다.'라고 씁니다.
-- 오류 유형별로 나누고, 건마다 사용일·사용자·항목·금액을 한 줄씩 적습니다.
-- 마지막에 담당자가 해야 할 조치를 2줄 이내로 제안합니다.
-- 목록에 없는 내용은 지어내지 않습니다.
+  form.addMultipleChoiceItem()
+    .setTitle('소속 구분')
+    .setChoiceValues([
+      '중앙부처',
+      '광역지자체',
+      '기초지자체',
+      '공공기관',
+      '기타'
+    ])
+    .setRequired(true);
 
-[의심 건 목록]
-{{ JSON.stringify($json.data) }}</pre>
-        <p>이어서 노드 아래의 <code class="val">Model</code> 자리 <code class="val">+</code>를 눌러
-           <code class="val">Google Gemini Chat Model</code>을 달고, 자격증명을 고른 뒤
-           <code class="val">Model</code>에서 <code class="val">models/gemini-2.5-flash</code>를
-           <b>직접 고릅니다</b>. 06강에서 한 것과 같습니다.</p>
-        <div class="note">
-          <b>프롬프트 속 표현식 세 개</b>
-          <ul class="bullets">
-            <li><code class="val">{{ $json.data.length }}</code> — 앞에서 묶은 목록에 든 의심 건의 수</li>
-            <li><code class="val">{{ $('엑셀 읽기').all().length }}</code> — 엑셀 읽기 노드가 만든
-                <b>전체 줄 수</b>(45). P3의 <code class="val">$('노드 이름')</code> 문법인데, 한 건이 아니라
-                <b>전부</b>를 가져오므로 <code class="val">.item</code> 대신 <code class="val">.all()</code>을 씁니다.</li>
-            <li><code class="val">{{ JSON.stringify($json.data) }}</code> — 의심 건 목록 전체를 글자로 바꿔 AI에게 전달</li>
-          </ul>
-        </div>
-        <span class="hint">"목록에 없는 내용은 지어내지 않습니다"는 AI가 없는 건을 만들어 내는 것을
-        막으려는 문장입니다. 점검 보고서처럼 <b>숫자와 사실이 중요한 글</b>에서는 꼭 넣으세요.</span>
-      </li>
+  form.addListItem()
+    .setTitle('희망 후속 과정')
+    .setChoiceValues([
+      '중급 과정',
+      '업무별 심화',
+      '엑셀·보고서 자동화',
+      '공문서·민원 자동화',
+      '기타'
+    ])
+    .setRequired(true);
 
-      <li><span class="step-title">점검 메일 보내기</span>
-        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Gmail</code>을 고릅니다.
-        <code class="val">Send a message</code>를 선택하고 채웁니다.
-        <p>
-          <code class="val">To</code> → 본인 이메일 주소<br>
-          <code class="val">Subject</code> → 표현식 모드로 <code class="val">[집행내역 점검] {{ $now.toFormat('yyyy-MM-dd') }}</code><br>
-          <code class="val">Email Type</code> → <code class="val">Text</code><br>
-          <code class="val">Message</code> → 표현식 모드로 <code class="val">{{ $json.text }}</code>
-        </p>
-        <span class="hint">AI가 쓴 보고서는 <code class="val">text</code>라는 이름으로 나옵니다.
-        06강, P2에서 본 것과 같습니다.</span>
-      </li>
+  form.addScaleItem()
+    .setTitle('전체 만족도')
+    .setBounds(1, 5)
+    .setLabels('매우 불만족', '매우 만족')
+    .setRequired(true);
 
-      <li><span class="step-title">노드 이름 정리하기</span>
-        노드 제목을 각각 더블클릭해 아래 이름으로 바꿉니다.
-        <p><code class="val">엑셀 업로드 폼</code> ·
-           <code class="val">엑셀 읽기</code> ·
-           <code class="val">점검 결과 표시</code> ·
-           <code class="val">오류만 남기기</code> ·
-           <code class="val">한 건으로 합치기</code> ·
-           <code class="val">AI 점검 보고서</code> ·
-           <code class="val">점검 메일</code></p>
+  form.addScaleItem()
+    .setTitle('진행 속도 만족도')
+    .setBounds(1, 5)
+    .setLabels('매우 불만족', '매우 만족')
+    .setRequired(true);
+
+  form.addScaleItem()
+    .setTitle('설명 만족도')
+    .setBounds(1, 5)
+    .setLabels('매우 불만족', '매우 만족')
+    .setRequired(true);
+
+  form.addScaleItem()
+    .setTitle('현업 활용 가능성')
+    .setBounds(1, 5)
+    .setLabels('전혀 없음', '매우 높음')
+    .setRequired(true);
+
+  form.addParagraphTextItem()
+    .setTitle('개선이 필요한 사항')
+    .setHelpText(
+      '서비스를 이용하면서 불편했던 점이나 개선되었으면 하는 사항을 자유롭게 작성해주세요.'
+    )
+    .setRequired(false);
+
+  const spreadsheet =
+    SpreadsheetApp.create('교육 만족도 조사 응답');
+
+  form.setDestination(
+    FormApp.DestinationType.SPREADSHEET,
+    spreadsheet.getId()
+  );
+
+  Logger.log('폼 수정 URL');
+  Logger.log(form.getEditUrl());
+
+  Logger.log('폼 응답 URL');
+  Logger.log(form.getPublishedUrl());
+
+  Logger.log('응답 Spreadsheet URL');
+  Logger.log(spreadsheet.getUrl());
+}</pre>
+        <p>실행을 누르면 처음 한 번은 권한 승인 창이 뜹니다. <code class="val">권한 검토</code> →
+           본인 구글 계정 선택 → <b>"Google에서 확인하지 않은 앱"</b> 경고 화면이 보이면
+           <code class="val">고급</code> → <code class="val">(프로젝트 이름)(안전하지 않음)으로 이동</code> →
+           <code class="val">허용</code> 순서로 진행합니다.</p>
         <div class="note warn">
-          <b><code class="val">엑셀 읽기</code> 이름은 반드시 맞추세요</b>
-          AI 프롬프트의 <code class="val">$('엑셀 읽기')</code>가 이 이름을 부르고 있습니다.
-          다른 이름이면 "노드를 찾을 수 없다"는 오류가 납니다.
+          <b>이 경고는 본인이 방금 작성한 스크립트라서 뜨는 것입니다</b>
+          구글이 검수하지 않은 개인 스크립트를 실행할 때 항상 나오는 표준 경고 화면입니다. 위 코드를 그대로 붙여넣고 실행한 것이 맞다면 안전하게 허용을 눌러도 됩니다.
         </div>
+        <div class="note warn">
+          <b>"배포" 버튼은 누르지 않습니다</b>
+          Apps Script 화면 오른쪽 위의 <code class="val">배포</code> 버튼은 이 스크립트를 웹앱으로
+          공개할 때 쓰는 기능입니다. 이번 스크립트는 <code class="val">createSurveyForm()</code>
+          함수를 <b>한 번 실행</b>해 Form과 Spreadsheet를 만들기 위한 것일 뿐, 배포할 필요가
+          없습니다.
+          <p><b>실행할 때마다 새 Form과 새 Spreadsheet가 만들어집니다.</b> 여러 번 누르면
+             그만큼 여러 벌이 생기니, 결과를 확인한 뒤 필요 없는 사본은 구글 드라이브에서
+             지우세요.</p>
+        </div>
+        <p>실행이 끝나면 화면 아래 <code class="val">실행 로그</code>에 Form 수정 URL·
+           Form 응답 URL·Spreadsheet URL 세 줄이 찍힙니다. 이 중 <b>Form 응답 URL</b>로
+           들어가면 방금 만든 설문을 바로 확인할 수 있습니다.</p>
+      </li>
+
+      <li><span class="step-title">Form 배포하고 테스트해보기</span>
+        Form 오른쪽 위 <b>미리보기</b>(눈 모양) 아이콘을 눌러 실제 응답자가 보는 화면을 엽니다.
+        <p>본인이 직접 테스트 응답을 3~5개 제출합니다. 제출 후 Form 편집 화면의
+           <b>응답</b> 탭을 누르면 방금 낸 응답이 집계되어 있고, 응답 탭의
+           초록색 스프레드시트 아이콘을 누르면 연결된 <b>Google Sheets</b>가 열립니다.</p>
+        <p>다른 사람에게 받으려면 Form 오른쪽 위 <b>보내기</b> 버튼 →
+           링크 아이콘에서 URL을 복사해 카카오톡·이메일·문자 등으로 전달하면 됩니다.</p>
+        <div class="note warn">
+          <b>외부 응답자가 있다면 조직 제한을 확인하세요</b>
+          업무용 Google Workspace 계정으로 만든 Form은 기본값이 <b>같은 조직 사용자만
+          응답 가능</b>으로 되어 있을 수 있습니다. 보내기 창의 <code class="val">응답 수집 제한</code>
+          관련 옵션에서 "조직 내 사용자로 제한"이 켜져 있는지 확인하고, 다른 기관 수강생도 응답해야
+          한다면 꺼두세요.
+        </div>
+        <figure class="capture" id="fig-d2-p4-3">
+          <div class="capture-cap">[그림 P4-3] 테스트 응답을 제출한 뒤의 Google Form 응답 요약 화면</div>
+          <div class="capture-guide">캡처 위치: Form 편집 화면의 응답 탭 — 응답 개수와 요약 그래프가 보이는 화면</div>
+        </figure>
+      </li>
+
+      <li><span class="step-title">Google Sheets 응답 구조 확인하기</span>
+        연결된 Google Sheets를 열면 1행에 아래처럼 여덟 개의 열 머리글이 자동으로
+        만들어져 있고, 응답을 제출할 때마다 그 아래로 한 줄씩 쌓입니다.
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr>
+              <th>타임스탬프</th><th>소속 구분</th><th>희망 후속 과정</th><th>전체 만족도</th>
+              <th>진행 속도 만족도</th><th>설명 만족도</th><th>현업 활용 가능성</th><th>개선이 필요한 사항</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>2026-09-14 16:12</td><td>기초지자체</td><td>중급 과정</td><td>5</td><td>3</td><td>5</td><td>5</td><td>업무에 바로 쓸 예시가 더 있으면 좋겠습니다.</td></tr>
+              <tr><td>2026-09-14 16:15</td><td>중앙부처</td><td>업무별 심화</td><td>4</td><td>3</td><td>5</td><td>4</td><td>실습 시간이 조금 더 길었으면 합니다.</td></tr>
+              <tr><td>2026-09-15 16:20</td><td>공공기관</td><td>엑셀·보고서 자동화</td><td>5</td><td>4</td><td>5</td><td>5</td><td>엑셀 정리 자동화가 인상 깊었습니다.</td></tr>
+              <tr><td>2026-09-15 16:22</td><td>광역지자체</td><td>공문서·민원 자동화</td><td>4</td><td>2</td><td>4</td><td>4</td><td>진행이 조금 빨랐습니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">응답 탭이 자동 연결한 시트의 <b>탭 이름</b>도 미리 확인해두세요 — 보통
+           <code class="val">설문지 응답 시트1</code>입니다. 6단계 실습 설정 노드에 그대로 씁니다.</p>
+        <figure class="capture" id="fig-d2-p4-4">
+          <div class="capture-cap">[그림 P4-4] 위 표와 같은 구조로 응답이 쌓인 실제 Google Sheets 화면</div>
+          <div class="capture-guide">캡처 위치: Google Sheets에서 1행 머리글과 응답 2~3줄이 함께 보이는 화면</div>
+        </figure>
+      </li>
+
+      <li><span class="step-title">새 워크플로우와 두 트리거 만들기</span>
+        n8n에서 새 워크플로우를 만들고 이름을 <code class="val">P4 설문조사 자동 분석 보고서</code>로
+        바꿉니다. 캔버스 가운데 <code class="val">+</code> → <code class="val">Trigger manually</code>로
+        <code class="val">Manual Trigger</code>를 하나 놓습니다.
+        <p>그 아래 빈 공간에 <code class="val">+</code>를 한 번 더 눌러
+           <code class="val">Schedule Trigger</code>를 <b>따로</b> 추가합니다(P2에서 만든 것과 같은
+           노드). <code class="val">Trigger Interval</code> = <code class="val">Weeks</code>,
+           <code class="val">Trigger on Weekdays</code> = <code class="val">Friday</code>,
+           <code class="val">Trigger at Hour</code> = <code class="val">5pm</code>으로 맞춥니다.</p>
+        <div class="note">
+          <b>두 트리거를 한 워크플로우에 같이 두는 이유</b>
+          실습 중에는 매주 금요일까지 기다릴 수 없으니 <code class="val">Manual Trigger</code>로
+          즉시 실행해 확인하고, 실제 운영에서는 <code class="val">Schedule Trigger</code>가
+          자동으로 돌립니다. 다음 단계에서 이 둘을 <b>같은 노드 하나</b>로 모읍니다.
+        </div>
+        <p>노드 이름을 각각 <code class="val">수동 실행</code>, <code class="val">매주 금요일 17시</code>로 바꿉니다.</p>
+      </li>
+
+      <li><span class="step-title">실습 설정 노드 만들기 — 학생이 고칠 값을 한 곳에 모으기</span>
+        <code class="val">수동 실행</code> 오른쪽 <code class="val">+</code> → <code class="val">Edit Fields (Set)</code>를
+        추가하고 이름을 <code class="val">실습 설정</code>으로 바꿉니다. 그다음 <b>
+        <code class="val">매주 금요일 17시</code> 노드의 오른쪽 점에서도 선을 끌어와 같은
+        <code class="val">실습 설정</code> 노드에 연결</b>합니다 — 수동 실행이든 스케줄이든,
+        무엇으로 시작하든 이 노드로 모이게 만드는 것입니다.
+        <p><code class="val">Fields to Set</code>에 아래 다섯 개를 문자열(String)로 추가합니다
+           (<code class="val">reportDays</code>만 숫자(Number)).</p>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>이름</th><th>타입</th><th>값(실습용 기본값)</th><th>의미</th></tr></thead>
+            <tbody>
+              <tr><td><code class="val">spreadsheetUrl</code></td><td>String</td><td>본인 응답 시트 URL</td><td>Google Form 응답이 저장되는 Google Sheets 주소</td></tr>
+              <tr><td><code class="val">sheetName</code></td><td>String</td><td><code class="val">설문지 응답 시트1</code></td><td>응답이 쌓이는 시트 탭 이름</td></tr>
+              <tr><td><code class="val">reportEmail</code></td><td>String</td><td>본인 이메일</td><td>보고서를 받을 담당자 메일 주소</td></tr>
+              <tr><td><code class="val">reportTitle</code></td><td>String</td><td><code class="val">교육 만족도 조사 결과</code></td><td>보고서 제목</td></tr>
+              <tr><td><code class="val">reportDays</code></td><td>Number</td><td><code class="val">0</code></td><td>분석할 기간 — 0은 전체, 7은 최근 7일, 30은 최근 30일</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note warn">
+          <b>처음 테스트할 때는 반드시 <code class="val">reportDays</code> = <code class="val">0</code></b>
+          방금 테스트 응답 몇 개만 넣어둔 상태에서 <code class="val">7</code>이나
+          <code class="val">30</code>을 넣으면 조건에 따라 0건이 될 수 있습니다. 전체 흐름이
+          한 번 성공하는 것을 확인한 뒤에 기간을 좁혀보세요.
+        </div>
+        <figure class="capture" id="fig-d2-p4-5">
+          <div class="capture-cap">[그림 P4-5] 다섯 개 값이 채워진 실습 설정 노드, 그리고 그 왼쪽으로 모이는 두 트리거</div>
+          <div class="capture-guide">캡처 위치: n8n 캔버스 — 수동 실행·스케줄 트리거 두 선이 실습 설정 노드 하나로 모이는 모습과 Fields to Set 패널</div>
+        </figure>
+      </li>
+
+      <li><span class="step-title">응답 데이터 읽기 노드</span>
+        <code class="val">+</code> → <code class="val">Google Sheets</code> →
+        <code class="val">Get Row(s) in Sheet</code>. 자격증명은 1일차에 만든 것을 재사용합니다.
+        <p>
+          <code class="val">Document</code> → 표현식 모드로 바꾸고 <code class="val">{{ $json.spreadsheetUrl }}</code><br>
+          <code class="val">Sheet</code> → 표현식 모드로 바꾸고 <code class="val">{{ $json.sheetName }}</code>
+        </p>
+        <p>노드 이름을 <code class="val">응답 데이터 읽기</code>로 바꾸고, <code class="val">Test step</code>으로
+           단독 실행해봅니다. 응답 한 줄마다 아래와 비슷한 항목이 나오면 성공입니다.</p>
+<pre class="code-block">{
+  "타임스탬프": "2026/09/15 오후 4:20:11",
+  "소속 구분": "공공기관",
+  "희망 후속 과정": "엑셀·보고서 자동화",
+  "전체 만족도": 4,
+  "진행 속도 만족도": 3,
+  "설명 만족도": 5,
+  "현업 활용 가능성": 4,
+  "개선이 필요한 사항": "엑셀 정리 자동화가 인상 깊었습니다."
+}</pre>
+        <div class="note warn">
+          <b>필드 이름이 비어 있거나 값이 안 보인다면</b>
+          4단계에서 확인한 Google Sheets의 열 머리글과, 1단계에서 만든 Google Form 질문
+          이름이 정확히 같은지 다시 확인하세요.
+        </div>
+      </li>
+
+      <li><span class="step-title">통계 집계 Code 노드 — 숫자는 여기서만 계산합니다</span>
+        <div class="note tip">
+          <b>이번 실습에서 가장 중요한 설계: 계산은 Code, 해석은 AI</b>
+          Google Sheets에서 받은 원본 데이터를 바로 Gemini에게 던지고 "통계도 네가 알아서
+          계산해줘"라고 시키지 <b>않습니다</b>. 큰 숫자를 다루는 AI는 종종 평균을 잘못 계산하거나
+          그럴듯하지만 틀린 숫자를 만들어냅니다(할루시네이션). 그래서 총 응답자 수·평균·
+          비율처럼 <b>정확해야 하는 숫자는 전부 이 Code 노드가 계산</b>하고, Gemini에게는
+          "이미 계산이 끝난 확정된 숫자"만 건네 <b>해석과 문장 작성만</b> 맡깁니다.
+        </div>
+        <code class="val">응답 데이터 읽기</code> 오른쪽 <code class="val">+</code> →
+        <code class="val">Code</code>. 코드 칸을 전부 지우고 아래를 붙여넣습니다.
+<pre class="code-block">const days = Number($('실습 설정').first().json.reportDays) || 0;
+const cutoff = days &gt; 0 ? Date.now() - days * 24 * 60 * 60 * 1000 : null;
+
+const rows = $input.all()
+  .map((item) =&gt; item.json)
+  .filter((row) =&gt; {
+    if (!cutoff) return true;
+    const ts = new Date(row['타임스탬프']).getTime();
+    return !Number.isNaN(ts) &amp;&amp; ts &gt;= cutoff;
+  });
+
+const total = rows.length;
+
+const avg = (key) =&gt; {
+  const nums = rows.map((r) =&gt; Number(r[key])).filter((n) =&gt; !Number.isNaN(n));
+  if (nums.length === 0) return 0;
+  return Math.round((nums.reduce((a, b) =&gt; a + b, 0) / nums.length) * 10) / 10;
+};
+
+const countBy = (key) =&gt; {
+  const counts = {};
+  for (const r of rows) {
+    const v = r[key] || '미응답';
+    counts[v] = (counts[v] || 0) + 1;
+  }
+  return Object.entries(counts).map(([name, count]) =&gt; ({
+    name,
+    count,
+    percent: total &gt; 0 ? Math.round((count / total) * 1000) / 10 : 0,
+  }));
+};
+
+const opinions = rows
+  .map((r) =&gt; (r['개선이 필요한 사항'] || '').trim())
+  .filter((s) =&gt; s.length &gt; 0);
+
+return [{
+  json: {
+    totalCount: total,
+    avgOverall: avg('전체 만족도'),
+    avgSpeed: avg('진행 속도 만족도'),
+    avgExplain: avg('설명 만족도'),
+    avgUsefulness: avg('현업 활용 가능성'),
+    byOrg: countBy('소속 구분'),
+    byNext: countBy('희망 후속 과정'),
+    opinions,
+    opinionCount: opinions.length,
+  },
+}];</pre>
+        <div class="note">
+          <b>이 코드가 하는 일 (읽지 않아도 됩니다)</b>
+          맨 위에서 <code class="val">실습 설정</code> 노드의 <code class="val">reportDays</code>
+          값을 보고 <code class="val">타임스탬프</code>가 그 기간 안에 있는 응답만 남깁니다
+          (0이면 전부 통과). 그다음 총 응답자 수, 네 가지 만족도 평균, 소속·후속 과정별
+          응답 수와 비율, 빈칸이 아닌 서술형 의견 목록을 계산해 하나의 결과로 묶어
+          돌려줍니다.
+        </div>
+        <p>노드 이름을 <code class="val">통계 집계</code>로 바꿉니다.
+           <b>다음 단계의 프롬프트와 마지막 Code 노드가 정확히 이 이름을 부릅니다.</b></p>
+      </li>
+
+      <li><span class="step-title">Gemini 보고서 분석 노드</span>
+        <code class="val">통계 집계</code> 오른쪽 <code class="val">+</code> →
+        <code class="val">Basic LLM Chain</code> → <code class="val">Source for Prompt</code> =
+        <code class="val">Define below</code>, 아래 프롬프트를 그대로 붙여넣습니다.
+<pre class="code-block">당신은 교육과정 만족도 조사 결과를 분석하는 보고서 작성 전문가입니다.
+
+아래 통계는 n8n이 실제 응답 데이터에서 직접 계산한 확정된 값입니다.
+수치를 임의로 수정하거나 새로운 숫자를 만들어내지 마세요. 당신의 역할은 숫자 해석과 문장 작성입니다.
+
+[통계]
+- 총 응답자 수: {{ $json.totalCount }}명
+- 전체 만족도 평균: {{ $json.avgOverall }} / 5
+- 진행 속도 만족도 평균: {{ $json.avgSpeed }} / 5
+- 설명 만족도 평균: {{ $json.avgExplain }} / 5
+- 현업 활용 가능성 평균: {{ $json.avgUsefulness }} / 5
+- 소속별 분포: {{ JSON.stringify($json.byOrg) }}
+- 후속 과정 희망 분포: {{ JSON.stringify($json.byNext) }}
+
+[서술형 의견 목록]
+{{ JSON.stringify($json.opinions) }}
+
+다음 여섯 항목을 분석해 작성하세요.
+1. 핵심 결과 요약
+2. 만족도가 높은 부분
+3. 개선이 필요한 부분
+4. 서술형 의견에서 반복되는 주제
+5. 다음 교육에 반영할 수 있는 개선안
+6. 종합 의견
+
+[출력 형식]
+아래처럼 각 항목을 &lt;h3&gt; 제목과 &lt;p&gt; 본문으로 작성해 HTML 조각만 반환하세요. 코드블록 기호나 다른 설명은 붙이지 마세요.
+
+&lt;h3&gt;1. 핵심 결과 요약&lt;/h3&gt;
+&lt;p&gt;...&lt;/p&gt;</pre>
+        <p>아래쪽 <code class="val">+</code> → <code class="val">Google Gemini Chat Model</code> →
+           1일차에 만든 자격증명 재사용 → <code class="val">models/gemini-2.5-flash</code>
+           직접 선택.</p>
+        <div class="note warn">
+          <b>모델은 반드시 직접 골라서 지정하세요</b> — <code class="val">preview</code>가 붙은
+          모델은 예고 없이 사라질 수 있습니다.
+        </div>
+        <p>노드 이름을 <code class="val">Gemini 보고서 분석</code>으로 바꿉니다.</p>
+        <figure class="capture" id="fig-d2-p4-6">
+          <div class="capture-cap">[그림 P4-6] 프롬프트 안에 통계 집계 노드의 값들이 표현식으로 들어간 화면</div>
+          <div class="capture-guide">캡처 위치: Basic LLM Chain 노드의 Prompt 입력 칸 — 표현식(fx) 아이콘과 프롬프트 전체가 보이는 화면</div>
+        </figure>
+      </li>
+
+      <li><span class="step-title">HTML 보고서 만들기 Code 노드</span>
+        <code class="val">Gemini 보고서 분석</code> 오른쪽 <code class="val">+</code> →
+        <code class="val">Code</code>를 다시 하나 추가합니다. 코드 칸을 전부 지우고
+        아래를 붙여넣습니다.
+<pre class="code-block">const stats = $('통계 집계').first().json;
+const setup = $('실습 설정').first().json;
+const aiHtml = $json.text;
+
+const days = Number(setup.reportDays) || 0;
+const periodLabel = days === 0 ? '전체 기간' : `최근 ${days}일`;
+
+const now = new Date(Date.now() + 9 * 60 * 60 * 1000);
+const pad2 = (n) =&gt; String(n).padStart(2, '0');
+const generatedAt = `${now.getUTCFullYear()}-${pad2(now.getUTCMonth() + 1)}-${pad2(now.getUTCDate())} ${pad2(now.getUTCHours())}:${pad2(now.getUTCMinutes())}`;
+
+const tableRows = (list) =&gt; list.map((row) =&gt;
+  `&lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;${row.name}&lt;/td&gt;` +
+  `&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${row.count}건&lt;/td&gt;` +
+  `&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${row.percent}%&lt;/td&gt;&lt;/tr&gt;`
+).join('');
+
+const tableHead =
+  '&lt;tr&gt;&lt;th style="padding:6px 10px;border:1px solid #ddd;background:#f4f6f9;"&gt;구분&lt;/th&gt;' +
+  '&lt;th style="padding:6px 10px;border:1px solid #ddd;background:#f4f6f9;"&gt;응답 수&lt;/th&gt;' +
+  '&lt;th style="padding:6px 10px;border:1px solid #ddd;background:#f4f6f9;"&gt;비율&lt;/th&gt;&lt;/tr&gt;';
+
+const emailHtml = `
+&lt;div style="font-family:'Malgun Gothic',sans-serif;max-width:640px;margin:0 auto;color:#222;line-height:1.7;"&gt;
+  &lt;h2 style="border-bottom:2px solid #ea4b71;padding-bottom:8px;"&gt;${setup.reportTitle}&lt;/h2&gt;
+  &lt;p style="color:#666;font-size:13px;"&gt;분석 기간: ${periodLabel} · 보고서 생성 시각: ${generatedAt}&lt;/p&gt;
+
+  &lt;h3&gt;핵심 지표&lt;/h3&gt;
+  &lt;table style="border-collapse:collapse;width:100%;"&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;총 응답자 수&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.totalCount}명&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;전체 만족도&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgOverall} / 5&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;진행 속도 만족도&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgSpeed} / 5&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;설명 만족도&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgExplain} / 5&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;현업 활용 가능성&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.avgUsefulness} / 5&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;"&gt;서술형 의견 수&lt;/td&gt;&lt;td style="padding:6px 10px;border:1px solid #ddd;text-align:right;"&gt;${stats.opinionCount}건&lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+
+  &lt;h3&gt;후속 과정 희망 분포&lt;/h3&gt;
+  &lt;table style="border-collapse:collapse;width:100%;"&gt;${tableHead}${tableRows(stats.byNext)}&lt;/table&gt;
+
+  &lt;h3&gt;소속 분포&lt;/h3&gt;
+  &lt;table style="border-collapse:collapse;width:100%;"&gt;${tableHead}${tableRows(stats.byOrg)}&lt;/table&gt;
+
+  &lt;h3&gt;AI 분석&lt;/h3&gt;
+  ${aiHtml}
+&lt;/div&gt;
+`;
+
+const subject = `[${setup.reportTitle}] ${periodLabel} 결과 (${generatedAt.slice(0, 10)})`;
+
+return [{ json: { emailHtml, subject } }];</pre>
+        <div class="note">
+          <b>이 코드가 하는 일 (읽지 않아도 됩니다)</b>
+          두 칸 앞의 <code class="val">통계 집계</code> 결과와, 바로 앞
+          <code class="val">Gemini 보고서 분석</code>이 쓴 HTML 조각(<code class="val">$json.text</code>)을
+          한 화면에 모읍니다. 제목·분석 기간·생성 시각, 핵심 지표 표, 후속 과정·소속별
+          분포 표, 그리고 AI 분석 결과까지 이어 붙여 <b>메일 본문 하나</b>
+          (<code class="val">emailHtml</code>)와 <b>메일 제목</b>(<code class="val">subject</code>)을
+          만듭니다.
+        </div>
+        <div class="note warn">
+          <b>맨 첫 두 줄의 노드 이름을 확인하세요</b>
+          <code class="val">$('통계 집계')</code>와 <code class="val">$('실습 설정')</code>이
+          정확히 그 이름이어야 값을 제대로 가져옵니다. 8·6단계에서 이름을 다르게
+          바꿨다면 이 코드의 해당 부분도 맞춰 고치세요.
+        </div>
+        <p>노드 이름을 <code class="val">HTML 보고서 만들기</code>로 바꿉니다.</p>
+      </li>
+
+      <li><span class="step-title">Gmail 보고서 발송 노드</span>
+        <code class="val">+</code> → <code class="val">Gmail</code>(1일차 자격증명 재사용).
+        <p>
+          <code class="val">To</code> → 표현식 모드로 바꾸고 <code class="val">{{ $('실습 설정').first().json.reportEmail }}</code><br>
+          <code class="val">Subject</code> → 표현식 모드로 바꾸고 <code class="val">{{ $json.subject }}</code><br>
+          <code class="val">Email Type</code> → <code class="val">HTML</code><br>
+          <code class="val">Message</code> → 표현식 모드로 바꾸고 <code class="val">{{ $json.emailHtml }}</code>
+        </p>
+        <div class="note warn">
+          <b><code class="val">Email Type</code>을 <code class="val">HTML</code>로 바꾸는 것을 잊지 마세요</b>
+          <code class="val">Text</code>로 두면 표 태그와 스타일이 전부 글자 그대로
+          메일에 찍혀 나옵니다.
+        </div>
+        <p>노드 이름을 <code class="val">Gmail 보고서 발송</code>으로 바꿉니다.</p>
+      </li>
+
+      <li><span class="step-title">노드 이름 최종 확인</span>
+        아홉 개 노드 이름이 아래와 정확히 같은지 다시 한 번 확인합니다. Code 노드
+        두 곳이 이 이름들을 그대로 부르고 있기 때문입니다.
+        <p><code class="val">수동 실행</code> ·
+           <code class="val">매주 금요일 17시</code> ·
+           <code class="val">실습 설정</code> ·
+           <code class="val">응답 데이터 읽기</code> ·
+           <code class="val">통계 집계</code> ·
+           <code class="val">Gemini 보고서 분석</code> ·
+           <code class="val">Google Gemini Chat Model</code> ·
+           <code class="val">HTML 보고서 만들기</code> ·
+           <code class="val">Gmail 보고서 발송</code></p>
       </li>
     </ol>
   </section>
 
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
-    <ul class="bullets">
-      <li><code class="val">Execute workflow</code> → 폼 화면에서 <code class="val">day2-p4-sample.xlsx</code> 제출</li>
-      <li>몇 초 뒤 메일함에 <code class="val">[집행내역 점검]</code> 메일이 도착하면 성공</li>
-    </ul>
-    <p><b>정답을 공개합니다.</b> 45건 중 <b>9건</b>이 나와야 합니다.</p>
-    <table class="tbl">
-      <thead>
-        <tr><th>유형</th><th>사용일</th><th>사용자</th><th>항목</th><th>금액</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>한도 초과</td><td>2026-09-05</td><td>윤하린</td><td>업무추진비 식비</td><td>132,000원</td></tr>
-        <tr><td>한도 초과</td><td>2026-09-12</td><td>강민재</td><td>업무추진비 식비</td><td>158,000원</td></tr>
-        <tr><td>한도 초과</td><td>2026-09-19</td><td>서도윤</td><td>사무용품 구입</td><td>215,000원</td></tr>
-        <tr><td>한도 초과</td><td>2026-09-23</td><td>오서윤</td><td>회의 다과</td><td>108,000원</td></tr>
-        <tr><td>증빙 누락</td><td>2026-09-02</td><td>한지우</td><td>회의 다과</td><td>31,000원</td></tr>
-        <tr><td>증빙 누락</td><td>2026-09-08</td><td>서도윤</td><td>출장 교통비</td><td>26,400원</td></tr>
-        <tr><td>증빙 누락</td><td>2026-09-15</td><td>윤하린</td><td>사무용품 구입</td><td>48,500원</td></tr>
-        <tr><td>증빙 누락</td><td>2026-09-18</td><td>한지우</td><td>업무추진비 식비</td><td>55,000원</td></tr>
-        <tr><td>증빙 누락</td><td>2026-09-22</td><td>오서윤</td><td>출장 교통비</td><td>19,200원</td></tr>
-      </tbody>
-    </table>
-    <figure class="capture" id="fig-d2-p4-3">
-      <div class="capture-cap">[그림 P4-3] <code class="val">오류만 남기기</code> 노드 — 45건 중 9건이 남은 OUTPUT</div>
-      <div class="capture-guide">캡처 위치: 오류만 남기기 노드를 열고 INPUT 45 items, OUTPUT 9 items가 함께 보이는 화면</div>
-    </figure>
-    <figure class="capture" id="fig-d2-p4-4">
-      <div class="capture-cap">[그림 P4-4] 메일함에 도착한 AI 점검 보고서</div>
-      <div class="capture-guide">캡처 위치: 받은편지함에서 연 [집행내역 점검] 메일. 첫 줄 "전체 45건 중 9건에서…"와 유형별 목록이 보이는 화면</div>
-    </figure>
+    <p>완성하자마자 전체를 한 번에 실행하지 말고, 아래 순서로 하나씩 늘려가며
+       확인하세요. 어디서 막혔는지 바로 알 수 있습니다.</p>
+    <ol>
+      <li>Google Form에서 테스트 응답 3~5개 입력</li>
+      <li>Google Sheets에 응답이 줄마다 쌓였는지 확인</li>
+      <li><code class="val">실습 설정</code> 노드에 본인 값 다섯 개 입력(<code class="val">reportDays</code>는 <code class="val">0</code>)</li>
+      <li><code class="val">응답 데이터 읽기</code> 노드만 <code class="val">Test step</code>으로 단독 실행 — 응답 줄 수만큼 항목이 나오는지 확인</li>
+      <li><code class="val">통계 집계</code> 노드 실행 — 오류 없이 끝나는지 확인</li>
+      <li>출력 결과에서 <code class="val">totalCount</code>·평균값·<code class="val">byOrg</code>·<code class="val">byNext</code>가 실제 응답 수와 맞는지 확인</li>
+      <li><code class="val">Gemini 보고서 분석</code> 실행 — <code class="val">text</code>에 여섯 항목이 <code class="val">&lt;h3&gt;</code>로 구분되어 나오는지 확인</li>
+      <li><code class="val">HTML 보고서 만들기</code> 실행 — <code class="val">emailHtml</code>이 길게 만들어졌는지 확인</li>
+      <li><code class="val">Gmail 보고서 발송</code>까지 실행</li>
+      <li>실제 메일함에서 보고서 수신 확인 — 표와 글자가 깨지지 않고 보이는지 확인</li>
+      <li><code class="val">Execute workflow</code>로 워크플로우 전체를 처음부터 한 번 더 수동 실행</li>
+      <li>정상 동작을 확인한 뒤에만 오른쪽 위 활성화 스위치(<code class="val">Active</code>)를 켜기 — 켜야 매주 금요일 17시에 자동 실행</li>
+    </ol>
     <div class="note tip">
-      <b>눈으로 찾은 개수와 비교해 보세요</b>
-      처음에 눈으로 몇 건을 찾았나요? 규칙이 분명한 확인은 이렇게 <b>한 번 만들어 두면 다음 달에도
-      같은 엑셀 양식에 그대로</b> 쓸 수 있습니다. 한도 금액이나 확인할 열이 바뀌면
-      <code class="val">점검 결과 표시</code>의 표현식 한 줄만 고치면 됩니다.
+      <b>수업 중에는 수동 실행만으로 충분합니다</b>
+      활성화 스위치는 꼭 켜지 않아도 실습을 마칠 수 있습니다. 실제 운영에 쓸 때만 켜서
+      매주 금요일 자동 발송을 시작하세요.
     </div>
-    <div class="note warn">
-      <b>아직 잡지 못한 오류가 두 건 있습니다</b>
-      이 엑셀에는 <b>같은 건이 두 번 올라간 중복 결제</b>가 두 쌍 숨어 있습니다. 금액도
-      한도 안이고 증빙번호도 있어서 지금 규칙으로는 걸리지 않습니다. 아래 "더 해보기"에서
-      찾아 봅니다.
-    </div>
-    <p>상시로 쓰려면 오른쪽 위 활성화 스위치(<code class="val">Active</code>)를 켜고
-       <code class="val">엑셀 업로드 폼</code> 노드에 표시되는 상시 주소를 즐겨찾기에 넣어두면 됩니다.</p>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
     <ul class="bullets">
-      <li><b>엑셀 읽기에서 파일을 찾을 수 없다는 오류</b> — <code class="val">Input Binary Field</code> 값과 폼 필드 이름이 같은지 확인(왼쪽 INPUT 패널에 보이는 이름을 그대로 복사)</li>
-      <li><b>항목이 하나도 안 나옴</b> — 엑셀의 <b>첫 줄이 머리글</b>이어야 합니다. 첫 줄 위에 제목 줄이 있으면 제거하세요</li>
-      <li><b>한도 초과가 하나도 안 잡힘</b> — <code class="val">금액</code>이 글자로 읽힌 경우입니다. 엑셀에서 숫자 서식으로 바꿔 다시 올리세요</li>
-      <li><b>전부 증빙 누락으로 나옴</b> — 열 이름이 <code class="val">증빙번호</code>와 정확히 같은지 확인(띄어쓰기, 오타)</li>
-      <li><b>Filter 뒤가 비어 있고 AI 노드가 안 돎</b> — 오류 건이 0건이면 뒤 노드가 실행되지 않습니다. 정상 동작입니다</li>
-      <li><b>"노드를 찾을 수 없다"</b> — <code class="val">$('엑셀 읽기')</code>와 실제 노드 제목 일치 확인</li>
-      <li><b>메일이 안 옴</b> — Gmail 자격증명과 받는 주소 확인, 스팸함 확인</li>
-    </ul>
-  </section>
-
-  <section class="sec" id="challenge">
-    <h2 class="sec-title">더 해보기 (선택)</h2>
-    <p>일찍 끝났다면 아래 중 하나를 해 보세요.</p>
-    <ul class="bullets">
-      <li><b>중복 결제 찾기</b> — <code class="val">Summarize</code> 노드로 <code class="val">사용일</code>·<code class="val">사용자</code>·<code class="val">항목</code>·<code class="val">금액</code>이 같은 줄을 묶어 건수를 세고(<code class="val">Count</code>), 건수가 2 이상인 것만 <code class="val">Filter</code>로 남깁니다. 두 쌍이 나오면 성공입니다.</li>
-      <li><b>시트에 기록하기</b> — <code class="val">오류만 남기기</code>에서 갈래를 하나 더 빼서 1일차 03강처럼 구글 시트 <code class="val">점검결과</code> 탭에 한 줄씩 쌓아 보세요.</li>
-      <li><b>한도 바꿔 보기</b> — 한도를 80,000원으로 낮추면 몇 건이 더 잡힐까요? <code class="val">점검 결과 표시</code>의 숫자만 고치면 됩니다.</li>
+      <li><b>Google Sheets 노드에 빨간 경고</b> — 자격증명·Document·Sheet 이름 순서로 확인</li>
+      <li><b>통계가 전부 0건으로 나옴</b> — <code class="val">실습 설정</code>의 <code class="val">reportDays</code>를 <code class="val">0</code>으로 바꾸고, Google Sheets에 실제 응답이 있는지 확인</li>
+      <li><b>특정 항목만 값이 비어 있음</b> — Google Form 질문 이름과 Google Sheets 열 머리글 철자가 정확히 같은지 확인(4단계 "중요 안내" 참고)</li>
+      <li><b>Gemini 노드가 실행되지 않음</b> — 자격증명 재연결 여부, 모델 목록에서 <code class="val">models/gemini-2.5-flash</code>를 직접 골랐는지, 할당량 초과라면 <code class="val">models/gemini-2.5-flash-lite</code>로 교체</li>
+      <li><b>Gmail 노드 오류 또는 메일 서식이 깨짐</b> — Gmail 자격증명, <code class="val">reportEmail</code> 값, <code class="val">Email Type</code>이 <code class="val">HTML</code>인지 확인</li>
+      <li><b>Form에는 응답이 쌓이는데 n8n에서는 안 보임</b> — Form이 연결된 Spreadsheet와 <code class="val">실습 설정</code>의 <code class="val">spreadsheetUrl</code>이 같은 문서인지 확인(사본을 따로 만들었다면 다른 문서일 수 있음)</li>
+      <li><b>Apps Script 실행 시 "Google에서 확인하지 않은 앱"</b> — 본인이 작성한 스크립트가 맞다면 <code class="val">고급</code> → <code class="val">프로젝트로 이동</code> → <code class="val">허용</code></li>
     </ul>
   </section>
 
   <section class="sec" id="quiz">
     <h2 class="sec-title">확인 문제</h2>
     <div class="quiz-item">
-      <p class="quiz-q"><span class="qtype">객관식</span>Q1. 엑셀 파일 한 줄을 n8n 항목 하나로 바꿔 주는 노드는?</p>
+      <p class="quiz-q"><span class="qtype">객관식</span>Q1. 이번 워크플로우에서 총 응답자 수와 평균 만족도를 계산하는 노드는?</p>
       <ol class="quiz-choices">
-        <li>Edit Fields (Set)</li>
-        <li>Extract from File</li>
-        <li>Aggregate</li>
-        <li>Filter</li>
+        <li>Gemini 보고서 분석 (Basic LLM Chain)</li>
+        <li>통계 집계 (Code)</li>
+        <li>Gmail 보고서 발송</li>
+        <li>실습 설정 (Set)</li>
       </ol>
       <details class="quiz-answer"><summary>정답 확인</summary>
-        <p class="quiz-a"><b>정답: ②</b> Extract from File이 파일을 열어 표의 줄마다 항목을 만듭니다.</p>
+        <p class="quiz-a"><b>정답: ②</b> 정확해야 하는 숫자는 전부 Code 노드가 계산합니다. Gemini는 이미 계산된 숫자를 받아 해석과 문장 작성만 맡습니다.</p>
       </details>
     </div>
     <div class="quiz-item">
-      <p class="quiz-q"><span class="qtype">객관식</span>Q2. IF 노드와 Filter 노드의 가장 큰 차이는?</p>
+      <p class="quiz-q"><span class="qtype">객관식</span>Q2. 통계 계산을 AI에게 맡기지 않고 Code 노드로 따로 분리하는 가장 중요한 이유는?</p>
       <ol class="quiz-choices">
-        <li>IF는 숫자만, Filter는 글자만 비교한다</li>
-        <li>IF는 참·거짓 두 갈래로 나누고, Filter는 맞는 것만 남기고 나머지는 버린다</li>
-        <li>둘은 똑같다</li>
-        <li>Filter는 AI와만 함께 쓸 수 있다</li>
+        <li>Code 노드가 더 예쁜 화면을 보여줘서</li>
+        <li>AI가 큰 숫자를 다룰 때 틀린 값을 그럴듯하게 만들어낼 수 있어서(할루시네이션)</li>
+        <li>Gemini는 숫자를 아예 입력받을 수 없어서</li>
+        <li>Code 노드가 더 빠르게 실행되어서</li>
       </ol>
       <details class="quiz-answer"><summary>정답 확인</summary>
-        <p class="quiz-a"><b>정답: ②</b> 문제 건만 필요할 때는 Filter, 두 갈래로 각각 일을 시킬 때는 IF입니다.</p>
+        <p class="quiz-a"><b>정답: ②</b> AI는 정확한 계산기가 아닙니다. 확정된 통계는 Code로 계산해 "사실"로 고정하고, AI에게는 그 사실의 해석만 맡겨야 신뢰할 수 있는 보고서가 됩니다.</p>
       </details>
     </div>
     <div class="quiz-item">
-      <p class="quiz-q"><span class="qtype">단답형</span>Q3. 증빙번호가 없는 줄에서 <code class="val">!$json.증빙번호</code>가 참이 되는 이유는?</p>
+      <p class="quiz-q"><span class="qtype">단답형</span>Q3. 실습을 처음 테스트할 때 <code class="val">실습 설정</code> 노드의 <code class="val">reportDays</code> 값은 얼마로 두는 것이 좋은가요?</p>
       <details class="quiz-answer"><summary>정답 확인</summary>
-        <p class="quiz-a"><b>정답:</b> 값이 빈 칸인 줄은 <code class="val">증빙번호</code> 항목 자체가 없어서, 값이 없다는 뜻의 <code class="val">!</code>(부정)이 참이 됩니다.</p>
+        <p class="quiz-a"><b>정답:</b> 0 — 전체 기간을 뜻하며, 테스트 응답 몇 개만 있는 상태에서도 통계가 0건으로 나오지 않습니다.</p>
       </details>
     </div>
   </section>
 
+  <section class="sec" id="checklist">
+    <h2 class="sec-title">실습 완료 체크리스트</h2>
+    <ul class="bullets">
+      <li>☐ Google Form을 만들었다</li>
+      <li>☐ 테스트 설문을 제출했다</li>
+      <li>☐ Google Sheets에 응답이 저장된 것을 확인했다</li>
+      <li>☐ n8n에서 Google Sheets 데이터를 읽었다</li>
+      <li>☐ 응답자 수와 평균을 계산했다</li>
+      <li>☐ Gemini가 설문 의견을 분석했다</li>
+      <li>☐ HTML 보고서를 생성했다</li>
+      <li>☐ Gmail로 보고서를 받았다</li>
+      <li>☐ 전체 워크플로우를 수동 실행했다</li>
+      <li>☐ Schedule Trigger의 역할을 이해했다</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="challenge">
+    <h2 class="sec-title">추가 실습 · 도전 과제</h2>
+    <p class="hint">시간이 남았다면 아래를 순서대로 시도해보세요. 뒤로 갈수록 스스로 코드를 고쳐야 합니다.</p>
+    <ul class="bullets">
+      <li><b>[기초]</b> <code class="val">실습 설정</code>의 <code class="val">reportDays</code>를 <code class="val">7</code>로 바꿔 최근 7일만 분석해보기</li>
+      <li><b>[중급]</b> <code class="val">통계 집계</code> 코드를 고쳐 특정 후속 과정(예: 중급 과정)만 걸러서 분석하기</li>
+      <li><b>[중급]</b> 만족도 3점 이하 응답만 따로 모아 별도 통계 만들기</li>
+      <li><b>[고급]</b> 지난주 응답과 이번 주 응답의 만족도 평균을 비교해 보고서에 추가하기</li>
+      <li><b>[고급]</b> 소속·후속 과정별 분포를 막대그래프 이미지로 만들어 보고서에 넣기</li>
+      <li><b>[고급]</b> HTML 보고서를 PDF로 변환해 Gmail 첨부파일로 함께 보내기</li>
+      <li><b>[고급]</b> 응답 수가 일정 건수 이상 쌓였을 때만 보고서를 생성하도록 조건 추가하기</li>
+    </ul>
+  </section>
+
   <section class="sec" id="download">
-    <h2 class="sec-title">이번 프로젝트 워크플로우 받기</h2>
-    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.
-       표현식이 이미 들어 있으므로 붙여넣기 실수를 피하고 싶을 때도 쓸 만합니다.</p>
+    <h2 class="sec-title">이번 실습 워크플로우 받기</h2>
+    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
     <div class="note warn">
       <b>불러온 뒤 반드시 확인하세요</b>
       이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤
-      <code class="val">Google Gemini Chat Model</code>과 <code class="val">점검 메일</code>
-      노드를 열어 자격증명을 다시 골라야 합니다. 그리고 <code class="val">점검 메일</code>의
-      받는 주소 <code class="val">본인이메일@example.com</code>을 본인 주소로 바꿔야 합니다.
+      <code class="val">응답 데이터 읽기</code> ·
+      <code class="val">Google Gemini Chat Model</code> ·
+      <code class="val">Gmail 보고서 발송</code> 세 노드를 각각 열어 자격증명을 다시
+      골라야 합니다. 그리고 <code class="val">실습 설정</code> 노드를 열어 아래 값을
+      본인 값으로 바꿔야 합니다.
+      <p><code class="val">spreadsheetUrl</code> →
+         <code class="val">여기에_본인_시트_ID</code>가 들어간 자리표시자를 본인 응답
+         시트 URL로<br>
+         <code class="val">sheetName</code> → 본인 시트의 실제 탭 이름으로(다르면 목록에서
+         다시 고르기)<br>
+         <code class="val">reportEmail</code> → <code class="val">본인이메일@example.com</code>을
+         실제 받을 주소로</p>
+      자격증명과 자리표시자를 고치기 전에는 불러온 워크플로우에 빨간 오류 표시가
+      납니다 — 고장난 것이 아니라 원래 그렇습니다.
     </div>
     <a class="dl" href="../downloads/day2-p4.json" download>
       워크플로우 내려받기 <span class="dl-name">day2-p4.json</span>
     </a>
     <div class="note tip">
       <b>2일차 완주를 축하합니다</b>
-      민원 접수 시스템 하나 + 파일 처리·시각 트리거·AI 판단·엑셀 점검 네 자동화. 업무 자동화는 대부분 이 조합입니다.
+      민원 접수 시스템 하나 + 파일 처리·시각 트리거·엑셀 점검·설문 분석 네 자동화. 업무 자동화는 대부분 이 조합입니다.
       마지막으로 <a href="../wrapup/my-workflow.html">"내 업무에서 자동화할 일"을 설계</a>해 보세요.
     </div>
   </section>
 
   <nav class="pager">
-    <a href="p3.html">← P3 AI 민원 자동 분류·답변 초안</a>
+    <a href="p3.html">← P3 엑셀 오류 찾기</a>
     <a href="../wrapup/my-workflow.html">내 업무 자동화 설계 →</a>
   </nav>
 

@@ -1,20 +1,17 @@
 {
-  "name": "[공무원] 2일차 P3 AI 민원 자동 분류·답변 초안 + 결재",
+  "name": "[공무원] 2일차 P3 엑셀 오류 찾기",
   "nodes": [
     {
       "parameters": {
-        "formTitle": "민원 내용 입력",
-        "formDescription": "분류할 민원 내용과 답변 받을 이메일을 입력하세요.",
+        "formTitle": "집행내역 점검 서비스",
+        "formDescription": "집행내역 엑셀(.xlsx)을 올리면 한도 초과·증빙 누락 건을 AI가 찾아 메일로 보내드립니다.",
         "formFields": {
           "values": [
             {
-              "fieldLabel": "민원내용",
-              "fieldType": "textarea",
-              "requiredField": true
-            },
-            {
-              "fieldLabel": "이메일",
-              "fieldType": "email",
+              "fieldLabel": "XLSX",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".xlsx",
               "requiredField": true
             }
           ]
@@ -23,28 +20,97 @@
       },
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.5,
-      "position": [
-        0,
-        0
-      ],
-      "webhookId": "a48d0c37-6e91-4f52-b0d8-3c71ae6b2905",
-      "id": "d2p3-form",
-      "name": "민원 내용 입력"
+      "position": [0, 0],
+      "webhookId": "a4c18e72-6b05-4d93-8f2a-3e71d09b5c64",
+      "id": "6f1b3c52-8a4e-4d07-b9c1-2e5a7d0f4a11",
+      "name": "엑셀 업로드 폼"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "XLSX",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.2,
+      "position": [220, 0],
+      "id": "0b9d4e83-5c17-4a62-8e3f-71a0c6d2b522",
+      "name": "엑셀 읽기"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c3e75a10-9f24-4b8d-a6e1-0d58b2f93c33",
+              "name": "점검결과",
+              "value": "={{ !$json.증빙번호 ? '증빙 누락' : ($json.금액 > 100000 ? '한도 초과' : '정상') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [440, 0],
+      "id": "d82f6b94-1e53-4c70-9a2d-5b47e8c01d44",
+      "name": "점검 결과 표시"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4a6e9c07-b3d8-4f15-8c62-9e0f1a7d5b55",
+              "leftValue": "={{ $json.점검결과 }}",
+              "rightValue": "정상",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.4,
+      "position": [660, 0],
+      "id": "7e2b5d18-4a90-4c36-bf71-0c83d6a9e266",
+      "name": "오류만 남기기"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [880, 0],
+      "id": "93d0a4f6-2c81-4e5b-a7d3-8f16b5e0c377",
+      "name": "한 건으로 합치기"
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "=당신은 민원 분류 담당 공무원입니다.\n아래 민원 내용을 읽고 다음을 작성하세요.\n\n1) 담당부서: [도로교통과 / 환경위생과 / 복지정책과 / 건축과 / 기타] 중 하나\n2) 긴급도: [높음 / 보통 / 낮음] 중 하나\n3) 답변초안: 민원인에게 보낼 정중한 답변 초안 (3~4문장, 존댓말)\n\n아래 형식 그대로만 출력하세요.\n담당부서: \n긴급도: \n답변초안: \n\n[민원 내용]\n{{ $json.민원내용 }}",
+        "text": "=당신은 시청 감사 업무를 돕는 비서입니다.\n아래는 지출 집행내역을 점검해 찾아낸 의심 건 목록입니다.\n\n[점검 기준]\n- 한도 초과: 1건 금액이 100,000원을 넘는 경우\n- 증빙 누락: 증빙번호가 비어 있는 경우\n\n[작성 규칙]\n- 맨 첫 줄에 '전체 {{ $('엑셀 읽기').all().length }}건 중 {{ $json.data.length }}건에서 문제가 발견되었습니다.'라고 씁니다.\n- 오류 유형별로 나누고, 건마다 사용일·사용자·항목·금액을 한 줄씩 적습니다.\n- 마지막에 담당자가 해야 할 조치를 2줄 이내로 제안합니다.\n- 목록에 없는 내용은 지어내지 않습니다.\n\n[의심 건 목록]\n{{ JSON.stringify($json.data) }}",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
-      "position": [
-        220,
-        0
-      ],
-      "id": "d2p3-ai",
-      "name": "AI 분류·답변"
+      "position": [1100, 0],
+      "id": "1c8f7a25-6d39-4b04-92e8-c4a05d7b1488",
+      "name": "AI 점검 보고서"
     },
     {
       "parameters": {
@@ -53,175 +119,86 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [
-        160,
-        180
-      ],
-      "id": "d2p3-gemini",
+      "position": [1040, 180],
+      "id": "e5a3d812-7f60-4c29-8b14-6a9c0e3f2599",
       "name": "Google Gemini Chat Model"
     },
     {
       "parameters": {
-        "operation": "append",
-        "documentId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "여기에_본인_시트_ID"
-        },
-        "sheetName": {
-          "__rl": true,
-          "mode": "name",
-          "value": "분류결과"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "민원내용": "={{ $('민원 내용 입력').item.json.민원내용 }}",
-            "AI분류결과": "={{ $json.text }}",
-            "접수일시": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}"
-          },
-          "schema": [
-            {
-              "id": "민원내용",
-              "displayName": "민원내용",
-              "type": "string",
-              "display": true,
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "AI분류결과",
-              "displayName": "AI분류결과",
-              "type": "string",
-              "display": true,
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "접수일시",
-              "displayName": "접수일시",
-              "type": "string",
-              "display": true,
-              "required": false,
-              "defaultMatch": false,
-              "canBeUsedToMatch": true
-            }
-          ],
-          "matchingColumns": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        440,
-        -100
-      ],
-      "id": "d2p3-sheets",
-      "name": "분류 결과 기록"
-    },
-    {
-      "parameters": {
         "sendTo": "본인이메일@example.com",
-        "subject": "[결재 요청] 민원 답변 초안",
-        "message": "=민원 내용:\n{{ $('민원 내용 입력').item.json.민원내용 }}\n\nAI 분류·답변 초안:\n{{ $json.text }}\n\n아래 [Approve]를 누르면 답변 초안이 민원인에게 발송됩니다. 수정이 필요하면 [Disapprove]를 누르세요.",
-        "approvalOptions": {
-          "values": {
-            "approvalType": "double"
-          }
-        },
-        "options": {},
-        "resource": "message",
-        "operation": "sendAndWait",
-        "responseType": "approval"
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
-      "position": [
-        440,
-        120
-      ],
-      "webhookId": "2f6c1a98-b047-4d35-8e91-5a3d7c0b9e14",
-      "id": "8d3a5f12-0b97-4c64-a2e8-6e1f9b7c3d25",
-      "name": "결재 요청"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "version": 2,
-            "leftValue": "",
-            "caseSensitive": true,
-            "typeValidation": "strict"
-          },
-          "combinator": "and",
-          "conditions": [
-            {
-              "id": "a7c2e5b1-4d08-4f93-b6a1-3e9d0c8f5a36",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              },
-              "leftValue": "={{ $json.data.approved }}",
-              "rightValue": ""
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        660,
-        120
-      ],
-      "id": "f4b8d0a3-7e51-4c29-8d6f-1a2c9e5b7d47",
-      "name": "승인됐나?"
-    },
-    {
-      "parameters": {
-        "sendTo": "={{ $('민원 내용 입력').first().json.이메일 }}",
-        "subject": "민원 답변 안내",
-        "message": "={{ $('AI 분류·답변').first().json.text.split('답변초안:').pop().trim() }}",
+        "subject": "=[집행내역 점검] {{ $now.toFormat('yyyy-MM-dd') }}",
+        "emailType": "text",
+        "message": "={{ $json.text }}",
         "options": {}
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
-      "position": [
-        880,
-        120
-      ],
-      "id": "3e9c7b05-a1d4-4862-95f0-8b6d2a4c1e58",
-      "name": "답변 발송"
+      "position": [1320, 0],
+      "id": "b07c4e39-8d12-4a75-9f60-3e1d8a5c6a00",
+      "name": "점검 메일"
     }
   ],
   "connections": {
-    "민원 내용 입력": {
+    "엑셀 업로드 폼": {
       "main": [
         [
           {
-            "node": "AI 분류·답변",
+            "node": "엑셀 읽기",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "AI 분류·답변": {
+    "엑셀 읽기": {
       "main": [
         [
           {
-            "node": "분류 결과 기록",
+            "node": "점검 결과 표시",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "점검 결과 표시": {
+      "main": [
+        [
           {
-            "node": "결재 요청",
+            "node": "오류만 남기기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "오류만 남기기": {
+      "main": [
+        [
+          {
+            "node": "한 건으로 합치기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "한 건으로 합치기": {
+      "main": [
+        [
+          {
+            "node": "AI 점검 보고서",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI 점검 보고서": {
+      "main": [
+        [
+          {
+            "node": "점검 메일",
             "type": "main",
             "index": 0
           }
@@ -232,34 +209,11 @@
       "ai_languageModel": [
         [
           {
-            "node": "AI 분류·답변",
+            "node": "AI 점검 보고서",
             "type": "ai_languageModel",
             "index": 0
           }
         ]
-      ]
-    },
-    "결재 요청": {
-      "main": [
-        [
-          {
-            "node": "승인됐나?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "승인됐나?": {
-      "main": [
-        [
-          {
-            "node": "답변 발송",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        []
       ]
     }
   },

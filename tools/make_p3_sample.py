@@ -1,13 +1,13 @@
-"""2일차 P4 실습용 가상 집행내역 엑셀 생성.
+"""2일차 P3 실습용 가상 집행내역 엑셀 생성.
 
-출력: public/downloads/day2-p4-sample.xlsx
+출력: public/downloads/day2-p3-sample.xlsx
 오류를 일부러 심어둔 가상 데이터다. 실제 인물·부서·금액과 무관하다.
 
   - 한도 초과  : 1건 100,000원 초과 (4건)
   - 증빙 누락  : 증빙번호 칸이 빈 건 (5건)
   - 중복 결제  : 사용일·사용자·항목·금액이 모두 같은 건이 두 번 (2쌍, 도전 과제용)
 
-사용법: python tools/make_p4_sample.py
+사용법: python tools/make_p3_sample.py
 """
 import sys
 from pathlib import Path
@@ -18,7 +18,7 @@ from openpyxl.utils import get_column_letter
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-OUT = Path(__file__).resolve().parent.parent / "public" / "downloads" / "day2-p4-sample.xlsx"
+OUT = Path(__file__).resolve().parent.parent / "public" / "downloads" / "day2-p3-sample.xlsx"
 
 HEADER = ["사용일", "부서", "사용자", "항목", "금액", "증빙번호"]
 DEPT = "복지정책과"

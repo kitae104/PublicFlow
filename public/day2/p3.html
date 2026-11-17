@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="../assets/img/n8n-logo.svg">
-<title>P3 AI 민원 분류와 결재 — 공무원을 위한 n8n</title>
+<title>P3 엑셀 오류 찾기 — 공무원을 위한 n8n</title>
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" href="../assets/lecture.css">
 </head>
@@ -14,189 +14,246 @@
   <nav class="crumb"><a href="../index.html">목차</a> › 2일차 › P3</nav>
 
   <header class="page-head">
-    <h1>P3 AI 민원 분류와 결재</h1>
-    <p class="sub">AI가 초안을 쓰고, 사람이 승인해야 발송됩니다</p>
+    <h1>P3 엑셀 오류 찾기</h1>
+    <p class="sub">집행내역 엑셀에 숨은 오류를 워크플로우가 찾아냅니다</p>
   </header>
 
   <section class="sec" id="why">
     <h2 class="sec-title">왜 이게 필요한가</h2>
     <ul class="bullets">
-      <li>민원이 한 건 들어오면 담당자가 하는 일: <b>담당 판단</b>(어느 과 일인가) → <b>긴급도 판단</b>(얼마나 급한가) → <b>답변 작성</b>(정중한 답변 초안)</li>
-      <li>앞의 두 가지는 판단이고 마지막은 글쓰기지만, 셋 다 AI가 초벌로 해낼 수 있음 — 중요한 건 AI가 <b>결정</b>하는 게 아니라 <b>초안</b>을 낸다는 점</li>
-      <li>해결: 민원을 접수하면 AI가 담당부서·긴급도·답변초안 세 가지를 한 번에 만들어 시트에 남김 — 민원 원문 옆에 AI 초안이 나란히 쌓임</li>
-      <li>하지만 <b>AI 초안을 그대로 보낼 수는 없음</b> — 그래서 담당자가 메일의 승인 버튼을 눌러야만 민원인에게 답변이 나가도록 결재 단계를 둠</li>
+      <li>집행내역·출장 정산·물품 대장처럼 <b>엑셀로 오는 자료를 눈으로 훑어 검토</b>하는 일은 공무원 업무에서 가장 흔한 반복 작업 중 하나</li>
+      <li>사람의 눈은 줄이 길어질수록 놓치기 쉬움 — 금액이 한도를 넘었는지, 증빙번호가 비었는지는 <b>규칙으로 정해진 확인</b>이라 기계가 훨씬 정확하고 빠름</li>
+      <li>해결: 엑셀을 폼에 올리면 규칙에 어긋난 건만 골라내고, AI가 담당자에게 보낼 점검 보고서까지 써서 메일로 발송</li>
     </ul>
     <div class="note tip">
-      <b>새로 배우는 것 ①</b> — <b>두 칸 앞의 값 가져오기</b>. 노드를 이어 붙이면 앞 값이 사라진다고 배웠는데, 이번에는 그 사라진 값을 이름으로 직접 불러오는 표현식을 씁니다.
+      <b>새로 배우는 것</b> — <b>엑셀 파일 읽기</b>(Extract from File)와
+      <b>조건에 따라 줄 걸러내기</b>(Filter)입니다. 1일차 07강의 IF는 "한 건을 보고 갈래를 나누는" 노드였고,
+      Filter는 "수십 건 중 조건에 맞는 건만 남기는" 노드입니다. P2에서 배운 <code class="val">Aggregate</code>와
+      P1의 파일 업로드 폼도 그대로 다시 씁니다.
     </div>
-    <div class="note tip">
-      <b>새로 배우는 것 ②</b> — <b>사람의 승인을 기다리는 노드</b>. AI가 쓴 답변을 그대로 민원인에게 보내는 것은 불안합니다.
-      그래서 담당자에게 승인·반려 메일을 보내고, <b>승인 버튼이 눌려야만</b> 워크플로우가 이어지게 만듭니다. 공무원의 결재 흐름을 그대로 옮긴 것입니다.
+    <div class="note">
+      <b>이 실습은 코드가 없습니다</b>
+      날씨 알리미와 달리 Code 노드를 쓰지 않습니다. "금액이 10만 원을 넘으면 한도 초과" 같은
+      규칙은 표현식 한 줄로 적습니다.
     </div>
   </section>
 
   <section class="sec" id="goal">
     <h2 class="sec-title">이번 시간에 만들 것</h2>
-    <p>폼으로 접수된 민원을 AI가 담당부서와 긴급도로 분류하고 답변 초안까지 작성합니다. 그 뒤 두 갈래로 나뉩니다.</p>
+    <p>집행내역 엑셀 한 개를 폼으로 올리면, 규칙에 어긋난 건만 뽑아 AI가 점검 보고서를 쓰고 메일로 보내는 워크플로우를 만듭니다.</p>
+    <p><b>점검 규칙은 두 가지입니다.</b></p>
     <ul class="bullets">
-      <li><b>위 갈래</b> — 민원 원문과 함께 시트에 기록</li>
-      <li><b>아래 갈래</b> — 담당자에게 결재 요청 메일 발송 → <b>승인하면</b> 답변 초안을 민원인에게 발송</li>
+      <li><b>한도 초과</b> — 1건 금액이 100,000원을 넘는 건</li>
+      <li><b>증빙 누락</b> — 증빙번호 칸이 비어 있는 건</li>
     </ul>
+    <p>연습용 엑셀은 <b>가상의 부서 집행내역 45건</b>이고, 오류를 일부러 심어 두었습니다.
+       몇 건이 나와야 하는지는 <a href="#verify">실행하고 확인하기</a>에서 공개합니다.
+       먼저 끝까지 만들어 보고, <b>워크플로우가 몇 건을 잡아내는지</b> 확인하세요.</p>
+    <a class="dl" href="../downloads/day2-p3-sample.xlsx" download>
+      연습용 엑셀 내려받기 <span class="dl-name">day2-p3-sample.xlsx</span>
+    </a>
     <div class="note warn">
-      <b>시트에 새 탭 하나 필요</b> — 1일차 시트에 <code class="val">분류결과</code> 탭 추가(1단계에서 진행)
-    </div>
-    <div class="note">
-      <b>결재자는 옆자리 수강생으로 해 보세요</b>
-      <code class="val">결재 요청</code>의 받는 사람을 본인 주소로 해도 되지만, 짝과 주소를 바꿔 서로의 결재자가 되면
-      "내가 올린 건을 옆 사람이 승인해 주는" 실제 결재 흐름을 그대로 체험할 수 있습니다.
+      <b>모두 가상 데이터입니다</b>
+      이름·금액·증빙번호는 연습을 위해 지어낸 값이며 실제 사람이나 기관과 관계가 없습니다.
+      실제 업무에서 이 워크플로우를 쓸 때는 <b>개인정보가 든 엑셀을 외부 AI에 보내도 되는지</b>를
+      먼저 확인하세요.
     </div>
     <figure class="capture" id="fig-d2-p3-1">
-      <div class="capture-cap">[그림 P3-1] 완성 — <code class="val">AI 분류·답변</code>에서 선이 두 갈래로 나뉘는 모습</div>
-      <div class="capture-guide">캡처 위치: 완성된 P3 캔버스 전체 — 민원 내용 입력 → AI 분류·답변, 이어서 (위) 분류 결과 기록, (아래) 결재 요청 → 승인됐나? → 답변 발송. AI 분류·답변 아래에 Gemini 모델</div>
+      <div class="capture-cap">[그림 P3-1] 완성 — 여섯 노드가 일직선, 아래에 Gemini 모델이 붙은 모습</div>
+      <div class="capture-guide">캡처 위치: 완성된 P3 워크플로우 캔버스 전체(엑셀 업로드 폼 → 엑셀 읽기 → 점검 결과 표시 → 오류만 남기기 → 한 건으로 합치기 → AI 점검 보고서 → 점검 메일, AI 점검 보고서 아래에 Google Gemini Chat Model)</div>
     </figure>
-    <p class="hint">위 갈래에서는 <b>두 곳의 값을 동시에</b> 씀 — AI 분류 결과와 폼의 민원 원문</p>
   </section>
 
   <section class="sec" id="steps">
     <h2 class="sec-title">따라하기</h2>
     <ol class="steps">
-      <li><span class="step-title">시트에 분류결과 탭 만들기</span>
-        1일차 시트 맨 아래 탭줄에서 <code class="val">+</code> → 탭 이름 <code class="val">분류결과</code>로 변경
-        <p>1행에 세 칸 순서대로: <code class="val">민원내용</code> · <code class="val">AI분류결과</code> · <code class="val">접수일시</code></p>
-        <figure class="capture" id="fig-d2-p3-2">
-          <div class="capture-cap">[그림 P3-2] 1행 A·B·C에 머리글 세 개를 넣은 <code class="val">분류결과</code> 탭</div>
-          <img src="../assets/img/fig-d2-p3-2.png" alt="1행에 머리글 세 개를 넣은 분류결과 탭">
-        </figure>
+      <li><span class="step-title">연습용 엑셀 열어보기</span>
+        위에서 내려받은 <code class="val">day2-p3-sample.xlsx</code>를 엑셀로 엽니다.
+        <p>열은 여섯 개입니다 — <code class="val">사용일</code> ·
+           <code class="val">부서</code> · <code class="val">사용자</code> ·
+           <code class="val">항목</code> · <code class="val">금액</code> ·
+           <code class="val">증빙번호</code>. 이 <b>첫 줄의 이름</b>이 n8n에서 그대로
+           항목 이름이 됩니다.</p>
+        <span class="hint">눈으로 오류를 찾아보고 싶다면 5분만 시도해 보세요. 45줄에서
+        몇 건이나 찾을 수 있는지 — 그 숫자를 기억해 두었다가 워크플로우 결과와
+        비교하면 재미있습니다.</span>
       </li>
 
-      <li><span class="step-title">새 워크플로우 만들기</span>
-        이름을 <code class="val">P3 AI 민원 자동 분류</code>로
-      </li>
-
-      <li><span class="step-title">폼 트리거 추가하기</span>
+      <li><span class="step-title">새 워크플로우와 업로드 폼</span>
+        새 워크플로우를 만들고 이름을 <code class="val">P3 엑셀 오류 찾기</code>로
+        바꿉니다. 캔버스 가운데 <code class="val">+</code>를 눌러
+        <code class="val">On form submission</code>을 고릅니다.
+        <p>P1과 같은 방법으로 채웁니다.</p>
         <p>
-          <code class="val">Form Title</code> → <code class="val">민원 내용 입력</code><br>
-          <code class="val">Form Description</code> → <code class="val">분류할 민원 내용을 입력하세요.</code>
+          <code class="val">Form Title</code> → <code class="val">집행내역 점검 서비스</code><br>
+          <code class="val">Form Description</code> → <code class="val">집행내역 엑셀(.xlsx)을 올리면 한도 초과·증빙 누락 건을 AI가 찾아 메일로 보내드립니다.</code>
         </p>
-        <p>필드 두 개:</p>
+        <p><code class="val">Form Elements</code>에서 <code class="val">Add Form Element</code>를
+           눌러 필드를 <b>하나</b> 만듭니다.</p>
         <p>
-          <code class="val">Label</code> = <code class="val">민원내용</code>(띄어쓰기 없이), <code class="val">Element Type</code> = <code class="val">Textarea</code>, 필수 켜기<br>
-          <code class="val">Label</code> = <code class="val">이메일</code>, <code class="val">Element Type</code> = <code class="val">Email</code>, 필수 켜기
-        </p>
-        <span class="hint">이메일은 승인 뒤 <b>답변을 받을 민원인 주소</b>입니다. 실습에서는 본인 주소를 넣으면 됩니다.</span>
-      </li>
-
-      <li><span class="step-title">AI 분류 노드 추가하기</span>
-        <code class="val">+</code> → <code class="val">Basic LLM Chain</code> → <code class="val">Source for Prompt</code> = <code class="val">Define below</code>
-<pre class="code-block">당신은 민원 분류 담당 공무원입니다.
-아래 민원 내용을 읽고 다음을 작성하세요.
-
-1) 담당부서: [도로교통과 / 환경위생과 / 복지정책과 / 건축과 / 기타] 중 하나
-2) 긴급도: [높음 / 보통 / 낮음] 중 하나
-3) 답변초안: 민원인에게 보낼 정중한 답변 초안 (3~4문장, 존댓말)
-
-아래 형식 그대로만 출력하세요.
-담당부서:
-긴급도:
-답변초안:
-
-[민원 내용]
-{{ $json.민원내용 }}</pre>
-        <div class="note">
-          <b>"형식 그대로만 출력하세요"가 중요한 이유</b> — 없으면 AI가 인사말·설명을 덧붙여 시트가 지저분해짐
-        </div>
-      </li>
-
-      <li><span class="step-title">Gemini 모델 붙이고 모델 이름 고르기</span>
-        아래쪽 <code class="val">+</code> → <code class="val">Google Gemini Chat Model</code> → 자격증명 재사용 → <code class="val">models/gemini-2.5-flash</code> 직접 선택
-      </li>
-
-      <li><span class="step-title">시트 기록 노드 추가하기</span>
-        <code class="val">+</code> → <code class="val">Google Sheets</code> → <code class="val">Append Row in Sheet</code>
-        <p><code class="val">Document</code> = 1일차 시트, <code class="val">Sheet</code> = <code class="val">분류결과</code> 탭</p>
-        <p><code class="val">Mapping Column Mode</code> = <code class="val">Map Each Column Manually</code></p>
-      </li>
-
-      <li><span class="step-title">세 칸 채우기 — 이번 시간의 핵심</span>
-        세 칸 각각 표현식 전환 후:
-        <p>
-          <code class="val">민원내용</code> → <code class="val">{{ $('민원 내용 입력').item.json.민원내용 }}</code><br>
-          <code class="val">AI분류결과</code> → <code class="val">{{ $json.text }}</code><br>
-          <code class="val">접수일시</code> → <code class="val">{{ $now.toFormat('yyyy-MM-dd HH:mm') }}</code>
+          <code class="val">Label</code> → <code class="val">XLSX</code><br>
+          <code class="val">Element Type</code> → <code class="val">File</code><br>
+          <code class="val">Accepted File Types</code> → <code class="val">.xlsx</code><br>
+          <code class="val">Multiple Files</code> → <b>끔</b><br>
+          <code class="val">Required Field</code> → <b>켬</b>
         </p>
         <div class="note warn">
-          <b>왜 첫 칸만 다른가</b>
-          <code class="val">AI 분류·답변</code> 노드를 지나면 민원 원문이 사라짐. <code class="val">$('민원 내용 입력')</code>로 몇 칸 앞 노드의 값을 이름으로 직접 불러옴. <b>노드 이름 철자가 한 글자라도 다르면 실패.</b>
+          <b>필드 이름은 영문 <code class="val">XLSX</code>로 지으세요</b>
+          n8n 폼은 파일 필드의 이름을 그대로 "파일 보관함 이름"으로 씁니다. 한글로 지으면
+          밑줄(<code class="val">_</code>)로 바뀌어 다음 노드에서 이름을 맞추기 어려워집니다.
+          P1의 <code class="val">PDF</code>와 같은 이유입니다.
         </div>
-        <figure class="capture" id="fig-d2-p3-3">
-          <div class="capture-cap">[그림 P3-3] 세 칸 모두 <code class="val">fx</code>가 붙고, 칸 아래 회색 글씨로 실제 들어갈 값이 미리 보입니다</div>
-          <img src="../assets/img/fig-d2-p3-3.png" alt="세 칸에 표현식을 입력한 시트 노드">
-        </figure>
       </li>
 
-      <li><span class="step-title">결재 요청 메일 — 두 번째 갈래</span>
-        <code class="val">AI 분류·답변</code> 노드 오른쪽 끝의 동그란 점을 잡고 빈 곳으로 끌어 놓은 뒤
-        <code class="val">Gmail</code>을 고릅니다. <code class="val">Operation</code>은 <b><code class="val">Send message and wait for response</code></b>입니다.
-        <p>
-          <code class="val">To</code> → 결재자 이메일 (본인 또는 짝)<br>
-          <code class="val">Subject</code> → <code class="val">[결재 요청] 민원 답변 초안</code><br>
-          <code class="val">Message</code> → 표현식 모드로 아래
-        </p>
-<pre class="code-block">민원 내용:
-{{ $('민원 내용 입력').item.json.민원내용 }}
-
-AI 분류·답변 초안:
-{{ $json.text }}
-
-아래 [Approve]를 누르면 답변 초안이 민원인에게 발송됩니다. 수정이 필요하면 [Disapprove]를 누르세요.</pre>
-        <p><code class="val">Response Type</code> → <code class="val">Approval</code>, 그 아래 <code class="val">Type of Approval</code> → <code class="val">Approve and Disapprove</code></p>
+      <li><span class="step-title">엑셀 읽기</span>
+        폼 오른쪽 <code class="val">+</code>를 누르고 <code class="val">Extract from File</code>을
+        고릅니다. <code class="val">Operation</code>을 <code class="val">Extract From XLSX</code>로
+        바꾸고, <code class="val">Input Binary Field</code>에 <code class="val">XLSX</code>를 적습니다.
         <div class="note">
           <b>이 노드가 하는 일</b>
-          메일을 보낸 뒤 <b>멈춰서 기다립니다</b>. 받는 사람이 메일의 <code class="val">Approve</code> 또는 <code class="val">Disapprove</code> 버튼을 누르면
-          그 선택이 결과(<code class="val">approved</code>: 참 또는 거짓)로 나오며 워크플로우가 이어집니다. 그동안 실행은 끝나지 않고 이 노드에서 기다리는 상태로 남습니다.
+          엑셀 파일은 "표"로 보이지만 n8n에게는 그냥 파일 덩어리입니다. 이 노드가 파일을 열어
+          <b>표의 한 줄을 항목 하나로</b> 바꿔 줍니다. 45줄이면 항목 45개가 나옵니다. 1일차에서
+          구글 시트를 읽을 때와 같은 모양이 됩니다.
         </div>
-        <figure class="capture" id="fig-d2-p3-4">
-          <div class="capture-cap">[그림 P3-4] 받은편지함에 도착한 결재 요청 메일 — <code class="val">Approve</code>·<code class="val">Disapprove</code> 버튼</div>
-          <div class="capture-guide">캡처 위치: 받은편지함에서 연 [결재 요청] 메일. 민원 내용, AI 초안, 두 개의 버튼이 함께 보이는 화면</div>
-        </figure>
+        <p>이제 한 번 실행해 봅니다. 이 노드 안의 <code class="val">Execute step</code> 또는
+           캔버스 아래 <code class="val">Execute workflow</code>를 누르면 폼 화면이 열립니다.
+           <code class="val">day2-p3-sample.xlsx</code>를 올리고 제출하세요.</p>
+        <p>OUTPUT 패널에 <code class="val">사용일</code> · <code class="val">부서</code> ·
+           <code class="val">사용자</code> · <code class="val">항목</code> · <code class="val">금액</code> ·
+           <code class="val">증빙번호</code>가 줄줄이 보이고, 항목 수가 <b>45</b>로 나오면 성공입니다.</p>
+        <span class="hint">증빙번호가 없는 줄은 <code class="val">증빙번호</code> 항목이 아예
+        <b>없는 채로</b> 나옵니다. 값이 빈 칸이 아니라 "항목 자체가 없다"는 점을 기억해 두세요 —
+        바로 다음 단계에서 이게 쓰입니다.</span>
       </li>
 
-      <li><span class="step-title">승인했는지 갈라 보기</span>
-        <code class="val">결재 요청</code> 오른쪽 <code class="val">+</code> → <code class="val">If</code>. 1일차 07강과 같은 노드입니다.
+      <li><span class="step-title">줄마다 점검 결과 붙이기</span>
+        <code class="val">Extract from File</code> 오른쪽 <code class="val">+</code>를 누르고
+        <code class="val">Edit Fields (Set)</code>를 고릅니다.
+        <p><code class="val">Add Field</code>를 눌러 아래처럼 채웁니다.</p>
         <p>
-          왼쪽 값 → 표현식 모드로 <code class="val">{{ $json.data.approved }}</code><br>
-          비교 방식 → <code class="val">Boolean</code> › <code class="val">is true</code>
+          <code class="val">Name</code> → <code class="val">점검결과</code><br>
+          <code class="val">Type</code> → <code class="val">String</code><br>
+          <code class="val">Value</code> → 표현식 모드로 바꾸고 아래를 붙여넣기
         </p>
-        <span class="hint">승인(<code class="val">true</code>) 쪽 출력에만 다음 노드를 연결합니다. 반려(<code class="val">false</code>) 쪽은 비워 두면 그냥 끝납니다.</span>
-      </li>
-
-      <li><span class="step-title">승인되면 민원인에게 답변 보내기</span>
-        <code class="val">If</code>의 <b>true</b> 출력 오른쪽 <code class="val">+</code> → <code class="val">Gmail</code> → <code class="val">Send a message</code>.
-        <p>
-          <code class="val">To</code> → 표현식 모드로 <code class="val">{{ $('민원 내용 입력').first().json.이메일 }}</code><br>
-          <code class="val">Subject</code> → <code class="val">민원 답변 안내</code><br>
-          <code class="val">Email Type</code> → <code class="val">Text</code><br>
-          <code class="val">Message</code> → 표현식 모드로 아래
-        </p>
-<pre class="code-block">{{ $('AI 분류·답변').first().json.text.split('답변초안:').pop().trim() }}</pre>
+<pre class="code-block">{{ !$json.증빙번호 ? '증빙 누락' : ($json.금액 > 100000 ? '한도 초과' : '정상') }}</pre>
+        <p>아래쪽 <code class="val">Include Other Input Fields</code>를 <b>켜</b>서 원래 열
+           여섯 개가 사라지지 않게 합니다.</p>
         <div class="note">
-          <b>이 식 읽는 법</b>
-          AI 결과는 <code class="val">담당부서: … 긴급도: … 답변초안: …</code> 한 덩어리입니다.
-          <code class="val">.split('답변초안:')</code>은 그 글자를 기준으로 덩어리를 둘로 자르고,
-          <code class="val">.pop()</code>은 뒤쪽 조각(답변)만 집고, <code class="val">.trim()</code>은 앞뒤 빈칸을 지웁니다.
-          민원인에게는 <b>답변 부분만</b> 나갑니다.
+          <b>이 한 줄 읽는 법</b>
+          <code class="val">조건 ? A : B</code>는 "조건이 맞으면 A, 아니면 B"라는 뜻입니다.
+          <ul class="bullets">
+            <li><code class="val">!$json.증빙번호</code> — 증빙번호가 <b>없으면</b></li>
+            <li>→ <code class="val">'증빙 누락'</code></li>
+            <li>아니면 <code class="val">$json.금액 &gt; 100000</code> — 금액이 10만 원을 넘으면 <code class="val">'한도 초과'</code></li>
+            <li>그것도 아니면 <code class="val">'정상'</code></li>
+          </ul>
+          07강의 IF가 노드로 나누던 일을 <b>한 줄 안에서</b> 하는 셈입니다. 줄이 45개여도
+          줄마다 한 번씩 알아서 계산합니다.
         </div>
-        <div class="note warn">
-          <b>여기서는 <code class="val">.item</code> 대신 <code class="val">.first()</code>를 씁니다</b>
-          결재 요청 노드는 중간에 멈췄다 이어지기 때문에, 이 구간을 지나면 n8n이 "어느 항목에서 이어졌는지"를 잃어버립니다.
-          그래서 <code class="val">.item</code>이 실패합니다. 이 워크플로우는 한 번에 민원 한 건만 흐르니 <code class="val">.first()</code>(첫 번째 항목)로 불러오면 됩니다.
+        <p>다시 실행해 OUTPUT을 보면 모든 줄에 <code class="val">점검결과</code>가 붙어 있습니다.
+           <code class="val">정상</code>이 대부분이고 <code class="val">한도 초과</code>와
+           <code class="val">증빙 누락</code>이 섞여 있어야 합니다.</p>
+        <figure class="capture" id="fig-d2-p3-2">
+          <div class="capture-cap">[그림 P3-2] <code class="val">점검 결과 표시</code> 노드의 OUTPUT — 줄마다 <code class="val">점검결과</code> 항목이 붙은 모습</div>
+          <div class="capture-guide">캡처 위치: 점검 결과 표시 노드를 열고 오른쪽 OUTPUT을 Table 보기로, 점검결과 열에 정상·한도 초과·증빙 누락이 섞여 보이는 화면</div>
+        </figure>
+        <span class="hint">금액 칸이 글자(문자열)로 읽히면 비교가 어긋납니다. 그럴 때는 엑셀에서 금액
+        칸을 숫자 서식으로 바꾼 뒤 다시 올려 보세요. 연습용 파일은 이미 숫자입니다.</span>
+      </li>
+
+      <li><span class="step-title">오류인 줄만 남기기</span>
+        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Filter</code>를 고릅니다.
+        <p>조건을 하나 만듭니다.</p>
+        <p>
+          왼쪽 값 → 표현식 모드로 바꾸고 <code class="val">{{ $json.점검결과 }}</code><br>
+          비교 방식 → <code class="val">String</code> › <code class="val">is not equal to</code><br>
+          오른쪽 값 → <code class="val">정상</code>
+        </p>
+        <p>실행하면 45건이 <b>오류 건만</b> 남습니다. OUTPUT의 항목 수가 몇 건인지 확인하세요.</p>
+        <div class="note">
+          <b>Filter와 IF의 차이</b>
+          IF는 항목을 <b>참 쪽과 거짓 쪽 두 갈래</b>로 나눕니다. Filter는 조건에 맞는 항목만
+          다음으로 보내고 <b>나머지는 버립니다</b>. "정상은 필요 없고 문제 건만 보면 된다"는
+          지금 같은 일에는 Filter가 맞습니다.
         </div>
+      </li>
+
+      <li><span class="step-title">한 건으로 합치기</span>
+        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Aggregate</code>를 고릅니다.
+        P2와 똑같이 설정합니다.
+        <p>
+          <code class="val">Aggregate</code> → <code class="val">All Item Data (Into a Single List)</code><br>
+          <code class="val">Put Output in Field</code> → <code class="val">data</code>
+        </p>
+        <span class="hint">이유도 P2와 같습니다. 오류 건이 아홉 개면 AI 노드가 아홉 번 돌고 메일이
+        아홉 통 나갑니다. 하나로 묶어서 AI에게 한 번에 넘겨야 합니다.</span>
+      </li>
+
+      <li><span class="step-title">AI 점검 보고서</span>
+        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Basic LLM Chain</code>을
+        고릅니다. 1일차 06강, P1과 같은 방법입니다.
+        <code class="val">Source for Prompt</code>는 <code class="val">Define below</code>로 두고
+        <code class="val">Prompt</code> 칸을 표현식 모드로 바꿔 아래를 붙여넣습니다.
+<pre class="code-block">당신은 시청 감사 업무를 돕는 비서입니다.
+아래는 지출 집행내역을 점검해 찾아낸 의심 건 목록입니다.
+
+[점검 기준]
+- 한도 초과: 1건 금액이 100,000원을 넘는 경우
+- 증빙 누락: 증빙번호가 비어 있는 경우
+
+[작성 규칙]
+- 맨 첫 줄에 '전체 {{ $('엑셀 읽기').all().length }}건 중 {{ $json.data.length }}건에서 문제가 발견되었습니다.'라고 씁니다.
+- 오류 유형별로 나누고, 건마다 사용일·사용자·항목·금액을 한 줄씩 적습니다.
+- 마지막에 담당자가 해야 할 조치를 2줄 이내로 제안합니다.
+- 목록에 없는 내용은 지어내지 않습니다.
+
+[의심 건 목록]
+{{ JSON.stringify($json.data) }}</pre>
+        <p>이어서 노드 아래의 <code class="val">Model</code> 자리 <code class="val">+</code>를 눌러
+           <code class="val">Google Gemini Chat Model</code>을 달고, 자격증명을 고른 뒤
+           <code class="val">Model</code>에서 <code class="val">models/gemini-2.5-flash</code>를
+           <b>직접 고릅니다</b>. 06강에서 한 것과 같습니다.</p>
+        <div class="note">
+          <b>프롬프트 속 표현식 세 개</b>
+          <ul class="bullets">
+            <li><code class="val">{{ $json.data.length }}</code> — 앞에서 묶은 목록에 든 의심 건의 수</li>
+            <li><code class="val">{{ $('엑셀 읽기').all().length }}</code> — 엑셀 읽기 노드가 만든
+                <b>전체 줄 수</b>(45). <code class="val">$('노드 이름')</code>은 몇 칸 앞 노드를 이름으로 부르는 문법인데, 한 건이 아니라
+                <b>전부</b>를 가져오므로 <code class="val">.item</code> 대신 <code class="val">.all()</code>을 씁니다.</li>
+            <li><code class="val">{{ JSON.stringify($json.data) }}</code> — 의심 건 목록 전체를 글자로 바꿔 AI에게 전달</li>
+          </ul>
+        </div>
+        <span class="hint">"목록에 없는 내용은 지어내지 않습니다"는 AI가 없는 건을 만들어 내는 것을
+        막으려는 문장입니다. 점검 보고서처럼 <b>숫자와 사실이 중요한 글</b>에서는 꼭 넣으세요.</span>
+      </li>
+
+      <li><span class="step-title">점검 메일 보내기</span>
+        오른쪽 <code class="val">+</code>를 누르고 <code class="val">Gmail</code>을 고릅니다.
+        <code class="val">Send a message</code>를 선택하고 채웁니다.
+        <p>
+          <code class="val">To</code> → 본인 이메일 주소<br>
+          <code class="val">Subject</code> → 표현식 모드로 <code class="val">[집행내역 점검] {{ $now.toFormat('yyyy-MM-dd') }}</code><br>
+          <code class="val">Email Type</code> → <code class="val">Text</code><br>
+          <code class="val">Message</code> → 표현식 모드로 <code class="val">{{ $json.text }}</code>
+        </p>
+        <span class="hint">AI가 쓴 보고서는 <code class="val">text</code>라는 이름으로 나옵니다.
+        06강, P2에서 본 것과 같습니다.</span>
       </li>
 
       <li><span class="step-title">노드 이름 정리하기</span>
-        <p><code class="val">민원 내용 입력</code> · <code class="val">AI 분류·답변</code> · <code class="val">분류 결과 기록</code> ·
-           <code class="val">결재 요청</code> · <code class="val">승인됐나?</code> · <code class="val">답변 발송</code></p>
-        <span class="hint">폼 트리거와 <code class="val">AI 분류·답변</code> 이름은 바꾸지 마세요 — 뒤 단계 표현식이 이 이름을 가리킵니다.</span>
+        노드 제목을 각각 더블클릭해 아래 이름으로 바꿉니다.
+        <p><code class="val">엑셀 업로드 폼</code> ·
+           <code class="val">엑셀 읽기</code> ·
+           <code class="val">점검 결과 표시</code> ·
+           <code class="val">오류만 남기기</code> ·
+           <code class="val">한 건으로 합치기</code> ·
+           <code class="val">AI 점검 보고서</code> ·
+           <code class="val">점검 메일</code></p>
+        <div class="note warn">
+          <b><code class="val">엑셀 읽기</code> 이름은 반드시 맞추세요</b>
+          AI 프롬프트의 <code class="val">$('엑셀 읽기')</code>가 이 이름을 부르고 있습니다.
+          다른 이름이면 "노드를 찾을 수 없다"는 오류가 납니다.
+        </div>
       </li>
     </ol>
   </section>
@@ -204,103 +261,117 @@ AI 분류·답변 초안:
   <section class="sec" id="verify">
     <h2 class="sec-title">실행하고 확인하기</h2>
     <ul class="bullets">
-      <li><code class="val">Execute workflow</code> → 임시 폼 주소에서 민원 내용 제출</li>
-      <li><code class="val">분류결과</code> 탭에 새 줄: 민원 원문 + AI 분류 결과 + 오늘 날짜시각 = 위 갈래 성공</li>
-      <li>결재자 메일함에 <code class="val">[결재 요청] 민원 답변 초안</code> 메일이 오고, 캔버스의 <code class="val">결재 요청</code> 노드가 <b>기다리는 중</b>으로 표시됨</li>
-      <li>메일에서 <code class="val">Approve</code>를 누르면 → 몇 초 뒤 민원인(폼에 적은 이메일)에게 <code class="val">민원 답변 안내</code> 메일이 도착 = 아래 갈래 성공</li>
-      <li>서로 다른 민원을 몇 번 더 제출해 담당부서가 달라지는지 확인</li>
+      <li><code class="val">Execute workflow</code> → 폼 화면에서 <code class="val">day2-p3-sample.xlsx</code> 제출</li>
+      <li>몇 초 뒤 메일함에 <code class="val">[집행내역 점검]</code> 메일이 도착하면 성공</li>
     </ul>
-    <p><b>이번에는 <code class="val">Disapprove</code>를 눌러 보세요.</b> 승인됐나? 노드의 거짓 쪽으로 빠지고 아무 메일도 나가지 않습니다.
-       AI가 쓴 초안이 마음에 들지 않을 때 이렇게 멈출 수 있다는 것이 결재 단계의 존재 이유입니다.</p>
-    <figure class="capture" id="fig-d2-p3-5">
-      <div class="capture-cap">[그림 P3-5] 승인 후 민원인에게 도착한 답변 메일 — 담당부서·긴급도 줄 없이 답변 부분만</div>
-      <div class="capture-guide">캡처 위치: 민원인 받은편지함에서 연 [민원 답변 안내] 메일. 답변초안 문장만 보이는 화면</div>
+    <p><b>정답을 공개합니다.</b> 45건 중 <b>9건</b>이 나와야 합니다.</p>
+    <table class="tbl">
+      <thead>
+        <tr><th>유형</th><th>사용일</th><th>사용자</th><th>항목</th><th>금액</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>한도 초과</td><td>2026-09-05</td><td>윤하린</td><td>업무추진비 식비</td><td>132,000원</td></tr>
+        <tr><td>한도 초과</td><td>2026-09-12</td><td>강민재</td><td>업무추진비 식비</td><td>158,000원</td></tr>
+        <tr><td>한도 초과</td><td>2026-09-19</td><td>서도윤</td><td>사무용품 구입</td><td>215,000원</td></tr>
+        <tr><td>한도 초과</td><td>2026-09-23</td><td>오서윤</td><td>회의 다과</td><td>108,000원</td></tr>
+        <tr><td>증빙 누락</td><td>2026-09-02</td><td>한지우</td><td>회의 다과</td><td>31,000원</td></tr>
+        <tr><td>증빙 누락</td><td>2026-09-08</td><td>서도윤</td><td>출장 교통비</td><td>26,400원</td></tr>
+        <tr><td>증빙 누락</td><td>2026-09-15</td><td>윤하린</td><td>사무용품 구입</td><td>48,500원</td></tr>
+        <tr><td>증빙 누락</td><td>2026-09-18</td><td>한지우</td><td>업무추진비 식비</td><td>55,000원</td></tr>
+        <tr><td>증빙 누락</td><td>2026-09-22</td><td>오서윤</td><td>출장 교통비</td><td>19,200원</td></tr>
+      </tbody>
+    </table>
+    <figure class="capture" id="fig-d2-p3-3">
+      <div class="capture-cap">[그림 P3-3] <code class="val">오류만 남기기</code> 노드 — 45건 중 9건이 남은 OUTPUT</div>
+      <div class="capture-guide">캡처 위치: 오류만 남기기 노드를 열고 INPUT 45 items, OUTPUT 9 items가 함께 보이는 화면</div>
+    </figure>
+    <figure class="capture" id="fig-d2-p3-4">
+      <div class="capture-cap">[그림 P3-4] 메일함에 도착한 AI 점검 보고서</div>
+      <div class="capture-guide">캡처 위치: 받은편지함에서 연 [집행내역 점검] 메일. 첫 줄 "전체 45건 중 9건에서…"와 유형별 목록이 보이는 화면</div>
     </figure>
     <div class="note tip">
-      <b>B열이 답답해 보이면</b>
-      AI 결과 세 줄이 한 칸 안에 들어가 있어서 줄이 두껍게 보입니다. 시트에서 B열
-      너비를 넓히고 <b>서식 → 텍스트 줄바꿈 → 자동 줄바꿈</b>으로 바꾸면 세 줄이
-      가지런히 보입니다. 자동화와는 상관없는 보기 설정입니다.
+      <b>눈으로 찾은 개수와 비교해 보세요</b>
+      처음에 눈으로 몇 건을 찾았나요? 규칙이 분명한 확인은 이렇게 <b>한 번 만들어 두면 다음 달에도
+      같은 엑셀 양식에 그대로</b> 쓸 수 있습니다. 한도 금액이나 확인할 열이 바뀌면
+      <code class="val">점검 결과 표시</code>의 표현식 한 줄만 고치면 됩니다.
     </div>
+    <div class="note warn">
+      <b>아직 잡지 못한 오류가 두 건 있습니다</b>
+      이 엑셀에는 <b>같은 건이 두 번 올라간 중복 결제</b>가 두 쌍 숨어 있습니다. 금액도
+      한도 안이고 증빙번호도 있어서 지금 규칙으로는 걸리지 않습니다. 아래 "더 해보기"에서
+      찾아 봅니다.
+    </div>
+    <p>상시로 쓰려면 오른쪽 위 활성화 스위치(<code class="val">Active</code>)를 켜고
+       <code class="val">엑셀 업로드 폼</code> 노드에 표시되는 상시 주소를 즐겨찾기에 넣어두면 됩니다.</p>
   </section>
 
   <section class="sec" id="trouble">
     <h2 class="sec-title">안 될 때</h2>
     <ul class="bullets">
-      <li><b>민원내용 칸이 비어 있음</b> — <code class="val">{{ $('민원 내용 입력').item.json.민원내용 }}</code>인지, 폼 트리거 이름이 정확한지 확인</li>
-      <li><b>"노드를 찾을 수 없다" 오류</b> — <code class="val">$('...')</code> 안 이름과 실제 노드 제목 일치 확인</li>
-      <li><b>칸이 전부 비어 있음</b> — 세 칸 각각 표현식 전환 확인</li>
-      <li><b>값이 엉뚱한 칸에 들어감</b> — <code class="val">분류결과</code> 탭 머리글 철자 확인</li>
-      <li><b>AI 결과에 인사말 잔뜩</b> — 프롬프트의 "형식 그대로만 출력하세요" 줄 확인</li>
-      <li><b>Sheet 목록에 분류결과 탭 안 보임</b> — 브라우저 새로고침 후 재확인</li>
-      <li><b>결재 메일이 안 옴</b> — <code class="val">결재 요청</code>의 <code class="val">To</code> 주소와 스팸함 확인. Gmail 자격증명이 같은 계정인지도 확인</li>
-      <li><b>Approve를 눌러도 아무 일도 없음</b> — 캔버스에서 해당 실행이 아직 기다리는 중인지 확인하고, 이미 끝났거나 시간이 많이 지났다면 민원을 처음부터 다시 제출</li>
-      <li><b>답변 발송에서 "Paired item data unavailable" 같은 오류</b> — <code class="val">.item</code>을 썼기 때문입니다. <code class="val">.first()</code>로 바꾸세요</li>
-      <li><b>답변 메일에 담당부서·긴급도까지 같이 나감</b> — <code class="val">.split('답변초안:')</code>의 글자가 AI 결과의 표제와 정확히 같은지 확인(콜론 포함)</li>
+      <li><b>엑셀 읽기에서 파일을 찾을 수 없다는 오류</b> — <code class="val">Input Binary Field</code> 값과 폼 필드 이름이 같은지 확인(왼쪽 INPUT 패널에 보이는 이름을 그대로 복사)</li>
+      <li><b>항목이 하나도 안 나옴</b> — 엑셀의 <b>첫 줄이 머리글</b>이어야 합니다. 첫 줄 위에 제목 줄이 있으면 제거하세요</li>
+      <li><b>한도 초과가 하나도 안 잡힘</b> — <code class="val">금액</code>이 글자로 읽힌 경우입니다. 엑셀에서 숫자 서식으로 바꿔 다시 올리세요</li>
+      <li><b>전부 증빙 누락으로 나옴</b> — 열 이름이 <code class="val">증빙번호</code>와 정확히 같은지 확인(띄어쓰기, 오타)</li>
+      <li><b>Filter 뒤가 비어 있고 AI 노드가 안 돎</b> — 오류 건이 0건이면 뒤 노드가 실행되지 않습니다. 정상 동작입니다</li>
+      <li><b>"노드를 찾을 수 없다"</b> — <code class="val">$('엑셀 읽기')</code>와 실제 노드 제목 일치 확인</li>
+      <li><b>메일이 안 옴</b> — Gmail 자격증명과 받는 주소 확인, 스팸함 확인</li>
+    </ul>
+  </section>
+
+  <section class="sec" id="challenge">
+    <h2 class="sec-title">더 해보기 (선택)</h2>
+    <p>일찍 끝났다면 아래 중 하나를 해 보세요.</p>
+    <ul class="bullets">
+      <li><b>중복 결제 찾기</b> — <code class="val">Summarize</code> 노드로 <code class="val">사용일</code>·<code class="val">사용자</code>·<code class="val">항목</code>·<code class="val">금액</code>이 같은 줄을 묶어 건수를 세고(<code class="val">Count</code>), 건수가 2 이상인 것만 <code class="val">Filter</code>로 남깁니다. 두 쌍이 나오면 성공입니다.</li>
+      <li><b>시트에 기록하기</b> — <code class="val">오류만 남기기</code>에서 갈래를 하나 더 빼서 1일차 03강처럼 구글 시트 <code class="val">점검결과</code> 탭에 한 줄씩 쌓아 보세요.</li>
+      <li><b>한도 바꿔 보기</b> — 한도를 80,000원으로 낮추면 몇 건이 더 잡힐까요? <code class="val">점검 결과 표시</code>의 숫자만 고치면 됩니다.</li>
     </ul>
   </section>
 
   <section class="sec" id="quiz">
     <h2 class="sec-title">확인 문제</h2>
     <div class="quiz-item">
-      <p class="quiz-q"><span class="qtype">객관식</span>Q1. <code class="val">{{ $('민원 내용 입력').item.json.민원내용 }}</code> 표현식이 필요한 이유는?</p>
+      <p class="quiz-q"><span class="qtype">객관식</span>Q1. 엑셀 파일 한 줄을 n8n 항목 하나로 바꿔 주는 노드는?</p>
       <ol class="quiz-choices">
-        <li>시트 자격증명 문제 때문에</li>
-        <li><code class="val">AI 분류·답변</code> 노드를 지나면서 민원 원문이 사라졌기 때문에</li>
-        <li>폼 필드 이름이 한글이라서</li>
-        <li>표현식은 항상 이 형태로 써야 하기 때문에</li>
+        <li>Edit Fields (Set)</li>
+        <li>Extract from File</li>
+        <li>Aggregate</li>
+        <li>Filter</li>
       </ol>
       <details class="quiz-answer"><summary>정답 확인</summary>
-        <p class="quiz-a"><b>정답: ②</b> <code class="val">$('노드 이름')</code>으로 몇 칸 앞 노드의 값을 이름으로 직접 불러올 수 있습니다.</p>
+        <p class="quiz-a"><b>정답: ②</b> Extract from File이 파일을 열어 표의 줄마다 항목을 만듭니다.</p>
       </details>
     </div>
     <div class="quiz-item">
-      <p class="quiz-q"><span class="qtype">객관식</span>Q2. 프롬프트에 "아래 형식 그대로만 출력하세요"를 넣는 이유는?</p>
+      <p class="quiz-q"><span class="qtype">객관식</span>Q2. IF 노드와 Filter 노드의 가장 큰 차이는?</p>
       <ol class="quiz-choices">
-        <li>AI 응답 속도를 높이기 위해</li>
-        <li>인사말·설명이 붙지 않게 해 시트에 깔끔하게 쌓기 위해</li>
-        <li>긴급도를 자동으로 계산하기 위해</li>
-        <li>자격증명 오류를 막기 위해</li>
+        <li>IF는 숫자만, Filter는 글자만 비교한다</li>
+        <li>IF는 참·거짓 두 갈래로 나누고, Filter는 맞는 것만 남기고 나머지는 버린다</li>
+        <li>둘은 똑같다</li>
+        <li>Filter는 AI와만 함께 쓸 수 있다</li>
       </ol>
       <details class="quiz-answer"><summary>정답 확인</summary>
-        <p class="quiz-a"><b>정답: ②</b> 이 문장이 없으면 AI가 인사말이나 부가 설명을 붙여 시트가 지저분해집니다.</p>
+        <p class="quiz-a"><b>정답: ②</b> 문제 건만 필요할 때는 Filter, 두 갈래로 각각 일을 시킬 때는 IF입니다.</p>
       </details>
     </div>
     <div class="quiz-item">
-      <p class="quiz-q"><span class="qtype">단답형</span>Q3. <code class="val">$('민원 내용 입력')</code>이 정상 동작하려면 어떤 조건이 지켜져야 하나요?</p>
+      <p class="quiz-q"><span class="qtype">단답형</span>Q3. 증빙번호가 없는 줄에서 <code class="val">!$json.증빙번호</code>가 참이 되는 이유는?</p>
       <details class="quiz-answer"><summary>정답 확인</summary>
-        <p class="quiz-a"><b>정답:</b> 폼 트리거 노드의 제목이 정확히 <code class="val">민원 내용 입력</code>이어야 합니다 — 철자가 한 글자라도 다르면 실행이 실패합니다.</p>
-      </details>
-    </div>
-    <div class="quiz-item">
-      <p class="quiz-q"><span class="qtype">객관식</span>Q4. 결재 요청 메일에서 <code class="val">Disapprove</code>를 누르면 어떻게 되나요?</p>
-      <ol class="quiz-choices">
-        <li>민원인에게 답변이 그대로 발송된다</li>
-        <li>워크플로우가 오류로 멈춘다</li>
-        <li><code class="val">승인됐나?</code>의 거짓 쪽으로 빠지고, 연결된 노드가 없으면 아무 메일도 나가지 않는다</li>
-        <li>AI가 답변을 다시 쓴다</li>
-      </ol>
-      <details class="quiz-answer"><summary>정답 확인</summary>
-        <p class="quiz-a"><b>정답: ③</b> 반려는 오류가 아니라 "거짓"이라는 정상적인 결과입니다. 거짓 쪽에 노드를 이으면 반려 사유 기록 같은 일도 시킬 수 있습니다.</p>
+        <p class="quiz-a"><b>정답:</b> 값이 빈 칸인 줄은 <code class="val">증빙번호</code> 항목 자체가 없어서, 값이 없다는 뜻의 <code class="val">!</code>(부정)이 참이 됩니다.</p>
       </details>
     </div>
   </section>
 
   <section class="sec" id="download">
     <h2 class="sec-title">이번 프로젝트 워크플로우 받기</h2>
-    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.</p>
+    <p>따라오다 막혔다면 이 파일을 받아 n8n에서 불러오면 이어서 진행할 수 있습니다.
+       표현식이 이미 들어 있으므로 붙여넣기 실수를 피하고 싶을 때도 쓸 만합니다.</p>
     <div class="note warn">
       <b>불러온 뒤 반드시 확인하세요</b>
       이 파일에는 자격증명이 들어 있지 않습니다. 불러온 뒤
-      <code class="val">Google Gemini Chat Model</code>·<code class="val">분류 결과 기록</code>·
-      <code class="val">결재 요청</code>·<code class="val">답변 발송</code> 네 노드를 각각 열어
-      자격증명을 다시 골라야 합니다. 그리고 두 자리표시자를 본인 값으로 바꿔야 합니다.
-      <p><code class="val">분류 결과 기록</code>의 <code class="val">Document</code> →
-         <code class="val">여기에_본인_시트_ID</code>(본인 시트)<br>
-         <code class="val">결재 요청</code>의 <code class="val">To</code> →
-         <code class="val">본인이메일@example.com</code>(결재자 주소)</p>
-      탭 이름은 <code class="val">분류결과</code>로 들어 있으니,
-      <b>시트에 그 이름의 탭과 머리글 세 개를 먼저 만들어두어야</b> 합니다.
+      <code class="val">Google Gemini Chat Model</code>과 <code class="val">점검 메일</code>
+      노드를 열어 자격증명을 다시 골라야 합니다. 그리고 <code class="val">점검 메일</code>의
+      받는 주소 <code class="val">본인이메일@example.com</code>을 본인 주소로 바꿔야 합니다.
     </div>
     <a class="dl" href="../downloads/day2-p3.json" download>
       워크플로우 내려받기 <span class="dl-name">day2-p3.json</span>
@@ -309,7 +380,7 @@ AI 분류·답변 초안:
 
   <nav class="pager">
     <a href="p2.html">← P2 매일 아침 민원 브리핑 봇</a>
-    <a href="p4.html">P4 엑셀 오류 찾기 →</a>
+    <a href="p4.html">P4 설문조사 자동 분석 보고서 →</a>
   </nav>
 
 </main>

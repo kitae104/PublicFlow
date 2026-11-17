@@ -57,7 +57,8 @@
     </div>
     <figure class="capture" id="fig-d2-p1-1">
       <div class="capture-cap">[그림 P1-1] 완성 — <code class="val">PDF 텍스트 추출</code>에서 선이 두 갈래로 나뉘는 모습</div>
-      <div class="capture-guide">캡처 위치: 완성된 P1 캔버스 전체 — 공문서 업로드 폼 → PDF 텍스트 추출, 이어서 (위) AI 요약 → 텔레그램 발송, (아래) 기한 추출 → 기한 일정 등록. 각 AI 노드 아래에 Gemini 모델이 매달린 모습</div>
+      <!-- 캡처 위치: 완성된 P1 캔버스 전체 — 공문서 업로드 폼 → PDF 텍스트 추출, 이어서 (위) AI 요약 → 텔레그램 발송, (아래) 기한 추출 → 기한 일정 등록. 각 AI 노드 아래에 Gemini 모델이 매달린 모습 -->
+      <img src="../assets/img/fig-d2-p1-1.png" alt="완성 — PDF 텍스트 추출에서 선이 두 갈래로 나뉘는 모습">
     </figure>
     <p class="hint">1일차 결정과 같은 <b>부챗살 구조</b>입니다. 한쪽이 실패해도 다른 쪽은 영향을 받지 않습니다.</p>
   </section>
@@ -179,7 +180,8 @@
         <p>실행 후 OUTPUT을 보면 <code class="val">output</code> 아래에 네 개 값이 나옵니다. <code class="val">제출기한</code>이 <code class="val">2026-12-18</code>인지 확인하세요.</p>
         <figure class="capture" id="fig-d2-p1-6">
           <div class="capture-cap">[그림 P1-6] <code class="val">기한 추출</code> OUTPUT — <code class="val">output</code> 아래 네 개 값</div>
-          <div class="capture-guide">캡처 위치: 기한 추출 노드의 OUTPUT(JSON 또는 Table). 문서제목·제출기한(2026-12-18)·담당부서·필요조치가 보이는 화면</div>
+          <!-- 캡처 위치: 기한 추출 노드의 OUTPUT(JSON 또는 Table). 문서제목·제출기한(2026-12-18)·담당부서·필요조치가 보이는 화면 -->
+          <img src="../assets/img/fig-d2-p1-6.png" alt="기한 추출 OUTPUT — output 아래 네 개 값">
         </figure>
         <span class="hint">값은 <code class="val">{{ $json.text }}</code>가 아니라 <code class="val">{{ $json.output.제출기한 }}</code>처럼 <b><code class="val">output</code>을 한 번 거쳐</b> 꺼냅니다.</span>
       </li>

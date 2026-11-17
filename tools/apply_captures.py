@@ -105,8 +105,10 @@ def is_own_image_src(fig_id: str, src: str) -> bool:
 
 
 def make_alt(caption: str) -> str:
-    stripped = CAP_PREFIX_RE.sub("", caption).strip()
-    return stripped if stripped else caption.strip()
+    # alt는 속성값이므로 HTML 태그를 제거하고 따옴표를 이스케이프한다.
+    plain = re.sub(r"<[^>]+>", "", caption)
+    stripped = CAP_PREFIX_RE.sub("", plain).strip()
+    return (stripped if stripped else plain.strip()).replace('"', "&quot;")
 
 
 def rel_src(page: Path, image: Path) -> str:
